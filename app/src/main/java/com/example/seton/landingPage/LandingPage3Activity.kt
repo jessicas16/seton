@@ -1,5 +1,6 @@
 package com.example.seton.landingPage
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -74,10 +75,10 @@ private fun ListFitur() {
             fontSize = 28.sp,
             color = Color(0xFF0E9794),
             modifier = Modifier.padding(
-                top = 30.dp,
+                top = 60.dp,
                 start = 20.dp,
                 end = 20.dp,
-                bottom = 50.dp
+                bottom = 20.dp
             )
         )
 
@@ -118,7 +119,7 @@ private fun FeatureCard(
 ) {
     Box(
         modifier = Modifier
-            .width(210.dp)
+            .width(200.dp)
             .height(210.dp)
             .padding(10.dp)
             .background(Color(0xFFD8FDFF),
@@ -151,12 +152,13 @@ private fun NextButton(){
     Button(
         onClick = {
             //pindah ke login page
-
+//            val intent = Intent(context, LandingPage3Activity::class.java)
+//            context.startActivity(intent)
         },
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0E9794)),
         modifier = Modifier
             .size(width = 150.dp, height = 80.dp)
-            .padding(top = 50.dp)
+            .padding(top = 30.dp)
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
