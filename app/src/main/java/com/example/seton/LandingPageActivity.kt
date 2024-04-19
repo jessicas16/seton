@@ -71,7 +71,7 @@ private fun Jumbotron(){
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            val mContext = LocalContext.current
+            val context = LocalContext.current
             Text(
                 text = "Empower your modern team with powerful project management tools.",
                 textAlign = TextAlign.Center,
@@ -88,6 +88,9 @@ private fun Jumbotron(){
             )
             Button(
                 onClick = {
+                    //pindah ke landingpage2
+                    val intent = Intent(context, LandingPage2Activity::class.java)
+                    context.startActivity(intent)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0E9794)),
                 modifier = Modifier.size(width = 170.dp, height = 50.dp)

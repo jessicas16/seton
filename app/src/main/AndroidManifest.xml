@@ -13,8 +13,18 @@
         android:theme="@style/Theme.SETON"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity2"
+            android:name=".LandingPage3Activity"
             android:exported="false"
+            android:label="@string/title_activity_landing_page3"
+            android:theme="@style/Theme.SETON" />
+        <activity
+            android:name=".LandingPage2Activity"
+            android:exported="false"
+            android:label="@string/title_activity_landing_page2"
+            android:theme="@style/Theme.SETON" />
+        <activity
+            android:name=".LandingPageActivity"
+            android:exported="true"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.SETON">
             <intent-filter>
@@ -23,11 +33,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".LandingPage2Activity"
-            android:exported="false"
-            android:label="@string/title_activity_landing_page2"
-            android:theme="@style/Theme.SETON" />
     </application>
 
 </manifest>
