@@ -59,19 +59,13 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
-<<<<<<< Updated upstream
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
-=======
->>>>>>> Stashed changes
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
-<<<<<<< Updated upstream
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
-=======
->>>>>>> Stashed changes
 
     val composeBom = platform("androidx.compose:compose-bom:2024.04.00")
     implementation(composeBom)

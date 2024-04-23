@@ -1,11 +1,7 @@
 <resources>
     <string name="app_name">SETON</string>
     <string name="title_activity_landing_page2">LandingPage2Activity</string>
-<<<<<<< Updated upstream
     <string name="title_activity_main">SETON</string>
     <string name="title_activity_landing_page3">LandingPage3Activity</string>
-=======
-    <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_login">LoginActivity</string>
->>>>>>> Stashed changes
 </resources>
