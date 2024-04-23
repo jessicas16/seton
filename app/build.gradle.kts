@@ -118,4 +118,7 @@ dependencies {
     implementation ("com.squareup.moshi:moshi-kotlin:1.15.0")
     kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
 
+    //splash screen
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
 }
