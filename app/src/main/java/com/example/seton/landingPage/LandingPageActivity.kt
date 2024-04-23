@@ -34,7 +34,7 @@ class LandingPageActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Column{
-                Logo()
+//                Logo()
                 Surface(
                     modifier = Modifier.fillMaxHeight()
                 ) {

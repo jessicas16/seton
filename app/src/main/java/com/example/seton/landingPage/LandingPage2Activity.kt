@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,16 +36,10 @@ class LandingPage2Activity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Column{
-                Logo()
+            Surface(
+                modifier = Modifier.fillMaxHeight()
+            ) {
                 Manage()
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    NextButton()
-                }
             }
         }
     }
@@ -86,7 +82,7 @@ private fun Manage(){
             boxFitur(2, "Connect with others", "Ignite seamless collaboration and unleash creativity with user-friendly project management tools that simplify communication, enabling effortless teamwork and idea exchange.")
             boxFitur(3, "Plan and track projects", "Harness the power of insightful project management tools to make smart decisions, strategically plan, and stay on track, ensuring successful goal achievement.")
         }
-
+        NextButton()
     }
 }
 
