@@ -152,7 +152,7 @@ private fun NextButton(){
     Button(
         onClick = {
             //pindah ke login page
-//            val intent = Intent(context, LandingPage3Activity::class.java)
+//            val intent = Intent(context, MainActivity::class.java)
 //            context.startActivity(intent)
         },
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0E9794)),
