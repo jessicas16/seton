@@ -2,6 +2,7 @@ package com.example.seton
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -137,7 +138,6 @@ fun Login() {
                 visualTransformation = if(passwordVisibility.value) VisualTransformation.None
                 else PasswordVisualTransformation(),
                 modifier = Modifier
-
                     .width(282.dp)
             )
 
@@ -162,7 +162,7 @@ fun Login() {
                     Text(
                         text ="Remember Me",
                         fontSize = 12.sp,
-                        modifier = Modifier.padding(top = 16.dp)
+                        modifier = Modifier.padding(top = 19.dp)
                     )
                 }
                 Row(
@@ -170,7 +170,7 @@ fun Login() {
                 ) {
                     Text(
                         text = "Forgot Password?",
-                        modifier = Modifier.padding(top = 16.dp),
+                        modifier = Modifier.padding(top = 19.dp),
                         color = Color(0xFF0E9794),
                         fontSize = 12.sp
                     )
@@ -199,8 +199,10 @@ fun Login() {
                     modifier = Modifier
                         .padding(start = 5.dp)
                         .clickable {
-//                            val intent = Intent(context, RegisterActivity::class.java)
-//                            context.startActivity(intent)
+                            val intent = Intent(context, RegisterActivity::class.java)
+                            context.startActivity(intent)
+
+                            Toast.makeText(context, "Hai", Toast.LENGTH_SHORT).show()
                         },
                     textDecoration = TextDecoration.Underline,
                 )
