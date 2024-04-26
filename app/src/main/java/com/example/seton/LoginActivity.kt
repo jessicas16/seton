@@ -202,7 +202,6 @@ fun Login() {
                             val intent = Intent(context, RegisterActivity::class.java)
                             context.startActivity(intent)
 
-                            Toast.makeText(context, "Hai", Toast.LENGTH_SHORT).show()
                         },
                     textDecoration = TextDecoration.Underline,
                 )
