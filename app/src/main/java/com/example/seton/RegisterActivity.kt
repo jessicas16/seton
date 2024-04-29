@@ -24,7 +24,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -42,8 +41,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.seton.ui.theme.SetonTheme
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -51,10 +48,8 @@ class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            SetonTheme {
-                Surface {
-                    Register()
-                }
+            Surface {
+                Register()
             }
         }
     }
@@ -217,7 +212,6 @@ fun Register() {
                         .clickable {
                             val intent = Intent(context, LoginActivity::class.java)
                             context.startActivity(intent)
-
                         },
                     textDecoration = TextDecoration.Underline,
                 )
@@ -273,11 +267,3 @@ fun Register() {
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    SetonTheme {
-//        Greeting("Android")
-//    }
-//}
