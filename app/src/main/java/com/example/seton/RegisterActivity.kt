@@ -46,7 +46,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.seton.config.ApiConfiguration.Companion.apiService
 import com.example.seton.config.ApiConfiguration.Companion.service
 import com.example.seton.entity.userEntity
 import kotlinx.coroutines.CoroutineScope
