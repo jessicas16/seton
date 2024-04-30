@@ -1,7 +1,9 @@
 package com.example.seton.entity
 
 import androidx.room.*
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 @Entity(tableName = "User")
 data class userEntity (
     @PrimaryKey(autoGenerate = false)

@@ -2,6 +2,8 @@ package com.example.seton
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -28,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -43,20 +46,40 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.seton.config.ApiConfiguration.Companion.apiService
+import com.example.seton.config.ApiConfiguration.Companion.service
+import com.example.seton.entity.userEntity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val name = remember { mutableStateOf("") }
+            val email = remember { mutableStateOf("") }
+            val confirm_password = remember { mutableStateOf("") }
+            val password = remember { mutableStateOf("") }
             Surface {
-                Register()
+                Register(
+                    name = name,
+                    email = email,
+                    password = password,
+                    confirm_password = confirm_password
+                )
             }
         }
     }
 }
 
 @Composable
-fun Register() {
+fun Register(
+    name: MutableState<String>,
+    email: MutableState<String>,
+    password: MutableState<String>,
+    confirm_password: MutableState<String>
+) {
     val context = LocalContext.current
     Box(modifier = Modifier.fillMaxSize()){
         Image(
@@ -71,7 +94,7 @@ fun Register() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            val name = remember { mutableStateOf("") }
+
             //name
             OutlinedTextField(
                 value = name.value ,
@@ -90,7 +113,6 @@ fun Register() {
                     .width(282.dp)
             )
 
-            val email = remember { mutableStateOf("") }
             //email
             OutlinedTextField(
                 value = email.value,
@@ -117,7 +139,6 @@ fun Register() {
                     .width(282.dp)
             )
 
-            val password = remember { mutableStateOf("") }
             val passwordVisibility = remember { mutableStateOf(false) }
 
             val icon = if (passwordVisibility.value)
@@ -153,7 +174,7 @@ fun Register() {
                     .width(282.dp)
                     .padding(bottom = 16.dp)
             )
-            val confirm_password = remember { mutableStateOf("") }
+
             val confirm_passwordVisibility = remember { mutableStateOf(false) }
 
             val iconConfirm = if (confirm_passwordVisibility.value)
@@ -189,7 +210,28 @@ fun Register() {
             )
 
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    //check if fields are empty
+                    if (name.value.isEmpty() || email.value.isEmpty() || password.value.isEmpty() || confirm_password.value.isEmpty()) {
+                        Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
+//                        resetFields(name, email, password, confirm_password)
+                        return@Button
+                    }
+
+                    //check if password and confirm password match
+                    if (password.value != confirm_password.value) {
+                        Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+//                        resetFields(name, email, password, confirm_password)
+                        return@Button
+                    }
+
+                    registerUser(
+                        name = name.value,
+                        email = email.value,
+                        password = password.value,
+                        confirm_password = confirm_password.value
+                    )
+                },
                 modifier = Modifier
                     .width(282.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0E9794)),
@@ -266,4 +308,33 @@ fun Register() {
             }
         }
     }
+}
+
+private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+private val mainScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
+private fun registerUser(
+    name: String,
+    email: String,
+    password: String,
+    confirm_password: String
+) {
+    //check if user already registered
+    Log.i("RegisterActivity", "$name $email $password $confirm_password")
+    //register user with API service
+    ioScope.launch {
+        val msg = service.registerUser(name, email, password)
+        Log.e("RegisterActivity", msg)
+    }
+}
+
+private fun resetFields(
+    name: MutableState<String>,
+    email: MutableState<String>,
+    password: MutableState<String>,
+    confirm_password: MutableState<String>
+) {
+    name.value = ""
+    email.value = ""
+    password.value = ""
+    confirm_password.value = ""
 }

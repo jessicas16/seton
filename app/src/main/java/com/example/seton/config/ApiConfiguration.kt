@@ -17,8 +17,6 @@ class ApiConfiguration{
             .baseUrl(env.URL)
             .build()
 
-//        val retrofitService:ServiceStudent by lazy {
-//            retrofit.create(ServiceStudent::class.java)
-//        }
+        val service = retrofit.create(apiService::class.java)
     }
 }
