@@ -2,6 +2,7 @@ package com.example.seton
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -50,6 +51,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.seton.landingPage.LandingPage2Activity
+import com.example.seton.mainPage.DashboardActivity
 
 class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -178,7 +180,10 @@ fun Login() {
             }
 
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    val intent = Intent(context, DashboardActivity::class.java)
+                    context.startActivity(intent)
+                },
                 modifier = Modifier
                     .width(282.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0E9794)),
@@ -235,7 +240,9 @@ fun Login() {
             }
 
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+
+                },
                 modifier = Modifier
                     .width(282.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD8FDFF)),
