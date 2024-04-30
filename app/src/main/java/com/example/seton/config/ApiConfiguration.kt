@@ -8,15 +8,16 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 class ApiConfiguration{
     companion object{
-        private val moshi = Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
-            .build()
+        fun getApiService() : ApiService {
+            val moshi = Moshi.Builder()
+                .add(KotlinJsonAdapterFactory())
+                .build()
 
-        private val retrofit = Retrofit.Builder()
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .baseUrl(env.URL)
-            .build()
-
-        val service = retrofit.create(apiService::class.java)
+            val retrofit = Retrofit.Builder()
+                .addConverterFactory(MoshiConverterFactory.create(moshi))
+                .baseUrl(env.URL)
+                .build()
+            return retrofit.create(ApiService::class.java)
+        }
     }
 }

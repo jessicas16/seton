@@ -147,26 +147,8 @@ fun Login() {
                 modifier = Modifier
                     .padding(bottom = 16.dp)
                     .width(282.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.End
             ){
-                Row(
-                    modifier = Modifier
-                        .padding(0.dp)
-                ) {
-                    val checkedState = remember { mutableStateOf(false) }
-                    Checkbox(
-                        checked = checkedState.value,
-                        onCheckedChange = { checkedState.value = it },
-                        modifier = Modifier
-                            .padding(0.dp),
-                        colors = CheckboxDefaults.colors(Color(0xFF0E9794))
-                    )
-                    Text(
-                        text ="Remember Me",
-                        fontSize = 12.sp,
-                        modifier = Modifier.padding(top = 19.dp)
-                    )
-                }
                 Row(
                     modifier = Modifier.padding(start = 30.dp)
                 ) {
