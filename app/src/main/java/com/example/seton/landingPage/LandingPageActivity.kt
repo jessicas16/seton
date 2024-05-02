@@ -45,10 +45,13 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.seton.config.ApiConfiguration
+import com.example.seton.config.ApiService
 
 class LandingPageActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ApiConfiguration.getApiService(baseContext)
         installSplashScreen()
         setContent {
             Surface(

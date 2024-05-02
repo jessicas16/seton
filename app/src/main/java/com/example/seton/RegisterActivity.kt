@@ -1,9 +1,7 @@
 package com.example.seton
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.JsonReader
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -48,15 +46,18 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.seton.config.ApiConfiguration.Companion.getApiService
+import com.example.seton.config.ApiConfiguration
+import com.example.seton.entity.userDRO
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.StringReader
+import retrofit2.Call
+import retrofit2.Callback
 
 class RegisterActivity : ComponentActivity() {
     private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
     private val mainScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
+    private var repo = ApiConfiguration.defaultRepo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -213,24 +214,30 @@ class RegisterActivity : ComponentActivity() {
                 Button(
                     onClick = {
                         //check if fields are empty
-//                    if (name.value.isEmpty() || email.value.isEmpty() || password.value.isEmpty() || confirm_password.value.isEmpty()) {
-//                        Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
-////                        resetFields(name, email, password, confirm_password)
-//                        return@Button
-//                    }
+                        if (name.value.isEmpty() || email.value.isEmpty() || password.value.isEmpty() || confirm_password.value.isEmpty()) {
+                            Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
+                            return@Button
+                        }
 
-                        //check if password and confirm password match
-//                    if (password.value != confirm_password.value) {
-//                        Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
-////                        resetFields(name, email, password, confirm_password)
-//                        return@Button
-//                    }
-
-                        registerUser(
+                            //check if password and confirm password match
+                        if (password.value != confirm_password.value) {
+                            Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                            return@Button
+                        }
+                        val res = registerUser(
                             name = name.value,
                             email = email.value,
                             password = password.value
                         )
+                        Toast.makeText(context, res, Toast.LENGTH_SHORT).show()
+                        if(res == "User successfully registered!") {
+                            resetFields(
+                                name = name,
+                                email = email,
+                                password = password,
+                                confirm_password = confirm_password
+                            )
+                        }
                     },
                     modifier = Modifier
                         .width(282.dp),
@@ -314,22 +321,27 @@ class RegisterActivity : ComponentActivity() {
         name: String,
         email: String,
         password: String
-    ) {
+    ):String {
+        var msg: String = ""
         ioScope.launch {
+            val user = userDRO(
+                email = email,
+                name = name,
+                password = password
+            )
             try {
-                val response = getApiService().getAllUser()
+                val response = repo.registerUser(user)
+                Log.d("DEBUG", response.message)
                 mainScope.launch {
-                    Log.d("RESPONSE", response)
+                    msg = response.message
                 }
             } catch (e: Exception) {
                 Log.e("ERROR", e.message.toString())
+                msg = "An error occurred"
             }
         }
-    }
-
-    @Composable
-    private fun showToast(message: String) {
-        Toast.makeText(LocalContext.current, message, Toast.LENGTH_SHORT).show()
+        Log.d("DEBUG", msg)
+        return msg
     }
 
     private fun resetFields(
