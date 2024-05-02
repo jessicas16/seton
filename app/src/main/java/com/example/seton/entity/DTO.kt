@@ -4,10 +4,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class BasicDTO(
-    val message: String
-)
-
-@JsonClass(generateAdapter = true)
-data class addUserDTO(
+    val status : String,
     val message: String,
+    val data : Any?
 )

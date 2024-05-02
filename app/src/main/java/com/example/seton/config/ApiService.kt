@@ -1,9 +1,6 @@
 package com.example.seton.config
 
-import com.example.seton.entity.BasicDTO
-import com.example.seton.entity.Users
-import com.example.seton.entity.addUserDTO
-import com.example.seton.entity.userDRO
+import com.example.seton.entity.*
 import retrofit2.http.*
 
 interface ApiService {
@@ -18,7 +15,7 @@ interface ApiService {
     @POST("users/register")
     suspend fun registerUser(
         @Body userDRO : userDRO
-    ): addUserDTO
+    ): BasicDTO
 
     @POST("users/login/")
     suspend fun loginUser(@Body user:Users):Users

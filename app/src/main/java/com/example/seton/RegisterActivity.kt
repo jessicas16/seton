@@ -58,13 +58,15 @@ class RegisterActivity : ComponentActivity() {
     private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
     private val mainScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
     private var repo = ApiConfiguration.defaultRepo
+    private var statusCode : String = ""
+    private var msg : String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val name = remember { mutableStateOf("") }
-            val email = remember { mutableStateOf("") }
-            val confirm_password = remember { mutableStateOf("") }
-            val password = remember { mutableStateOf("") }
+            val name = remember { mutableStateOf("a") }
+            val email = remember { mutableStateOf("a") }
+            val confirm_password = remember { mutableStateOf("a") }
+            val password = remember { mutableStateOf("a") }
             Surface {
                 Register(
                     name = name,
@@ -219,25 +221,16 @@ class RegisterActivity : ComponentActivity() {
                             return@Button
                         }
 
-                            //check if password and confirm password match
+                        //check if password and confirm password match
                         if (password.value != confirm_password.value) {
                             Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
-                        val res = registerUser(
+                        registerUser(
                             name = name.value,
                             email = email.value,
                             password = password.value
                         )
-                        Toast.makeText(context, res, Toast.LENGTH_SHORT).show()
-                        if(res == "User successfully registered!") {
-                            resetFields(
-                                name = name,
-                                email = email,
-                                password = password,
-                                confirm_password = confirm_password
-                            )
-                        }
                     },
                     modifier = Modifier
                         .width(282.dp),
@@ -321,38 +314,29 @@ class RegisterActivity : ComponentActivity() {
         name: String,
         email: String,
         password: String
-    ):String {
-        var msg: String = ""
+    ){
+        val user = userDRO(
+            email = email,
+            name = name,
+            password = password
+        )
         ioScope.launch {
-            val user = userDRO(
-                email = email,
-                name = name,
-                password = password
-            )
             try {
                 val response = repo.registerUser(user)
-                Log.d("DEBUG", response.message)
-                mainScope.launch {
-                    msg = response.message
+                val statusCodes = response.status
+                val message = response.message
+                runOnUiThread {
+                    Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+                    if(statusCodes == "200"){
+                        val intent = Intent(applicationContext, LoginActivity::class.java)
+                        startActivity(intent)
+                    }
                 }
             } catch (e: Exception) {
                 Log.e("ERROR", e.message.toString())
-                msg = "An error occurred"
+                msg = "An error occurred! Please try again later."
+                statusCode = "500"
             }
         }
-        Log.d("DEBUG", msg)
-        return msg
-    }
-
-    private fun resetFields(
-        name: MutableState<String>,
-        email: MutableState<String>,
-        password: MutableState<String>,
-        confirm_password: MutableState<String>
-    ) {
-        name.value = ""
-        email.value = ""
-        password.value = ""
-        confirm_password.value = ""
     }
 }

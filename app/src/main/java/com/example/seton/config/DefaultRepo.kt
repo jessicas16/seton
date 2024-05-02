@@ -12,7 +12,7 @@ class DefaultRepo(
         return dataSourceRemote.getAllUser()
     }
 
-    suspend fun registerUser(userDRO : userDRO): addUserDTO {
+    suspend fun registerUser(userDRO : userDRO): BasicDTO {
         return dataSourceRemote.registerUser(userDRO)
     }
 
