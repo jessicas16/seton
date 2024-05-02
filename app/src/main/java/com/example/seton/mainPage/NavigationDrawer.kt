@@ -32,7 +32,7 @@ fun DrawerHeader() {
     ){
 //        Text(text = "Header", fontSize = 60.sp)
         Image(
-            painter = painterResource(R.drawable.logo),
+            painter = painterResource(R.drawable.seton_logo),
             contentDescription = "Seton Icon",
         )
     }
