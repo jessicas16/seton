@@ -274,10 +274,11 @@ class LoginActivity : ComponentActivity() {
                 val statusCodes = response.status
                 val message = response.message
                 runOnUiThread {
-                    Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
                     if(statusCodes == "200"){
                         val intent = Intent(applicationContext, DashboardActivity::class.java)
                         startActivity(intent)
+                    } else {
+                        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
                     }
                 }
             } catch (e: Exception) {
@@ -288,9 +289,6 @@ class LoginActivity : ComponentActivity() {
                 }
             }
         }
-
-        val intent = Intent(this, DashboardActivity::class.java)
-        startActivity(intent)
     }
 }
 
