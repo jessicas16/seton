@@ -14,14 +14,7 @@ import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.filled.Task
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.seton.mainPage.ui.theme.SETONTheme
 import kotlinx.coroutines.launch
 
 class DashboardActivity : ComponentActivity() {
