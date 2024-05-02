@@ -18,5 +18,5 @@ interface ApiService {
     ): BasicDTO
 
     @POST("users/login/")
-    suspend fun loginUser(@Body user:Users):Users
+    suspend fun loginUser(@Body userLoginDRO:userLoginDRO):BasicDTO
 }

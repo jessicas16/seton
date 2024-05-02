@@ -50,10 +50,17 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.seton.config.ApiConfiguration
+import com.example.seton.entity.userLoginDRO
 import com.example.seton.landingPage.LandingPage2Activity
 import com.example.seton.mainPage.DashboardActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class LoginActivity : ComponentActivity() {
+    private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    private var repo = ApiConfiguration.defaultRepo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -62,187 +69,228 @@ class LoginActivity : ComponentActivity() {
             }
         }
     }
-}
 
-@Composable
-fun Login() {
-    val context = LocalContext.current
-    Box(modifier = Modifier.fillMaxSize()) {
-        Image(
-            painter = painterResource(R.drawable.login_page),
-            contentDescription = "login page",
-            contentScale = ContentScale.FillWidth,
-            modifier = Modifier.fillMaxSize()
-        )
-
-        Column(modifier = Modifier
-            .padding(top = 280.dp)
-            .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            val email = remember { mutableStateOf("") }
-            //email
-            OutlinedTextField(
-                value = email.value,
-                onValueChange = {
-                    email.value = it
-                },
-                leadingIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Email,
-                            contentDescription = "Email Icon"
-                        )
-                    }
-                },
-                placeholder = {
-                    Text(text = "Email")
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Done
-                ),
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .width(282.dp)
-            )
-            val password = remember { mutableStateOf("") }
-            val passwordVisibility = remember { mutableStateOf(false) }
-
-            val icon = if (passwordVisibility.value)
-                painterResource(id = R.drawable.eye_close_up_63568)
-            else
-                painterResource(id = R.drawable.visible_7042918)
-
-            //password
-            OutlinedTextField(
-                value = password.value,
-                onValueChange = {
-                    password.value = it
-                },
-                placeholder = {
-                    Text(text = "Password")
-                },
-                trailingIcon = {
-                    IconButton(onClick = {
-                        passwordVisibility.value = !passwordVisibility.value
-                    }) {
-                        Icon(
-                            painter = icon,
-                            contentDescription = ""
-                        )
-                    }
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password
-                ),
-                visualTransformation = if(passwordVisibility.value) VisualTransformation.None
-                else PasswordVisualTransformation(),
-                modifier = Modifier
-                    .width(282.dp)
+    @Composable
+    fun Login() {
+        val context = LocalContext.current
+        Box(modifier = Modifier.fillMaxSize()) {
+            Image(
+                painter = painterResource(R.drawable.login_page),
+                contentDescription = "login page",
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier.fillMaxSize()
             )
 
-            Row(
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .width(282.dp),
-                horizontalArrangement = Arrangement.End
-            ){
+            Column(modifier = Modifier
+                .padding(top = 280.dp)
+                .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                val email = remember { mutableStateOf("") }
+                //email
+                OutlinedTextField(
+                    value = email.value,
+                    onValueChange = {
+                        email.value = it
+                    },
+                    leadingIcon = {
+                        IconButton(onClick = { /*TODO*/ }) {
+                            Icon(
+                                imageVector = Icons.Filled.Email,
+                                contentDescription = "Email Icon"
+                            )
+                        }
+                    },
+                    placeholder = {
+                        Text(text = "Email")
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Done
+                    ),
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .width(282.dp)
+                )
+                val password = remember { mutableStateOf("") }
+                val passwordVisibility = remember { mutableStateOf(false) }
+
+                val icon = if (passwordVisibility.value)
+                    painterResource(id = R.drawable.eye_close_up_63568)
+                else
+                    painterResource(id = R.drawable.visible_7042918)
+
+                //password
+                OutlinedTextField(
+                    value = password.value,
+                    onValueChange = {
+                        password.value = it
+                    },
+                    placeholder = {
+                        Text(text = "Password")
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = {
+                            passwordVisibility.value = !passwordVisibility.value
+                        }) {
+                            Icon(
+                                painter = icon,
+                                contentDescription = ""
+                            )
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password
+                    ),
+                    visualTransformation = if(passwordVisibility.value) VisualTransformation.None
+                    else PasswordVisualTransformation(),
+                    modifier = Modifier
+                        .width(282.dp)
+                )
+
                 Row(
-                    modifier = Modifier.padding(start = 30.dp)
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .width(282.dp),
+                    horizontalArrangement = Arrangement.End
+                ){
+                    Row(
+                        modifier = Modifier.padding(start = 30.dp)
+                    ) {
+                        Text(
+                            text = "Forgot Password?",
+                            modifier = Modifier.padding(top = 19.dp),
+                            color = Color(0xFF0E9794),
+                            fontSize = 12.sp
+                        )
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        if (email.value.isEmpty() || password.value.isEmpty()) {
+                            Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
+                            return@Button
+                        }
+
+                        loginUser(
+                            email = email.value,
+                            password = password.value,
+                        )
+                    },
+                    modifier = Modifier
+                        .width(282.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0E9794)),
+                    shape = RoundedCornerShape(size = 4.dp)
                 ) {
                     Text(
-                        text = "Forgot Password?",
-                        modifier = Modifier.padding(top = 19.dp),
-                        color = Color(0xFF0E9794),
-                        fontSize = 12.sp
+                        text = "Log In",
+                        fontSize = 18.sp,
                     )
                 }
-            }
-
-            Button(
-                onClick = {
-                    val intent = Intent(context, DashboardActivity::class.java)
-                    context.startActivity(intent)
-                },
-                modifier = Modifier
-                    .width(282.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0E9794)),
-                shape = RoundedCornerShape(size = 4.dp)
-            ) {
-                Text(
-                    text = "Log In",
-                    fontSize = 18.sp,
-                )
-            }
-            Row{
-                Text(
-                    text = "Don't have an account?",
-                )
-                Text(
-                    text = "Sign Up",
-                    color = Color(0xFF0E9794),
-                    modifier = Modifier
-                        .padding(start = 5.dp)
-                        .clickable {
-                            val intent = Intent(context, RegisterActivity::class.java)
-                            context.startActivity(intent)
-
-                        },
-                    textDecoration = TextDecoration.Underline,
-                )
-            }
-            Row (
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .padding(top = 16.dp, bottom = 16.dp)
-                    .width(282.dp)
-                    .fillMaxWidth()
-            ) {
-                Box(
-                    modifier = Modifier
-                        .width(60.dp)
-                        .height(1.dp)
-                        .background(color = Color.LightGray)
-                )
-
-                Text(
-                    text = "Or Continue with",
-                    Modifier.padding(horizontal = 20.dp)
-                )
-
-                Box(
-                    modifier = Modifier
-                        .width(60.dp)
-                        .height(1.dp)
-                        .background(color = Color.LightGray)
-                )
-            }
-
-            Button(
-                onClick = {
-
-                },
-                modifier = Modifier
-                    .width(282.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD8FDFF)),
-                shape = RoundedCornerShape(size = 4.dp)
-            ) {
-                Row {
-                    Image(
-                        painter = painterResource(R.drawable.icon_google),
-                        contentDescription = "Google Icon",
+                Row{
+                    Text(
+                        text = "Don't have an account?",
                     )
                     Text(
-                        text = "Log In With Google",
-                        fontSize = 16.sp,
-                        color = Color.Black,
-                        modifier = Modifier.padding(start = 10.dp)
+                        text = "Sign Up",
+                        color = Color(0xFF0E9794),
+                        modifier = Modifier
+                            .padding(start = 5.dp)
+                            .clickable {
+                                val intent = Intent(context, RegisterActivity::class.java)
+                                context.startActivity(intent)
+
+                            },
+                        textDecoration = TextDecoration.Underline,
                     )
+                }
+                Row (
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .padding(top = 16.dp, bottom = 16.dp)
+                        .width(282.dp)
+                        .fillMaxWidth()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(60.dp)
+                            .height(1.dp)
+                            .background(color = Color.LightGray)
+                    )
+
+                    Text(
+                        text = "Or Continue with",
+                        Modifier.padding(horizontal = 20.dp)
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .width(60.dp)
+                            .height(1.dp)
+                            .background(color = Color.LightGray)
+                    )
+                }
+
+                Button(
+                    onClick = {
+
+                    },
+                    modifier = Modifier
+                        .width(282.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD8FDFF)),
+                    shape = RoundedCornerShape(size = 4.dp)
+                ) {
+                    Row {
+                        Image(
+                            painter = painterResource(R.drawable.icon_google),
+                            contentDescription = "Google Icon",
+                        )
+                        Text(
+                            text = "Log In With Google",
+                            fontSize = 16.sp,
+                            color = Color.Black,
+                            modifier = Modifier.padding(start = 10.dp)
+                        )
+                    }
                 }
             }
         }
     }
+
+    private fun loginUser(
+        email: String,
+        password: String,
+    ) {
+        val user = userLoginDRO(
+            email = email,
+            password = password,
+        )
+        ioScope.launch {
+            try {
+                val response = repo.loginUser(user)
+                val statusCodes = response.status
+                val message = response.message
+                runOnUiThread {
+                    Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+                    if(statusCodes == "200"){
+                        val intent = Intent(applicationContext, DashboardActivity::class.java)
+                        startActivity(intent)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("ERROR", e.message.toString())
+                val msg = "An error occurred! Please try again later."
+                runOnUiThread {
+                    Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        val intent = Intent(this, DashboardActivity::class.java)
+        startActivity(intent)
+    }
 }
+

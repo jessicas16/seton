@@ -8,3 +8,8 @@ data class userDRO (
     val email: String,
     val password: String,
 )
+
+data class userLoginDRO(
+    val email: String,
+    val password: String,
+)

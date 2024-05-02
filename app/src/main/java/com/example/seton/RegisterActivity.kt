@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.seton.config.ApiConfiguration
 import com.example.seton.entity.userDRO
+import com.example.seton.mainPage.DashboardActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,10 +57,7 @@ import retrofit2.Callback
 
 class RegisterActivity : ComponentActivity() {
     private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
-    private val mainScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
     private var repo = ApiConfiguration.defaultRepo
-    private var statusCode : String = ""
-    private var msg : String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -328,14 +326,16 @@ class RegisterActivity : ComponentActivity() {
                 runOnUiThread {
                     Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
                     if(statusCodes == "200"){
-                        val intent = Intent(applicationContext, LoginActivity::class.java)
+                        val intent = Intent(applicationContext, DashboardActivity::class.java)
                         startActivity(intent)
                     }
                 }
             } catch (e: Exception) {
                 Log.e("ERROR", e.message.toString())
-                msg = "An error occurred! Please try again later."
-                statusCode = "500"
+                val msg = "An error occurred! Please try again later."
+                runOnUiThread {
+                    Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

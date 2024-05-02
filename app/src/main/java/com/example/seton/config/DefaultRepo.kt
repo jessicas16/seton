@@ -5,15 +5,21 @@ import com.example.seton.entity.*
 class DefaultRepo(
     private val dataSourceRemote : ApiService,
 ) {
+    //USER
     suspend fun test2():BasicDTO {
         return dataSourceRemote.test2()
     }
+
     suspend fun getAllUser(force:Boolean = false):List<Users> {
         return dataSourceRemote.getAllUser()
     }
 
     suspend fun registerUser(userDRO : userDRO): BasicDTO {
         return dataSourceRemote.registerUser(userDRO)
+    }
+
+    suspend fun loginUser(userLoginDRO:userLoginDRO):BasicDTO {
+        return dataSourceRemote.loginUser(userLoginDRO)
     }
 
 }
