@@ -4,7 +4,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class BasicDTO(
-    val status : String,
-    val message: String,
-    val data : Any?
+    var status : String,
+    var message: String,
+    var data : Any?
 )

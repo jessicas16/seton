@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -52,12 +53,15 @@ import com.example.seton.R
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.seton.config.ApiConfiguration
 import com.example.seton.entity.userDRO
+import com.example.seton.entity.userLoginDRO
 import com.example.seton.mainPage.DashboardActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class RegisterActivity : ComponentActivity() {
+    val vm:loginRegisterViewModel by viewModels<loginRegisterViewModel>()
+    private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -267,11 +271,26 @@ class RegisterActivity : ComponentActivity() {
                                 Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
                                 return@Button
                             }
-                            registerUser(
+                            val user = userDRO(
                                 name = name.value,
                                 email = email.value,
-                                password = password.value
+                                password = password.value,
                             )
+                            ioScope.launch {
+                                vm.registerUser(user)
+                                Thread.sleep(750)
+                                val res = vm.response.value
+                                runOnUiThread{
+                                    if(res != null){
+                                        if(res.status == "201"){
+                                            val intent = Intent(context, DashboardActivity::class.java)
+                                            context.startActivity(intent)
+                                        } else {
+                                            Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                }
+                            }
                         },
                         modifier = Modifier
                             .constrainAs(btnRegister) {
@@ -373,40 +392,6 @@ class RegisterActivity : ComponentActivity() {
                     }
                 }
             }
-        }
-    }
-    private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
-//    private var repo = ApiConfiguration.defaultRepo
-
-    private fun registerUser(
-        name: String,
-        email: String,
-        password: String
-    ){
-        val user = userDRO(
-            email = email,
-            name = name,
-            password = password
-        )
-        ioScope.launch {
-//            try {
-//                val response = repo.registerUser(user)
-//                val statusCodes = response.status
-//                val message = response.message
-//                runOnUiThread {
-//                    Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
-//                    if(statusCodes == "200"){
-//                        val intent = Intent(applicationContext, DashboardActivity::class.java)
-//                        startActivity(intent)
-//                    }
-//                }
-//            } catch (e: Exception) {
-//                Log.e("ERROR", e.message.toString())
-//                val msg = "An error occurred! Please try again later."
-//                runOnUiThread {
-//                    Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
-//                }
-//            }
         }
     }
 }

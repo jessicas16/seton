@@ -56,6 +56,7 @@ import com.example.seton.mainPage.DashboardActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 
 class LoginActivity : ComponentActivity() {
     val vm:loginRegisterViewModel by viewModels<loginRegisterViewModel>()
@@ -100,7 +101,7 @@ class LoginActivity : ComponentActivity() {
                 verticalArrangement = Arrangement.Center
             ) {
                 ConstraintLayout {
-                    val email = remember { mutableStateOf("") }
+                    val email = remember { mutableStateOf("a") }
                     //email
                     OutlinedTextField(
                         value = email.value,
@@ -131,7 +132,7 @@ class LoginActivity : ComponentActivity() {
                                 end.linkTo(parent.end)
                             }
                     )
-                    val password = remember { mutableStateOf("") }
+                    val password = remember { mutableStateOf("a") }
                     val passwordVisibility = remember { mutableStateOf(false) }
 
                     val icon = if (passwordVisibility.value)
@@ -208,9 +209,17 @@ class LoginActivity : ComponentActivity() {
                             )
                             ioScope.launch {
                                 vm.loginUser(user)
+                                Thread.sleep(750)
                                 val res = vm.response.value
                                 runOnUiThread{
-                                    Log.e("HASILLL", res.toString())
+                                    if(res != null){
+                                        if(res.status == "200"){
+                                            val intent = Intent(context, DashboardActivity::class.java)
+                                            context.startActivity(intent)
+                                        } else {
+                                            Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
                                 }
                             }
                         },
