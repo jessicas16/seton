@@ -2,6 +2,7 @@ package com.example.seton.landingPage
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
@@ -20,10 +21,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +51,9 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.seton.config.ApiConfiguration
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class LandingPageActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +75,11 @@ class LandingPageActivity : ComponentActivity() {
 @Composable
 private fun fragment(){
     val context = LocalContext.current
+    val openAlertDialog = remember { mutableStateOf(false) }
+
+    Log.d("RESPONSE LAGI", Greeting().toString())
+    openAlertDialog.value = Greeting()
+
     ConstraintLayout(modifier = Modifier.fillMaxSize()){
         val (bg, pager, pageIdx, getStarted) = createRefs()
 
@@ -87,12 +101,12 @@ private fun fragment(){
         HorizontalPager(
             state = pagerState,
             count = 4,
-                modifier = Modifier.constrainAs(pager){
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(pageIdx.top)
-                    start.linkTo(parent.start)
-                }
+            modifier = Modifier.constrainAs(pager){
+                top.linkTo(parent.top)
+                end.linkTo(parent.end)
+                bottom.linkTo(pageIdx.top)
+                start.linkTo(parent.start)
+            }
         ) { page ->
             when(page){
                 0 -> Jumbotron()
@@ -148,8 +162,29 @@ private fun fragment(){
             )
         }
 
+        if(openAlertDialog.value){
+            AlertDialog(
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "Icon"
+                    )
+                },
+                title = {Text(text = "Connection Error")},
+                text = {Text(text = "Please check your internet connection and try again.")},
+                onDismissRequest = {openAlertDialog.value = false},
+                confirmButton = {
+                    TextButton(
+                        onClick = {openAlertDialog.value = false}
+                    ) {
+                        Text("Confirm")
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
     }
-
 }
 
 @Composable
@@ -305,5 +340,20 @@ private fun fitur3(){
                 )
             }
         }
+    }
+}
+
+fun Greeting():Boolean {
+    var repo = ApiConfiguration.defaultRepo
+    val ioScope = CoroutineScope(Dispatchers.IO)
+    try {
+        ioScope.launch(Dispatchers.IO) {
+            val res = repo.checkConnection()
+            Log.d("RESPONSE", res.toString())
+        }
+        return false
+    } catch (e: Exception) {
+        Log.e("ERROR", e.message.toString())
+        return true
     }
 }

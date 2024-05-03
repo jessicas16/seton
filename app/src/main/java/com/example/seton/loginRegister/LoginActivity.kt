@@ -50,6 +50,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.seton.R
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import com.example.seton.config.ApiConfiguration
 import com.example.seton.entity.userLoginDRO
 import com.example.seton.mainPage.DashboardActivity
@@ -209,15 +211,17 @@ class LoginActivity : ComponentActivity() {
                             )
                             ioScope.launch {
                                 vm.loginUser(user)
-                                Thread.sleep(750)
-                                val res = vm.response.value
-                                runOnUiThread{
-                                    if(res != null){
-                                        if(res.status == "200"){
-                                            val intent = Intent(context, DashboardActivity::class.java)
-                                            context.startActivity(intent)
-                                        } else {
-                                            Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()
+//                                Thread.sleep(750)
+                                ioScope.launch {
+                                    val res = vm.response.value
+                                    runOnUiThread{
+                                        if(res != null){
+                                            if(res.status == "200"){
+                                                val intent = Intent(context, DashboardActivity::class.java)
+                                                context.startActivity(intent)
+                                            } else {
+                                                Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()
+                                            }
                                         }
                                     }
                                 }

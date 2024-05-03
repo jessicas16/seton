@@ -5,8 +5,8 @@ import retrofit2.http.*
 
 interface ApiService {
     //TEST
-    @GET("test")
-    suspend fun test2():BasicDTO
+    @GET("checkConnection")
+    suspend fun checkConnection():BasicDTO
 
     //USER
     @GET("users")

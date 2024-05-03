@@ -5,11 +5,12 @@ import com.example.seton.entity.*
 class DefaultRepo(
     private val dataSourceRemote : ApiService,
 ) {
-    //USER
-    suspend fun test2():BasicDTO {
-        return dataSourceRemote.test2()
+    //TEST CONNECTION
+    suspend fun checkConnection():BasicDTO {
+        return dataSourceRemote.checkConnection()
     }
 
+    //USER
     suspend fun getAllUser(force:Boolean = false):List<Users> {
         return dataSourceRemote.getAllUser()
     }
