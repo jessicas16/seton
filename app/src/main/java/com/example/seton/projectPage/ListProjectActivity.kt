@@ -15,7 +15,7 @@ class ListProjectActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
+            GreetingPreview()
         }
     }
 }
@@ -31,5 +31,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-
+    val a = "asda"
+    Greeting(name = a, Modifier.fillMaxSize())
 }
