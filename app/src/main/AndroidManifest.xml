@@ -27,7 +27,7 @@
             android:label="@string/title_activity_dashboard"
             android:theme="@style/Theme.SETON" />
         <activity
-            android:name=".RegisterActivity"
+            android:name=".loginRegister.RegisterActivity"
             android:exported="false"
             android:label="@string/title_activity_register"
             android:theme="@style/Theme.SETON" />
@@ -37,7 +37,7 @@
             android:label="@string/title_activity_login"
             android:theme="@style/Theme.SETON" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".loginRegister.LoginActivity"
             android:exported="false"
             android:label="@string/title_activity_landing_page3"
             android:theme="@style/Theme.SETON" />

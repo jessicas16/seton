@@ -1,4 +1,4 @@
-package com.example.seton
+package com.example.seton.loginRegister
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,21 +14,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -42,7 +39,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -50,17 +46,17 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.seton.R
 import com.example.seton.config.ApiConfiguration
 import com.example.seton.entity.userLoginDRO
-import com.example.seton.landingPage.LandingPage2Activity
 import com.example.seton.mainPage.DashboardActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class LoginActivity : ComponentActivity() {
+    val vm:loginRegisterViewModel by viewModels<loginRegisterViewModel>()
     private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
-    private var repo = ApiConfiguration.defaultRepo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -174,10 +170,17 @@ class LoginActivity : ComponentActivity() {
                             return@Button
                         }
 
-                        loginUser(
+                        val user = userLoginDRO(
                             email = email.value,
                             password = password.value,
                         )
+                        ioScope.launch {
+                            vm.loginUser(user)
+                            val res = vm.response.value
+                            runOnUiThread{
+                                Log.e("HASILLL", res.toString())
+                            }
+                        }
                     },
                     modifier = Modifier
                         .width(282.dp),
@@ -255,37 +258,6 @@ class LoginActivity : ComponentActivity() {
                             modifier = Modifier.padding(start = 10.dp)
                         )
                     }
-                }
-            }
-        }
-    }
-
-    private fun loginUser(
-        email: String,
-        password: String,
-    ) {
-        val user = userLoginDRO(
-            email = email,
-            password = password,
-        )
-        ioScope.launch {
-            try {
-                val response = repo.loginUser(user)
-                val statusCodes = response.status
-                val message = response.message
-                runOnUiThread {
-                    if(statusCodes == "200"){
-                        val intent = Intent(applicationContext, DashboardActivity::class.java)
-                        startActivity(intent)
-                    } else {
-                        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } catch (e: Exception) {
-                Log.e("ERROR", e.message.toString())
-                val msg = "An error occurred! Please try again later."
-                runOnUiThread {
-                    Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
                 }
             }
         }

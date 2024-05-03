@@ -1,4 +1,4 @@
-package com.example.seton
+package com.example.seton.loginRegister
 
 import android.content.Intent
 import android.os.Bundle
@@ -46,14 +46,13 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.seton.R
 import com.example.seton.config.ApiConfiguration
 import com.example.seton.entity.userDRO
 import com.example.seton.mainPage.DashboardActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
 
 class RegisterActivity : ComponentActivity() {
     private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
