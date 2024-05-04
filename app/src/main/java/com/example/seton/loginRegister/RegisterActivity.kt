@@ -2,7 +2,6 @@ package com.example.seton.loginRegister
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -51,16 +50,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.seton.R
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.example.seton.config.ApiConfiguration
 import com.example.seton.entity.userDRO
-import com.example.seton.entity.userLoginDRO
 import com.example.seton.mainPage.DashboardActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class RegisterActivity : ComponentActivity() {
-    val vm:loginRegisterViewModel by viewModels<loginRegisterViewModel>()
+    val vm:LoginRegisterViewModel by viewModels<LoginRegisterViewModel>()
     private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
