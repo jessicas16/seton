@@ -51,12 +51,13 @@ import com.example.seton.R
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.seton.entity.userLoginDRO
 import com.example.seton.mainPage.DashboardActivity
+import com.example.seton.projectPage.ListProjectActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class LoginActivity : ComponentActivity() {
-    val vm: LoginRegisterViewModel by viewModels<LoginRegisterViewModel>()
+    val vm: loginRegisterViewModel by viewModels<loginRegisterViewModel>()
     private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -212,7 +213,7 @@ class LoginActivity : ComponentActivity() {
                                     runOnUiThread{
                                         if(res != null){
                                             if(res.status == "200"){
-                                                val intent = Intent(context, DashboardActivity::class.java)
+                                                val intent = Intent(context, ListProjectActivity::class.java)
                                                 context.startActivity(intent)
                                             } else {
                                                 Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()

@@ -57,7 +57,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class RegisterActivity : ComponentActivity() {
-    val vm:LoginRegisterViewModel by viewModels<LoginRegisterViewModel>()
+    val vm:loginRegisterViewModel by viewModels<loginRegisterViewModel>()
     private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,6 +1,7 @@
 package com.example.seton.config
 
 import com.example.seton.entity.*
+import org.json.JSONObject
 
 class DefaultRepo(
     private val dataSourceRemote : ApiService,
@@ -23,4 +24,8 @@ class DefaultRepo(
         return dataSourceRemote.loginUser(userLoginDRO)
     }
 
+    //PROJECTS
+    suspend fun getUserProjects(force:Boolean = false, email: String = "ivan.s21@mhs.istts.ac.id"): BasicDTO {
+        return dataSourceRemote.getUserProjects(email)
+    }
 }

@@ -12,7 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class LoginRegisterViewModel:ViewModel() {
+class loginRegisterViewModel:ViewModel() {
     private var repo = ApiConfiguration.defaultRepo
     private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
     private var _response = MutableLiveData<BasicDTO>()
