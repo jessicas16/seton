@@ -6,10 +6,10 @@ import com.squareup.moshi.JsonClass
 data class userDTO (
     val name: String,
     val email: String,
-    val password: String,
+    val password: String
 )
 
 data class userLoginDTO(
     val email: String,
-    val password: String,
+    val password: String
 )

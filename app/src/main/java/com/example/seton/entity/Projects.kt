@@ -13,8 +13,8 @@ data class Projects(
     @ColumnInfo(name = "id") val id: Int,
     @ColumnInfo(name = "name") var name: String,
     @ColumnInfo(name = "description") var description: String,
-    @ColumnInfo(name = "start") var start: Date,
-    @ColumnInfo(name = "deadline") var deadline: Date,
-    @ColumnInfo(name = "pm_email") var pmEmail: String,
+    @ColumnInfo(name = "start") var start: String,
+    @ColumnInfo(name = "deadline") var deadline: String,
+    @ColumnInfo(name = "pm_email") var pm_email: String,
     @ColumnInfo(name = "status") var status: Int
 )

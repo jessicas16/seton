@@ -33,7 +33,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -59,10 +61,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class ListProjectActivity : ComponentActivity() {
     private val vm: ListProjectViewModel by viewModels<ListProjectViewModel>()
     private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -73,37 +80,34 @@ class ListProjectActivity : ComponentActivity() {
     @Preview(showBackground = true)
     @Composable
     fun ListProjectPreview() {
+        val userProjects by vm.projects.observeAsState(emptyList())
+        LaunchedEffect(key1 = Unit) {
+            vm.getUserProjects()
+        }
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-            val projectsState = remember { mutableStateOf<List<DataProject>>(emptyList()) }
             LazyColumn(
                 Modifier
                     .fillMaxSize()
-                    .padding(8.dp, 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                ioScope.launch {
-                    vm.getUserProjects()
-                    ioScope.launch {
-                        val res = vm.response.value ?: emptyList()
-                        runOnUiThread {
-                            items(res) { project ->
-                                Log.i("DATA: ", project.toString())
-                                ExpandableCard(
-                                    project.name,
-                                    project.description,
-                                    project.deadline.toString(),
-                                    project.owner.name,
-                                    if (project.status == 0) "Ongoing" else "Completed",
-                                    "${project.tasks.filter { project.status == 1 }.size}/${project.tasks.size}",
-                                    project.members.map { user ->
-                                        val arrName = user.name.split(" ")
-                                        arrName[0].first().uppercaseChar().toString() +
-                                                if (arrName.size > 1) arrName[1].first()
-                                                    .uppercaseChar()
-                                                    .toString() else ""
-                                    }
-                                )
-                            }
-                        }
+                    .padding(8.dp, 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(userProjects) { project ->
+                    fun formatDate(date: String): String {
+                        val monthMap = listOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+                        return "${date.substring(8, 10)} ${monthMap[date.substring(5, 7).toInt() - 1]} ${date.substring(0, 4)}"
                     }
+                    ExpandableCard(
+                        project.name,
+                        project.description,
+                        formatDate(project.deadline),
+                        project.owner.name,
+                        if (project.status == 0) "Ongoing" else "Completed",
+                        "${project.tasks.filter { it.status == 1 }.size}/${project.tasks.size}",
+                        project.members.map { user ->
+                            val arrName = user.name.split(" ")
+                            arrName[0].first().uppercaseChar().toString() +
+                                if (arrName.size > 1) arrName[1].first().uppercaseChar().toString() else ""
+                        }
+                    )
                 }
             }
         }
@@ -288,7 +292,7 @@ class ListProjectActivity : ComponentActivity() {
                                 Font(R.font.open_sans_bold, FontWeight.Bold)
                             ),
                             modifier = Modifier.padding(end = 16.dp),
-                            color = Color(0xFFF4976C)
+                            color = if (status == "Completed") Color(0xFF0E9794) else Color(0xFFF4976C)
                         )
                     }
                     Row(
@@ -300,7 +304,7 @@ class ListProjectActivity : ComponentActivity() {
                                 .fillMaxWidth()
                                 .height(8.dp)
                                 .clip(RoundedCornerShape(8.dp)),
-                            progress = { 0.7f },
+                            progress = { progress.split("/")[0].toFloat() / progress.split("/")[1].toFloat() },
                             color = Color(0xFF0E9794),
                             trackColor = Color(0xFFECFFFF)
                         )
@@ -309,7 +313,7 @@ class ListProjectActivity : ComponentActivity() {
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(vertical = 8.dp)
                     ){
-                        for (i in 0 ..members.lastIndex) {
+                        for (i in 0..members.lastIndex) {
                             Box(
                                 modifier = Modifier
                                     .size(48.dp)

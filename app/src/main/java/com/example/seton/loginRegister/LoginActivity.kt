@@ -99,7 +99,7 @@ class LoginActivity : ComponentActivity() {
                 verticalArrangement = Arrangement.Center
             ) {
                 ConstraintLayout {
-                    val email = remember { mutableStateOf("a") }
+                    val email = remember { mutableStateOf("ivan.s21@mhs.istts.ac.id") }
                     //email
                     OutlinedTextField(
                         value = email.value,
@@ -130,7 +130,7 @@ class LoginActivity : ComponentActivity() {
                                 end.linkTo(parent.end)
                             }
                     )
-                    val password = remember { mutableStateOf("a") }
+                    val password = remember { mutableStateOf("123") }
                     val passwordVisibility = remember { mutableStateOf(false) }
 
                     val icon = if (passwordVisibility.value)

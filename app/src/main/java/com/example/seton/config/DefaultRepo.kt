@@ -25,7 +25,7 @@ class DefaultRepo(
     }
 
     //PROJECTS
-    suspend fun getUserProjects(force:Boolean = false, email: String = "ivan.s21@mhs.istts.ac.id"): BasicDRO {
+    suspend fun getUserProjects(force:Boolean = false, email: String = "ivan.s21@mhs.istts.ac.id"): ListProjectDRO {
         return dataSourceRemote.getUserProjects(email)
     }
 }
