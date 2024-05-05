@@ -49,7 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.seton.R
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.example.seton.entity.userLoginDRO
+import com.example.seton.entity.userLoginDTO
 import com.example.seton.mainPage.DashboardActivity
 import com.example.seton.projectPage.ListProjectActivity
 import kotlinx.coroutines.CoroutineScope
@@ -201,23 +201,20 @@ class LoginActivity : ComponentActivity() {
                                 return@Button
                             }
 
-                            val user = userLoginDRO(
+                            val user = userLoginDTO(
                                 email = email.value,
                                 password = password.value,
                             )
                             ioScope.launch {
                                 vm.loginUser(user)
-//                                Thread.sleep(750)
-                                ioScope.launch {
-                                    val res = vm.response.value
-                                    runOnUiThread{
-                                        if(res != null){
-                                            if(res.status == "200"){
-                                                val intent = Intent(context, ListProjectActivity::class.java)
-                                                context.startActivity(intent)
-                                            } else {
-                                                Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()
-                                            }
+                                val res = vm.response.value
+                                runOnUiThread{
+                                    if(res != null){
+                                        if(res.status == "200"){
+                                            val intent = Intent(context, ListProjectActivity::class.java)
+                                            context.startActivity(intent)
+                                        } else {
+                                            Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()
                                         }
                                     }
                                 }

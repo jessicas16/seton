@@ -7,7 +7,7 @@ import retrofit2.http.*
 interface ApiService {
     //TEST
     @GET("checkConnection")
-    suspend fun checkConnection():BasicDTO
+    suspend fun checkConnection():BasicDRO
 
     //USER
     @GET("users")
@@ -15,13 +15,13 @@ interface ApiService {
 
     @POST("users/register")
     suspend fun registerUser(
-        @Body userDRO : userDRO
-    ): BasicDTO
+        @Body userDTO : userDTO
+    ): BasicDRO
 
     @POST("users/login/")
-    suspend fun loginUser(@Body userLoginDRO:userLoginDRO):BasicDTO
+    suspend fun loginUser(@Body userLoginDRO:userLoginDTO):BasicDRO
 
     //PROJECTS
     @GET("projects/{email}")
-    suspend fun getUserProjects(@Path("email") email: String): BasicDTO
+    suspend fun getUserProjects(@Path("email") email: String): BasicDRO
 }

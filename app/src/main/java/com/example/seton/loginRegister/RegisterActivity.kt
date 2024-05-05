@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.seton.R
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.example.seton.entity.userDRO
+import com.example.seton.entity.userDTO
 import com.example.seton.mainPage.DashboardActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -268,7 +268,7 @@ class RegisterActivity : ComponentActivity() {
                                 Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
                                 return@Button
                             }
-                            val user = userDRO(
+                            val user = userDTO(
                                 name = name.value,
                                 email = email.value,
                                 password = password.value,

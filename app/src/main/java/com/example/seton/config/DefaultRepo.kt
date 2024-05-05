@@ -7,7 +7,7 @@ class DefaultRepo(
     private val dataSourceRemote : ApiService,
 ) {
     //TEST CONNECTION
-    suspend fun checkConnection():BasicDTO {
+    suspend fun checkConnection():BasicDRO {
         return dataSourceRemote.checkConnection()
     }
 
@@ -16,16 +16,16 @@ class DefaultRepo(
         return dataSourceRemote.getAllUser()
     }
 
-    suspend fun registerUser(userDRO : userDRO): BasicDTO {
-        return dataSourceRemote.registerUser(userDRO)
+    suspend fun registerUser(userDTO : userDTO): BasicDRO {
+        return dataSourceRemote.registerUser(userDTO)
     }
 
-    suspend fun loginUser(userLoginDRO:userLoginDRO):BasicDTO {
-        return dataSourceRemote.loginUser(userLoginDRO)
+    suspend fun loginUser(userLoginDTO:userLoginDTO):BasicDRO {
+        return dataSourceRemote.loginUser(userLoginDTO)
     }
 
     //PROJECTS
-    suspend fun getUserProjects(force:Boolean = false, email: String = "ivan.s21@mhs.istts.ac.id"): BasicDTO {
+    suspend fun getUserProjects(force:Boolean = false, email: String = "ivan.s21@mhs.istts.ac.id"): BasicDRO {
         return dataSourceRemote.getUserProjects(email)
     }
 }
