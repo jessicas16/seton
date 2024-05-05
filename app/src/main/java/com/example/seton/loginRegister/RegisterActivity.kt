@@ -71,10 +71,10 @@ class RegisterActivity : ComponentActivity() {
     @Preview(showBackground = true)
     @Composable
     fun RegisterPage(){
-        val name = remember { mutableStateOf("a") }
-        val email = remember { mutableStateOf("a") }
-        val confirm_password = remember { mutableStateOf("a") }
-        val password = remember { mutableStateOf("a") }
+        val name = remember { mutableStateOf("aa") }
+        val email = remember { mutableStateOf("aa") }
+        val confirm_password = remember { mutableStateOf("aa") }
+        val password = remember { mutableStateOf("aa") }
         Surface {
             Register(
                 name = name,
@@ -202,7 +202,8 @@ class RegisterActivity : ComponentActivity() {
                             }
                         },
                         keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Password
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Done
                         ),
                         visualTransformation = if(passwordVisibility.value) VisualTransformation.None
                         else PasswordVisualTransformation(),
@@ -242,7 +243,8 @@ class RegisterActivity : ComponentActivity() {
                             }
                         },
                         keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Password
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Done,
                         ),
                         visualTransformation = if(confirm_passwordVisibility.value) VisualTransformation.None
                         else PasswordVisualTransformation(),

@@ -119,7 +119,7 @@ class LoginActivity : ComponentActivity() {
                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Email,
-                            imeAction = ImeAction.Done
+                            imeAction = ImeAction.Done,
                         ),
                         modifier = Modifier
                             .width(282.dp)
@@ -159,7 +159,8 @@ class LoginActivity : ComponentActivity() {
                             }
                         },
                         keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Password
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Done
                         ),
                         visualTransformation = if(passwordVisibility.value) VisualTransformation.None
                         else PasswordVisualTransformation(),

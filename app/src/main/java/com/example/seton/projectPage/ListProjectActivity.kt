@@ -1,5 +1,6 @@
 package com.example.seton.projectPage
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -43,6 +44,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -116,6 +118,7 @@ class ListProjectActivity : ComponentActivity() {
 
     @Composable
     fun FloatingButton(onClick: () -> Unit) {
+        val context = LocalContext.current
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -123,7 +126,10 @@ class ListProjectActivity : ComponentActivity() {
             contentAlignment = Alignment.BottomEnd
         ) {
             Button(
-                onClick = onClick,
+                onClick = {
+                    val intent = Intent(context, AddProjectActivity::class.java)
+                    context.startActivity(intent)
+                },
                 colors = ButtonDefaults.buttonColors(Color(0xFF0E9794)),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
                 modifier = Modifier.size(72.dp)
@@ -222,7 +228,10 @@ class ListProjectActivity : ComponentActivity() {
                     Box(modifier = Modifier.weight(0.6f)) {
                         Box(
                             modifier = Modifier
-                                .background(color = Color(0xFFECFFFF), shape = RoundedCornerShape(8.dp))
+                                .background(
+                                    color = Color(0xFFECFFFF),
+                                    shape = RoundedCornerShape(8.dp)
+                                )
                                 .padding(horizontal = 8.dp, vertical = 1.dp)
                         ) {
                             Text(

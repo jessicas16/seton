@@ -3,15 +3,13 @@ package com.example.seton.mainPage
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Dashboard
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ListAlt
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Report
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Task
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -69,10 +67,10 @@ class DashboardActivity : ComponentActivity() {
                                 icon = Icons.Default.Report
                             ),
                             MenuItem(
-                                id = "logout",
-                                title = "Logout",
-                                contentDescription = "Logout",
-                                icon = Icons.Default.Logout
+                                id = "setting",
+                                title = "Setting",
+                                contentDescription = "Go to setting",
+                                icon = Icons.Default.Settings
                             ),
                         ),
                         onItemClick = {
