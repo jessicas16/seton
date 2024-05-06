@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.seton.AppFont
 import com.example.seton.R
 import com.example.seton.entity.Projects
 import kotlinx.coroutines.CoroutineScope
@@ -187,11 +188,8 @@ class ListProjectActivity : ComponentActivity() {
                         modifier = Modifier
                             .weight(6f),
                         text = name,
-                        fontFamily = FontFamily(
-                            Font(R.font.open_sans_bold, FontWeight.Bold)
-                        ),
+                        fontFamily = AppFont.fontBold,
                         fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -218,10 +216,7 @@ class ListProjectActivity : ComponentActivity() {
                         Text(
                             text = description,
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Light,
-                            fontFamily = FontFamily(
-                                Font(R.font.open_sans_light, FontWeight.Light)
-                            ),
+                            fontFamily = AppFont.fontLight,
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -241,10 +236,7 @@ class ListProjectActivity : ComponentActivity() {
                             Text(
                                 text = deadline,
                                 fontSize = 12.sp,
-                                fontFamily = FontFamily(
-                                    Font(R.font.open_sans_regular, FontWeight.Normal)
-                                ),
-                                fontWeight = FontWeight.Normal,
+                                fontFamily = AppFont.fontNormal,
                                 color = Color(0xFF0E9794)
                             )
                         }
@@ -262,10 +254,7 @@ class ListProjectActivity : ComponentActivity() {
                     Text(
                         text = status,
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily(
-                            Font(R.font.open_sans_bold, FontWeight.Bold)
-                        ),
+                        fontFamily = AppFont.fontBold,
                         modifier = Modifier.padding(end = 16.dp),
                         color = if (!expandedState) Color(0xFFF4976C) else Color.Transparent
                     )
@@ -278,28 +267,19 @@ class ListProjectActivity : ComponentActivity() {
                         Text(
                             text = "Progress",
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Normal,
-                            fontFamily = FontFamily(
-                                Font(R.font.open_sans_regular, FontWeight.Normal)
-                            ),
+                            fontFamily = AppFont.fontNormal,
                             modifier = Modifier.weight(0.4f)
                         )
                         Text(
                             text = progress,
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily(
-                                Font(R.font.open_sans_bold, FontWeight.Bold)
-                            ),
+                            fontFamily = AppFont.fontBold,
                             modifier = Modifier.weight(1f)
                         )
                         Text(
                             text = status,
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily(
-                                Font(R.font.open_sans_bold, FontWeight.Bold)
-                            ),
+                            fontFamily = AppFont.fontBold,
                             modifier = Modifier.padding(end = 16.dp),
                             color = if (status == "Completed") Color(0xFF0E9794) else Color(0xFFF4976C)
                         )
@@ -335,10 +315,7 @@ class ListProjectActivity : ComponentActivity() {
                                 Text(
                                     text = if (i < 4) members[i] else "+${members.size - 4}",
                                     fontSize = 20.sp,
-                                    fontFamily = FontFamily(
-                                        Font(R.font.open_sans_bold, FontWeight.Bold)
-                                    ),
-                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = AppFont.fontBold,
                                     color = Color(0xFF0E9794)
                                 )
                             }
