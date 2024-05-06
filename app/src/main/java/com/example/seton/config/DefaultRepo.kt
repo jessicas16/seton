@@ -16,6 +16,14 @@ class DefaultRepo(
         return dataSourceRemote.getAllUser()
     }
 
+    suspend fun getAllUserExceptLoginUser(force:Boolean = false, email: String): ListUserDRO{
+        return dataSourceRemote.getAllUserExceptLoginUser(email)
+    }
+
+    suspend fun checkEmail(email: String): UserDRO {
+        return dataSourceRemote.checkEmail(email)
+    }
+
     suspend fun registerUser(userDTO : userDTO): BasicDRO {
         return dataSourceRemote.registerUser(userDTO)
     }

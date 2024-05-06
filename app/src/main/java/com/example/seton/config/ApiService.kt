@@ -13,6 +13,12 @@ interface ApiService {
     @GET("users")
     suspend fun getAllUser(@Query("q") q:String = ""):List<Users>
 
+    @GET("users/except/{email}")
+    suspend fun getAllUserExceptLoginUser(@Path("email") email: String):ListUserDRO
+
+    @GET("users/{email}")
+    suspend fun checkEmail(@Path("email") email: String): UserDRO
+
     @POST("users/register")
     suspend fun registerUser(
         @Body userDTO : userDTO

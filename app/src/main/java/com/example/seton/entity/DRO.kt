@@ -15,3 +15,15 @@ data class ListProjectDRO(
     var message: String,
     var data : List<DataProject>
 )
+
+data class ListUserDRO(
+    var status : String,
+    var message: String,
+    var data : List<Users>
+)
+
+data class UserDRO(
+    var status : String,
+    var message: String,
+    var data : Users
+)

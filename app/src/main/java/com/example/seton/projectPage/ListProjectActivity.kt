@@ -240,7 +240,7 @@ class ListProjectActivity : ComponentActivity() {
                         ) {
                             Text(
                                 text = deadline,
-                                fontSize = 16.sp,
+                                fontSize = 12.sp,
                                 fontFamily = FontFamily(
                                     Font(R.font.open_sans_regular, FontWeight.Normal)
                                 ),
@@ -252,7 +252,7 @@ class ListProjectActivity : ComponentActivity() {
 
                     Text(
                         text = ownerName,
-                        fontSize = 16.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Normal,
                         fontFamily = FontFamily(
                             Font(R.font.open_sans_regular, FontWeight.Normal)
@@ -261,7 +261,7 @@ class ListProjectActivity : ComponentActivity() {
                     )
                     Text(
                         text = status,
-                        fontSize = 16.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         fontFamily = FontFamily(
                             Font(R.font.open_sans_bold, FontWeight.Bold)
