@@ -2,7 +2,6 @@ package com.example.seton.projectPage
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -26,12 +25,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.ListAlt
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Report
+import androidx.compose.material.icons.filled.Task
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,6 +46,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,17 +65,16 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.seton.AppBar
 import com.example.seton.AppFont
+import com.example.seton.DrawerBody
+import com.example.seton.DrawerHeader
+import com.example.seton.MenuItem
 import com.example.seton.R
-import com.example.seton.entity.Projects
+import com.example.seton.loginRegister.LoginActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class ListProjectActivity : ComponentActivity() {
     private val vm: ListProjectViewModel by viewModels<ListProjectViewModel>()
@@ -76,7 +83,76 @@ class ListProjectActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ListProjectPreview()
+            val scaffoldState = rememberScaffoldState()
+            val scope = rememberCoroutineScope()
+            val context = LocalContext.current
+            Scaffold(
+                scaffoldState = scaffoldState,
+                topBar = {
+                    AppBar (
+                        onNavigationIconClick = {
+                            scope.launch {
+                                scaffoldState.drawerState.open()
+                            }
+                        }
+                    )
+                },
+                drawerContent = {
+                    DrawerHeader()
+                    DrawerBody(
+                        items = listOf(
+                            MenuItem(
+                                id = "dashboard",
+                                title = "Dashboard",
+                                contentDescription = "Go to dashboard",
+                                icon = Icons.Default.Dashboard
+                            ),
+                            MenuItem(
+                                id = "projects",
+                                title = "Projects",
+                                contentDescription = "Go to projects",
+                                icon = Icons.Default.ListAlt
+                            ),
+                            MenuItem(
+                                id = "tasks",
+                                title = "Tasks",
+                                contentDescription = "Go to tasks",
+                                icon = Icons.Default.Task
+                            ),
+                            MenuItem(
+                                id = "calendar",
+                                title = "Calendar",
+                                contentDescription = "Go to calendar",
+                                icon = Icons.Default.CalendarToday
+                            ),
+                            MenuItem(
+                                id = "report",
+                                title = "Report",
+                                contentDescription = "Go to report",
+                                icon = Icons.Default.Report
+                            ),
+                            MenuItem(
+                                id = "logout",
+                                title = "Logout",
+                                contentDescription = "Logout",
+                                icon = Icons.Default.Logout
+                            ),
+                        ),
+                        onItemClick = {
+                            when(it.id){
+                                "logout" -> {
+                                    val intent = Intent(context, LoginActivity::class.java)
+                                    startActivity(intent)
+                                }
+                            }
+                        }
+                    )
+                },
+
+            ){
+                val hai = it
+                ListProjectPreview()
+            }
         }
     }
 

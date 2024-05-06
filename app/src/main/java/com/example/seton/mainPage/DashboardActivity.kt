@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Task
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.rememberCoroutineScope
+import com.example.seton.MenuItem
 import kotlinx.coroutines.launch
 
 class DashboardActivity : ComponentActivity() {

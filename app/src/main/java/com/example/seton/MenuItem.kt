@@ -1,4 +1,4 @@
-package com.example.seton.mainPage
+package com.example.seton
 
 import androidx.compose.ui.graphics.vector.ImageVector
 
