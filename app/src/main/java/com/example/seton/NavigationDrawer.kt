@@ -1,4 +1,4 @@
-package com.example.seton.mainPage
+package com.example.seton
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -16,12 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.seton.MenuItem
 import com.example.seton.R
-
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun DrawerHeader() {
@@ -31,7 +30,6 @@ fun DrawerHeader() {
             .padding(vertical = 64.dp),
         contentAlignment = Alignment.Center
     ){
-//        Text(text = "Header", fontSize = 60.sp)
         Image(
             painter = painterResource(R.drawable.seton_logo),
             contentDescription = "Seton Icon",
@@ -55,8 +53,9 @@ fun DrawerBody(
                         onItemClick(item)
                     }
                     .padding(16.dp)
-            ) {
-                Icon(imageVector = item.icon,
+            ){
+                Icon(
+                    imageVector = item.icon,
                     contentDescription = item.contentDescription
                 )
                 Spacer(modifier = Modifier.width(16.dp))
