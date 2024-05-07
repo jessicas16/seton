@@ -1,5 +1,6 @@
 package com.example.seton.projectPage
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -30,6 +31,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.ListAlt
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Report
+import androidx.compose.material.icons.filled.Task
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,9 +46,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -49,8 +60,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.seton.AppBar
+import com.example.seton.DrawerBody
+import com.example.seton.DrawerHeader
+import com.example.seton.MenuItem
 import com.example.seton.R
 import com.example.seton.component.CustomDateTimePicker
+import com.example.seton.loginRegister.LoginActivity
+import com.example.seton.mainPage.DashboardActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -63,7 +80,84 @@ class AddProjectActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AddNewProject()
+            val scaffoldState = rememberScaffoldState()
+            val scope = rememberCoroutineScope()
+            val context = LocalContext.current
+            Scaffold(
+                scaffoldState = scaffoldState,
+                topBar = {
+                    AppBar (
+                        onNavigationIconClick = {
+                            scope.launch { 
+                                scaffoldState.drawerState.open()
+                            }
+                        }    
+                    )
+                },
+                drawerContent = {
+                    DrawerHeader()
+                    DrawerBody(
+                        items = listOf(
+                            MenuItem(
+                                id = "dashboard",
+                                title = "Dashboard",
+                                contentDescription = "Go to dashboard",
+                                icon = Icons.Default.Dashboard
+                            ),
+                            MenuItem(
+                                id = "projects",
+                                title = "Projects",
+                                contentDescription = "Go to projects",
+                                icon = Icons.Default.ListAlt,
+                                isSelected = true
+                            ),
+                            MenuItem(
+                                id = "tasks",
+                                title = "Tasks",
+                                contentDescription = "Go to tasks",
+                                icon = Icons.Default.Task
+                            ),
+                            MenuItem(
+                                id = "calendar",
+                                title = "Calendar",
+                                contentDescription = "Go to calendar",
+                                icon = Icons.Default.CalendarToday
+                            ),
+                            MenuItem(
+                                id = "report",
+                                title = "Report",
+                                contentDescription = "Go to report",
+                                icon = Icons.Default.Report
+                            ),
+                            MenuItem(
+                                id = "logout",
+                                title = "Logout",
+                                contentDescription = "Logout",
+                                icon = Icons.Default.Logout
+                            ),
+                        ),
+                        onItemClick = {
+                            when(it.id){
+                                "dashboard" -> {
+                                    val intent = Intent(context, DashboardActivity::class.java)
+                                    startActivity(intent)
+                                }
+                                "projects" -> {
+                                    val intent = Intent(context, ListProjectActivity::class.java)
+                                    startActivity(intent)
+                                }
+                                "logout" -> {
+                                    val intent = Intent(context, LoginActivity::class.java)
+                                    startActivity(intent)
+                                }
+                            }
+                        }
+                    )
+                }
+            ) {
+                val hai = it
+                AddNewProject()
+            }
         }
     }
 

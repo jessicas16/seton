@@ -72,6 +72,7 @@ import com.example.seton.DrawerHeader
 import com.example.seton.MenuItem
 import com.example.seton.R
 import com.example.seton.loginRegister.LoginActivity
+import com.example.seton.mainPage.DashboardActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -111,7 +112,8 @@ class ListProjectActivity : ComponentActivity() {
                                 id = "projects",
                                 title = "Projects",
                                 contentDescription = "Go to projects",
-                                icon = Icons.Default.ListAlt
+                                icon = Icons.Default.ListAlt,
+                                isSelected = true
                             ),
                             MenuItem(
                                 id = "tasks",
@@ -140,6 +142,10 @@ class ListProjectActivity : ComponentActivity() {
                         ),
                         onItemClick = {
                             when(it.id){
+                                "dashboard" -> {
+                                    val intent = Intent(context, DashboardActivity::class.java)
+                                    startActivity(intent)
+                                }
                                 "logout" -> {
                                     val intent = Intent(context, LoginActivity::class.java)
                                     startActivity(intent)
