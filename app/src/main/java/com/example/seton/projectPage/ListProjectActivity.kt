@@ -11,6 +11,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -93,9 +95,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ListProjectActivity : ComponentActivity() {
-//    private val vm: ListProjectViewModel by viewModels<ListProjectViewModel>()
     private val vm: ListProjectViewModel by viewModels<ListProjectViewModel>()
-    private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -235,15 +235,11 @@ class ListProjectActivity : ComponentActivity() {
                 }
             }
         }
-        FloatingButton(
-            onClick = {
-
-            }
-        )
+        FloatingButton()
     }
 
     @Composable
-    fun FloatingButton(onClick: () -> Unit) {
+    fun FloatingButton() {
         val context = LocalContext.current
         Box(
             modifier = Modifier
@@ -279,6 +275,7 @@ class ListProjectActivity : ComponentActivity() {
         members: List<String>,
         padding: Dp = 12.dp
     ) {
+        val context = LocalContext.current
         var expandedState by remember { mutableStateOf(false) }
         val rotationState by animateFloatAsState(
             targetValue = if (expandedState) 180f else 0f, label = ""
@@ -423,24 +420,50 @@ class ListProjectActivity : ComponentActivity() {
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(vertical = 8.dp)
                     ){
-                        for (i in 0..members.lastIndex) {
-                            Box(
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .background(
-                                        color = Color(0xFFECFFFF),
-                                        shape = RoundedCornerShape(24.dp)
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(4.dp)
+                        ) {
+                            Row(modifier = Modifier.clickable(onClick = {
+                                val intent = Intent(context, AddProjectActivity::class.java)
+                                context.startActivity(intent)
+                            })) {
                                 Text(
-                                    text = if (i < 4) members[i] else "+${members.size - 4}",
-                                    fontSize = 20.sp,
-                                    fontFamily = AppFont.fontBold,
+                                    text = "See Details",
+                                    fontSize = 16.sp,
                                     color = Color(0xFF0E9794)
                                 )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Image(
+                                    painter = painterResource(id = R.drawable.icon_arrow_right),
+                                    contentDescription = "Plus Icon",
+                                    modifier = Modifier.size(20.dp)
+                                )
                             }
-                            if (i > 3) break
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                for (i in 0..members.lastIndex) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(48.dp)
+                                            .background(
+                                                color = Color(0xFFECFFFF),
+                                                shape = RoundedCornerShape(24.dp)
+                                            ),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = if (i < 3) members[i] else "+${members.size - 3}",
+                                            fontSize = 20.sp,
+                                            fontFamily = AppFont.fontBold,
+                                            color = Color(0xFF0E9794)
+                                        )
+                                    }
+                                    if (i > 2) break
+                                }
+                            }
                         }
                     }
                 }
