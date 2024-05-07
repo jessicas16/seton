@@ -213,6 +213,7 @@ class LoginActivity : ComponentActivity() {
                                     if(res != null){
                                         if(res.status == "200"){
                                             val intent = Intent(context, ListProjectActivity::class.java)
+                                            intent.putExtra("user", res.data)
                                             context.startActivity(intent)
                                         } else {
                                             Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()

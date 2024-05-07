@@ -218,7 +218,7 @@ class AddProjectActivity : ComponentActivity() {
                             Toast.makeText(this@AddProjectActivity, "Email cannot be empty", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
-                        ioScope.launch {
+                        ioScope.launch(Dispatchers.IO) {
                             vm.checkEmailUser(email.value)
                             val res = vm.checkEmail.value
                             runOnUiThread{
