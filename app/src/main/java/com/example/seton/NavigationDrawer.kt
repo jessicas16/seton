@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -47,79 +49,37 @@ fun DrawerHeader() {
 @Composable
 fun DrawerBody(
     items: List<MenuItem>,
-    modifier: Modifier = Modifier,
-    itemTextStyle: TextStyle = TextStyle(fontSize = 18.sp),
-    onItemClick: (MenuItem) -> Unit
+    currentRoute: String?,
+    onItemClick: (MenuItem) -> Unit,
 ) {
-    LazyColumn(modifier){
-        items(items){item ->
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        onItemClick(item)
-                    }
-                    .padding(16.dp)
-                    .background(if(item.isSelected) Color.LightGray else Color.Transparent)
-            ){
+    items.forEachIndexed { index, menuItem ->
+        NavigationDrawerItem(
+            label = {
+                    Text(text = menuItem.title)
+            },
+            selected = currentRoute == menuItem.route,
+            onClick = {
+                onItemClick(menuItem)
+            },
+            icon = {
                 Icon(
-                    imageVector = item.icon,
-                    contentDescription = item.contentDescription
+                    imageVector = if(currentRoute == menuItem.route){
+                        menuItem.selectedIcon
+                    }
+                    else {
+                         menuItem.unSelectedIcon
+                    },
+                    contentDescription = menuItem.title
                 )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = item.title,
-                    style = itemTextStyle,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
+            },
+            badge = {
+                menuItem.badgeCount?.let {
+                    Text(text = it.toString())
+                }
+            },
+            modifier = Modifier.padding(
+                PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+            )
+        )
     }
 }
-//fun DrawerBody(
-//    items: List<MenuItem>,
-//    modifier: Modifier = Modifier,
-//    itemTextStyle: TextStyle = TextStyle(fontSize = 18.sp),
-//    onItemClick: (MenuItem) -> Unit
-//) {
-//    var selectedItem = remember { mutableStateOf<MenuItem?>(null) }
-//
-//    LazyColumn(modifier) {
-//        items(items) { item ->
-//            MenuItemRow(
-//                item = item,
-//                isSelected = selectedItem.value != null && selectedItem.value == item,
-//                onItemClick = { onItemClick(item); selectedItem.value = item }
-//            )
-//        }
-//    }
-//}
-//
-//@Composable
-//private fun MenuItemRow(
-//    item: MenuItem,
-//    isSelected: Boolean,
-//    onItemClick: () -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    val ripple = rememberRipple()
-//    val interactionSource = remember { MutableInteractionSource() }
-//    Row(
-//        modifier = modifier
-//            .fillMaxWidth()
-//            .padding(16.dp)
-//            .background(if (isSelected) Color.LightGray else Color.Transparent, shape = MaterialTheme.shapes.medium)
-//            .clickable(interactionSource, indication = ripple, onClick = onItemClick)
-//    ) {
-//        Icon(
-//            imageVector = item.icon,
-//            contentDescription = item.contentDescription
-//        )
-//        Spacer(modifier = Modifier.width(16.dp))
-//        Text(
-//            text = item.title,
-//            style = TextStyle(fontSize = 18.sp),
-//            modifier = Modifier.weight(1f)
-//        )
-//    }
-//}

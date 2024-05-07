@@ -2,7 +2,6 @@ package com.example.seton.config
 
 import android.content.Context
 import androidx.room.Room
-import com.example.seton.env
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
