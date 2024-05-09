@@ -30,4 +30,9 @@ interface ApiService {
     //PROJECTS
     @GET("projects/{email}")
     suspend fun getUserProjects(@Path("email") email: String): ListProjectDRO
+
+
+    //TASKS
+    @GET("tasks/user/{email}")
+    suspend fun getUserTasks(@Path("email") email: String): ListTaskDRO
 }

@@ -206,7 +206,8 @@ class ListProjectActivity : ComponentActivity() {
             LazyColumn(
                 Modifier
                     .fillMaxSize()
-                    .padding(8.dp, 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(8.dp, 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(userProjects) { project ->
                     fun formatDate(date: String): String {
@@ -421,10 +422,11 @@ class ListProjectActivity : ComponentActivity() {
                             Row(modifier = Modifier.clickable(onClick = {
                                 val intent = Intent(context, AddProjectActivity::class.java)
                                 context.startActivity(intent)
-                            })) {
+                            }), verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = "See Details",
                                     fontSize = 16.sp,
+                                    fontFamily = AppFont.fontNormal,
                                     color = Color(0xFF0E9794)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
