@@ -141,19 +141,19 @@ class ListProjectActivity : ComponentActivity() {
 
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             val scope = rememberCoroutineScope()
-            val navController = rememberNavController()
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route
-
-            val topBarTitle =
-                if (currentRoute != null){
-                    items[items.indexOfFirst {
-                        it.route == currentRoute
-                    }].title
-                }
-                else {
-                    items[0].title
-                }
+//            val navController = rememberNavController()
+//            val navBackStackEntry by navController.currentBackStackEntryAsState()
+//            val currentRoute = navBackStackEntry?.destination?.route
+//
+//            val topBarTitle =
+//                if (currentRoute != null){
+//                    items[items.indexOfFirst {
+//                        it.route == currentRoute
+//                    }].title
+//                }
+//                else {
+//                    items[0].title
+//                }
 
             ModalNavigationDrawer(
                 gesturesEnabled = drawerState.isOpen,
@@ -163,23 +163,17 @@ class ListProjectActivity : ComponentActivity() {
                         Spacer(modifier = Modifier.height(8.dp))
                         DrawerBody(
                             items = items,
-                            currentRoute = currentRoute
-                        ){
-                                currentMenuItem ->
-                            navController.navigate(currentMenuItem.route){
-                                navController.graph.startDestinationRoute?.let {
-                                        startDestinationRoute ->
-                                    popUpTo(startDestinationRoute){
-                                        saveState = true
+                            onItemClick = { currentMenuItem ->
+                                when (currentMenuItem.route){
+                                    Screens.Logout.route -> {
+                                        startActivity(Intent(this@ListProjectActivity, LoginActivity::class.java))
+                                    }
+                                    Screens.Dashboard.route -> {
+                                        startActivity(Intent(this@ListProjectActivity, DashboardActivity::class.java))
                                     }
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
-                            scope.launch {
-                                drawerState.close()
-                            }
-                        }
+                        )
                     }
                 }, drawerState = drawerState
             ) {
@@ -193,8 +187,8 @@ class ListProjectActivity : ComponentActivity() {
                             }
                         )
                     }
-                ) { innerPadding ->
-                    SetUpNavGraph(navController = navController, innerPadding = innerPadding)
+                ) {
+                    val hai = it
                     ListProjectPreview()
                 }
             }

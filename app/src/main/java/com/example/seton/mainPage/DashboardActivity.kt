@@ -1,5 +1,6 @@
 package com.example.seton.mainPage
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -51,6 +52,8 @@ import com.example.seton.DrawerHeader
 import com.example.seton.MenuItem
 import com.example.seton.Screens
 import com.example.seton.SetUpNavGraph
+import com.example.seton.loginRegister.LoginActivity
+import com.example.seton.projectPage.ListProjectActivity
 import kotlinx.coroutines.launch
 
 class DashboardActivity : ComponentActivity() {
@@ -98,19 +101,19 @@ class DashboardActivity : ComponentActivity() {
 
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             val scope = rememberCoroutineScope()
-            val navController = rememberNavController()
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route
+//            val navController = rememberNavController()
+//            val navBackStackEntry by navController.currentBackStackEntryAsState()
+//            val currentRoute = navBackStackEntry?.destination?.route
 
-            val topBarTitle =
-                if (currentRoute != null){
-                    items[items.indexOfFirst {
-                        it.route == currentRoute
-                    }].title
-                }
-                else {
-                    items[0].title
-                }
+//            val topBarTitle =
+//                if (currentRoute != null){
+//                    items[items.indexOfFirst {
+//                        it.route == currentRoute
+//                    }].title
+//                }
+//                else {
+//                    items[0].title
+//                }
 
             ModalNavigationDrawer(
                 gesturesEnabled = drawerState.isOpen,
@@ -120,23 +123,17 @@ class DashboardActivity : ComponentActivity() {
                         Spacer(modifier = Modifier.height(8.dp))
                         DrawerBody(
                             items = items,
-                            currentRoute = currentRoute
-                        ){
-                            currentMenuItem ->
-                                navController.navigate(currentMenuItem.route){
-                                    navController.graph.startDestinationRoute?.let {
-                                        startDestinationRoute ->
-                                            popUpTo(startDestinationRoute){
-                                                saveState = true
-                                            }
+                            onItemClick = { currentMenuItem ->
+                                when (currentMenuItem.route){
+                                    Screens.Logout.route -> {
+                                        startActivity(Intent(this@DashboardActivity, LoginActivity::class.java))
                                     }
-                                    launchSingleTop = true
-                                    restoreState = true
+                                    Screens.Projects.route -> {
+                                        startActivity(Intent(this@DashboardActivity, ListProjectActivity::class.java))
+                                    }
                                 }
-                            scope.launch {
-                                drawerState.close()
                             }
-                        }
+                        )
                     }
                 }, drawerState = drawerState
             ) {
@@ -150,64 +147,65 @@ class DashboardActivity : ComponentActivity() {
                             }
                         )
                     }
-                ) { innerPadding ->
-                    SetUpNavGraph(navController = navController, innerPadding = innerPadding)
+                ) {
+                    val hai = it
+                    Dashboard()
                 }
-                Dashboard()
-            }
-        }
-    }
-    @Composable
-    fun Dashboard() {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)) {
-            Text(text = "Weekly Stats", style = MaterialTheme.typography.h4, color = Color.White)
-            Spacer(modifier = Modifier.height(16.dp))
-            BarChart()
-            TaskSummary(upcoming = 15, completed = 11, ongoing = 3)
-        }
-    }
-
-    @Composable
-    fun BarChart() {
-        // Dummy data
-        val data = listOf(0, 2, 3, 0, 0, 0, 0)
-        val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            data.forEachIndexed { index, value ->
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = value.toString(), color = Color.White)
-                    Box(
-                        modifier = Modifier
-                            .width(10.dp)
-                            .height((value * 10).dp)
-                            .background(Color.Blue)
-                    )
-                    Text(text = daysOfWeek[index], color = Color.White)
-                }
-            }
-        }
-    }
-
-    @Composable
-    fun TaskSummary(upcoming: Int, completed: Int, ongoing: Int) {
-        Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            SummaryItem(title = "Upcoming", count = upcoming, color = Color(0xFFFB8C00))
-            SummaryItem(title = "Completed", count = completed, color = Color(0xFFC0CA33))
-            SummaryItem(title = "Ongoing", count = ongoing, color = Color.Gray)
-        }
-    }
-
-    @Composable
-    fun SummaryItem(title: String, count: Int, color: Color) {
-        Surface(color = color, shape = RoundedCornerShape(8.dp), modifier = Modifier.padding(8.dp)) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(16.dp)) {
-                Text(text = title, style = MaterialTheme.typography.body1, color = Color.White)
-                Text(text = count.toString(), style = MaterialTheme.typography.h6, color = Color.White)
+//
             }
         }
     }
 }
 
+@Composable
+fun Dashboard() {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
+        Text(text = "Weekly Stats", style = MaterialTheme.typography.h4, color = Color.White)
+        Spacer(modifier = Modifier.height(16.dp))
+        BarChart()
+        TaskSummary(upcoming = 15, completed = 11, ongoing = 3)
+    }
+}
+
+@Composable
+fun BarChart() {
+    // Dummy data
+    val data = listOf(0, 2, 3, 0, 0, 0, 0)
+    val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+
+    Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+        data.forEachIndexed { index, value ->
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text = value.toString(), color = Color.White)
+                Box(
+                    modifier = Modifier
+                        .width(10.dp)
+                        .height((value * 10).dp)
+                        .background(Color.Blue)
+                )
+                Text(text = daysOfWeek[index], color = Color.White)
+            }
+        }
+    }
+}
+
+@Composable
+fun TaskSummary(upcoming: Int, completed: Int, ongoing: Int) {
+    Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+        SummaryItem(title = "Upcoming", count = upcoming, color = Color(0xFFFB8C00))
+        SummaryItem(title = "Completed", count = completed, color = Color(0xFFC0CA33))
+        SummaryItem(title = "Ongoing", count = ongoing, color = Color.Gray)
+    }
+}
+
+@Composable
+fun SummaryItem(title: String, count: Int, color: Color) {
+    Surface(color = color, shape = RoundedCornerShape(8.dp), modifier = Modifier.padding(8.dp)) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(16.dp)) {
+            Text(text = title, style = MaterialTheme.typography.body1, color = Color.White)
+            Text(text = count.toString(), style = MaterialTheme.typography.h6, color = Color.White)
+        }
+    }
+}

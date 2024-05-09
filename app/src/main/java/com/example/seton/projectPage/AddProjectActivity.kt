@@ -157,7 +157,6 @@ class AddProjectActivity : ComponentActivity() {
                         Spacer(modifier = Modifier.height(8.dp))
                         DrawerBody(
                             items = items,
-                            currentRoute = currentRoute
                         ){
                                 currentMenuItem ->
                             navController.navigate(currentMenuItem.route){

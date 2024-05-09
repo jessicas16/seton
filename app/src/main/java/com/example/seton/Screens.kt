@@ -1,6 +1,6 @@
 package com.example.seton
 
-sealed class Screens(var route: String) {
+sealed class Screens(val route: String) {
     object Dashboard : Screens("dashboard")
     object Projects : Screens("projects")
     object Tasks : Screens("tasks")
