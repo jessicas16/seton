@@ -14,4 +14,7 @@ object AppFont {
     val fontNormal = FontFamily(
         Font(R.font.open_sans_regular, FontWeight.Normal)
     )
+    val fontSemiBold = FontFamily(
+        Font(R.font.open_sans_semi_bold, FontWeight.SemiBold)
+    )
 }
