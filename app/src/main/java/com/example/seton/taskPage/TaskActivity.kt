@@ -180,7 +180,7 @@ class TaskActivity : ComponentActivity() {
                                         modifier = Modifier
                                             .background(
                                                 color = when (it.priority) {
-                                                    0 -> Color(0xFFD8FDFF)
+                                                    0 -> Color(0xFF9CDFDF)
                                                     1 -> Color(0xFFFDF4D3)
                                                     else -> Color(0xFFFACBB6)
                                                 },
