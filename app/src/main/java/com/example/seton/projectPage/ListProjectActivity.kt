@@ -236,6 +236,11 @@ class ListProjectActivity : ComponentActivity() {
         FloatingButton()
     }
 
+    override fun onResume() {
+        super.onResume()
+        vm.getUserProjects()
+    }
+
     @Composable
     fun FloatingButton() {
         val context = LocalContext.current
