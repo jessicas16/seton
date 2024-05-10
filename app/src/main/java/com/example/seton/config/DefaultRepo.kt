@@ -37,6 +37,9 @@ class DefaultRepo(
         return dataSourceRemote.getUserProjects(email)
     }
 
+    suspend fun createProject(projectDTO: addProjectDTO): BasicDRO {
+        return dataSourceRemote.createProject(projectDTO)
+
     //TASKS
     suspend fun getUserTasks(force:Boolean = false, email: String = "ivan.s21@mhs.istts.ac.id"): ListTaskDRO {
         return dataSourceRemote.getUserTasks(email)
