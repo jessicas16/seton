@@ -64,7 +64,7 @@ class TaskActivity : ComponentActivity() {
         LaunchedEffect(key1 = Unit) {
             vm.getUserTasks()
         }
-        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+        ConstraintLayout(modifier = Modifier.fillMaxSize().background(Color.White)) {
             LazyColumn(
                 Modifier
                     .fillMaxSize()
@@ -197,37 +197,40 @@ class TaskActivity : ComponentActivity() {
                                     }
                                 }
                             }
-                            Box(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 8.dp, end = 8.dp),
-                                contentAlignment = Alignment.CenterEnd
-                            ) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    val percentage = it.checklists.filter { it.is_checked == 1 }.size.toFloat() / it.checklists.size.toFloat()
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(50.dp),
-                                        progress = { percentage },
-                                        color = Color(0xFF0E9794),
-                                        strokeWidth = 5.dp,
-                                        trackColor = Color(0xFFECFFFF)
-                                    )
-                                    Text(
-                                        text = "${(percentage * 100).toInt()}%",
-                                        color = Color.Black,
-                                        fontFamily = AppFont.fontBold,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.padding(8.dp)
-                                    )
-                                }}
+                            if (it.status == 1) {
+                                Box(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 8.dp, end = 8.dp),
+                                    contentAlignment = Alignment.CenterEnd
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        val percentage = it.checklists.filter { it.is_checked == 1 }.size.toFloat() / it.checklists.size.toFloat()
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(50.dp),
+                                            progress = { percentage },
+                                            color = Color(0xFF0E9794),
+                                            strokeWidth = 5.dp,
+                                            trackColor = Color(0xFFECFFFF)
+                                        )
+                                        Text(
+                                            text = "${(percentage * 100).toInt()}%",
+                                            color = Color.Black,
+                                            fontFamily = AppFont.fontBold,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.padding(8.dp)
+                                        )
+                                    }
+                                }
+                            }
                         }
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(4.dp)
                         ) {
-                            Row(modifier = Modifier.clickable(onClick = {
+                            Row(modifier = Modifier.clickable {
                                 // Go to Task Details
-                            }), verticalAlignment = Alignment.CenterVertically) {
+                            }, verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = "See Details",
                                     fontSize = 14.sp,

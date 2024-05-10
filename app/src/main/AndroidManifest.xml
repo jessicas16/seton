@@ -21,6 +21,11 @@
             android:exported="false"
             android:label="@string/title_activity_add_task"
             android:theme="@style/Theme.SETON" />
+      <activity
+            android:name=".calendarPage.CalendarActivity"
+            android:exported="false"
+            android:label="@string/title_activity_calendar"
+            android:theme="@style/Theme.SETON" />
         <activity
             android:name=".taskPage.TaskActivity"
             android:exported="false"

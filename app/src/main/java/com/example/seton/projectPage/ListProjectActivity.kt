@@ -207,7 +207,7 @@ class ListProjectActivity : ComponentActivity() {
         LaunchedEffect(key1 = Unit) {
             vm.getUserProjects()
         }
-        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+        ConstraintLayout(modifier = Modifier.fillMaxSize().background(Color.White)) {
             LazyColumn(
                 Modifier
                     .fillMaxSize()
@@ -237,6 +237,11 @@ class ListProjectActivity : ComponentActivity() {
             }
         }
         FloatingButton()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        vm.getUserProjects()
     }
 
     @Composable
