@@ -27,20 +27,20 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun Chart(
     data: Map<Float, Int>,
-    max_value: Int
+    max_value: Int,
+    days: List<String>
 ) {
 
     val context = LocalContext.current
-
     Column(
         modifier = Modifier
-            .padding(50.dp)
+            .padding(15.dp)
             .fillMaxWidth()
     ) {
         Row (
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp),
+                .height(180.dp),
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Start
 
@@ -57,15 +57,47 @@ fun Chart(
                     verticalArrangement = Arrangement.Bottom
                 ) {
                     Text(text = max_value.toString())
-                    Spacer(modifier = Modifier.fillMaxHeight())
+                    Spacer(modifier = Modifier.fillMaxHeight(0.73f))
                 }
 
                 Column(
                     modifier = Modifier.fillMaxHeight(),
                     verticalArrangement = Arrangement.Bottom
                 ) {
-                    Text(text = (max_value/2).toString())
-                    Spacer(modifier = Modifier.fillMaxHeight(0.5f))
+                    Text(text = "1")
+                    Spacer(modifier = Modifier.fillMaxHeight(0.07f))
+                }
+
+                Column(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    Text(text = "2")
+                    Spacer(modifier = Modifier.fillMaxHeight(0.2f))
+                }
+
+                Column(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    Text(text = "3")
+                    Spacer(modifier = Modifier.fillMaxHeight(0.33f))
+                }
+
+                Column(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    Text(text = "4")
+                    Spacer(modifier = Modifier.fillMaxHeight(0.47f))
+                }
+
+                Column(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    Text(text = "5")
+                    Spacer(modifier = Modifier.fillMaxHeight(0.6f))
                 }
             }
 
@@ -102,13 +134,13 @@ fun Chart(
 
         Row(
             modifier = Modifier
-                .padding(start = 72.dp)
+                .padding(start = 69.dp)
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(20.dp)
+            horizontalArrangement = Arrangement.spacedBy(3.dp)
         ) {
-            data.values.forEach{
+            days.forEach{
                 Text(
-                    modifier = Modifier.width(20.dp),
+                    modifier = Modifier.width(36.dp),
                     text = it.toString(),
                     textAlign = TextAlign.Center
                 )
