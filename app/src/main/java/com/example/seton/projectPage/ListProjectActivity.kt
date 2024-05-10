@@ -11,18 +11,22 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.rememberScaffoldState
@@ -39,6 +43,15 @@ import androidx.compose.material.icons.filled.ListAlt
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.filled.Task
+import androidx.compose.material.icons.outlined.CalendarToday
+import androidx.compose.material.icons.outlined.Dashboard
+import androidx.compose.material.icons.outlined.ListAlt
+import androidx.compose.material.icons.outlined.Logout
+import androidx.compose.material.icons.outlined.Report
+import androidx.compose.material.icons.outlined.Task
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -65,13 +78,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.seton.AppBar
 import com.example.seton.AppFont
 import com.example.seton.DrawerBody
 import com.example.seton.DrawerHeader
 import com.example.seton.MenuItem
 import com.example.seton.R
+import com.example.seton.Screens
+import com.example.seton.SetUpNavGraph
 import com.example.seton.loginRegister.LoginActivity
+import com.example.seton.mainPage.DashboardActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -85,75 +103,97 @@ class ListProjectActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         userEmail = intent.getStringExtra("userEmail").toString()
         setContent {
-            val scaffoldState = rememberScaffoldState()
+            val items = listOf(
+                MenuItem(
+                    title = "Dashboard",
+                    route = Screens.Dashboard.route,
+                    selectedIcon = Icons.Filled.Dashboard,
+                    unSelectedIcon = Icons.Outlined.Dashboard
+                ),
+                MenuItem(
+                    title = "Projects",
+                    route = Screens.Projects.route,
+                    selectedIcon = Icons.Filled.ListAlt,
+                    unSelectedIcon = Icons.Outlined.ListAlt
+                ),
+                MenuItem(
+                    title = "Tasks",
+                    route = Screens.Tasks.route,
+                    selectedIcon = Icons.Filled.Task,
+                    unSelectedIcon = Icons.Outlined.Task
+                ),
+                MenuItem(
+                    title = "Calendar",
+                    route = Screens.Calendar.route,
+                    selectedIcon = Icons.Filled.CalendarToday,
+                    unSelectedIcon = Icons.Outlined.CalendarToday
+                ),
+                MenuItem(
+                    title = "Report",
+                    route = Screens.Report.route,
+                    selectedIcon = Icons.Filled.Report,
+                    unSelectedIcon = Icons.Outlined.Report
+                ),
+                MenuItem(
+                    title = "Logout",
+                    route = Screens.Logout.route,
+                    selectedIcon = Icons.Filled.Logout,
+                    unSelectedIcon = Icons.Outlined.Logout
+                ),
+            )
+
+            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             val scope = rememberCoroutineScope()
-            val context = LocalContext.current
-            Scaffold(
-                scaffoldState = scaffoldState,
-                topBar = {
-                    AppBar (
-                        onNavigationIconClick = {
-                            scope.launch {
-                                scaffoldState.drawerState.open()
-                            }
-                        }
-                    )
-                },
+//            val navController = rememberNavController()
+//            val navBackStackEntry by navController.currentBackStackEntryAsState()
+//            val currentRoute = navBackStackEntry?.destination?.route
+//
+//            val topBarTitle =
+//                if (currentRoute != null){
+//                    items[items.indexOfFirst {
+//                        it.route == currentRoute
+//                    }].title
+//                }
+//                else {
+//                    items[0].title
+//                }
+
+            ModalNavigationDrawer(
+                gesturesEnabled = drawerState.isOpen,
                 drawerContent = {
-                    DrawerHeader()
-                    DrawerBody(
-                        items = listOf(
-                            MenuItem(
-                                id = "dashboard",
-                                title = "Dashboard",
-                                contentDescription = "Go to dashboard",
-                                icon = Icons.Default.Dashboard
-                            ),
-                            MenuItem(
-                                id = "projects",
-                                title = "Projects",
-                                contentDescription = "Go to projects",
-                                icon = Icons.Default.ListAlt
-                            ),
-                            MenuItem(
-                                id = "tasks",
-                                title = "Tasks",
-                                contentDescription = "Go to tasks",
-                                icon = Icons.Default.Task
-                            ),
-                            MenuItem(
-                                id = "calendar",
-                                title = "Calendar",
-                                contentDescription = "Go to calendar",
-                                icon = Icons.Default.CalendarToday
-                            ),
-                            MenuItem(
-                                id = "report",
-                                title = "Report",
-                                contentDescription = "Go to report",
-                                icon = Icons.Default.Report
-                            ),
-                            MenuItem(
-                                id = "logout",
-                                title = "Logout",
-                                contentDescription = "Logout",
-                                icon = Icons.Default.Logout
-                            ),
-                        ),
-                        onItemClick = {
-                            when(it.id){
-                                "logout" -> {
-                                    val intent = Intent(context, LoginActivity::class.java)
-                                    startActivity(intent)
+                    ModalDrawerSheet {
+                        DrawerHeader()
+                        Spacer(modifier = Modifier.height(8.dp))
+                        DrawerBody(
+                            items = items,
+                            onItemClick = { currentMenuItem ->
+                                when (currentMenuItem.route){
+                                    Screens.Logout.route -> {
+                                        startActivity(Intent(this@ListProjectActivity, LoginActivity::class.java))
+                                    }
+                                    Screens.Dashboard.route -> {
+                                        startActivity(Intent(this@ListProjectActivity, DashboardActivity::class.java))
+                                    }
                                 }
                             }
-                        }
-                    )
-                },
-
-            ){
-                val hai = it
-                ListProjectPreview()
+                        )
+                    }
+                }, drawerState = drawerState
+            ) {
+                Scaffold(
+                    topBar = {
+                        AppBar (
+                            onNavigationIconClick = {
+                                scope.launch {
+                                    drawerState.open()
+                                }
+                            }
+                        )
+                    }
+                ) {
+                    val hai = it
+                    ListProjectPreview()
+                }
             }
         }
     }
@@ -169,7 +209,8 @@ class ListProjectActivity : ComponentActivity() {
             LazyColumn(
                 Modifier
                     .fillMaxSize()
-                    .padding(8.dp, 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(8.dp, 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(userProjects) { project ->
                     fun formatDate(date: String): String {
@@ -192,15 +233,11 @@ class ListProjectActivity : ComponentActivity() {
                 }
             }
         }
-        FloatingButton(
-            onClick = {
-
-            }
-        )
+        FloatingButton()
     }
 
     @Composable
-    fun FloatingButton(onClick: () -> Unit) {
+    fun FloatingButton() {
         val context = LocalContext.current
         Box(
             modifier = Modifier
@@ -237,6 +274,7 @@ class ListProjectActivity : ComponentActivity() {
         members: List<String>,
         padding: Dp = 12.dp
     ) {
+        val context = LocalContext.current
         var expandedState by remember { mutableStateOf(false) }
         val rotationState by animateFloatAsState(
             targetValue = if (expandedState) 180f else 0f, label = ""
@@ -381,24 +419,51 @@ class ListProjectActivity : ComponentActivity() {
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(vertical = 8.dp)
                     ){
-                        for (i in 0..members.lastIndex) {
-                            Box(
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .background(
-                                        color = Color(0xFFECFFFF),
-                                        shape = RoundedCornerShape(24.dp)
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(4.dp)
+                        ) {
+                            Row(modifier = Modifier.clickable(onClick = {
+                                val intent = Intent(context, AddProjectActivity::class.java)
+                                context.startActivity(intent)
+                            }), verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = if (i < 4) members[i] else "+${members.size - 4}",
-                                    fontSize = 20.sp,
-                                    fontFamily = AppFont.fontBold,
+                                    text = "See Details",
+                                    fontSize = 16.sp,
+                                    fontFamily = AppFont.fontNormal,
                                     color = Color(0xFF0E9794)
                                 )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Image(
+                                    painter = painterResource(id = R.drawable.icon_arrow_right),
+                                    contentDescription = "Plus Icon",
+                                    modifier = Modifier.size(20.dp)
+                                )
                             }
-                            if (i > 3) break
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                for (i in 0..members.lastIndex) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(48.dp)
+                                            .background(
+                                                color = Color(0xFFECFFFF),
+                                                shape = RoundedCornerShape(24.dp)
+                                            ),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = if (i < 3) members[i] else "+${members.size - 3}",
+                                            fontSize = 20.sp,
+                                            fontFamily = AppFont.fontBold,
+                                            color = Color(0xFF0E9794)
+                                        )
+                                    }
+                                    if (i > 2) break
+                                }
+                            }
                         }
                     }
                 }

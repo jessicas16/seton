@@ -1,6 +1,6 @@
 package com.example.seton.projectPage
 
-import android.app.Activity
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -23,6 +23,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.IconButton
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HorizontalRule
 import androidx.compose.material.icons.filled.Person
@@ -30,6 +32,23 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.ListAlt
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Report
+import androidx.compose.material.icons.filled.Task
+import androidx.compose.material.icons.outlined.CalendarToday
+import androidx.compose.material.icons.outlined.Dashboard
+import androidx.compose.material.icons.outlined.ListAlt
+import androidx.compose.material.icons.outlined.Logout
+import androidx.compose.material.icons.outlined.Report
+import androidx.compose.material.icons.outlined.Task
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,9 +70,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.seton.AppBar
+import com.example.seton.DrawerBody
+import com.example.seton.DrawerHeader
+import com.example.seton.MenuItem
 import com.example.seton.R
+import com.example.seton.Screens
+import com.example.seton.SetUpNavGraph
 import com.example.seton.component.CustomDateTimePicker
 import com.example.seton.entity.addProjectDTO
+import com.example.seton.loginRegister.LoginActivity
+import com.example.seton.mainPage.DashboardActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -71,6 +100,103 @@ class AddProjectActivity : ComponentActivity() {
         setContent {
             scope = rememberCoroutineScope()
             AddNewProject()
+            val items = listOf(
+                MenuItem(
+                    title = "Dashboard",
+                    route = Screens.Dashboard.route,
+                    selectedIcon = Icons.Filled.Dashboard,
+                    unSelectedIcon = Icons.Outlined.Dashboard
+                ),
+                MenuItem(
+                    title = "Projects",
+                    route = Screens.Projects.route,
+                    selectedIcon = Icons.Filled.ListAlt,
+                    unSelectedIcon = Icons.Outlined.ListAlt
+                ),
+                MenuItem(
+                    title = "Tasks",
+                    route = Screens.Tasks.route,
+                    selectedIcon = Icons.Filled.Task,
+                    unSelectedIcon = Icons.Outlined.Task
+                ),
+                MenuItem(
+                    title = "Calendar",
+                    route = Screens.Calendar.route,
+                    selectedIcon = Icons.Filled.CalendarToday,
+                    unSelectedIcon = Icons.Outlined.CalendarToday
+                ),
+                MenuItem(
+                    title = "Report",
+                    route = Screens.Report.route,
+                    selectedIcon = Icons.Filled.Report,
+                    unSelectedIcon = Icons.Outlined.Report
+                ),
+                MenuItem(
+                    title = "Dashboard",
+                    route = Screens.Logout.route,
+                    selectedIcon = Icons.Filled.Logout,
+                    unSelectedIcon = Icons.Outlined.Logout
+                ),
+            )
+
+            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+            val scope = rememberCoroutineScope()
+            val navController = rememberNavController()
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+
+            val topBarTitle =
+                if (currentRoute != null){
+                    items[items.indexOfFirst {
+                        it.route == currentRoute
+                    }].title
+                }
+                else {
+                    items[0].title
+                }
+
+            ModalNavigationDrawer(
+                gesturesEnabled = drawerState.isOpen,
+                drawerContent = {
+                    ModalDrawerSheet {
+                        DrawerHeader()
+                        Spacer(modifier = Modifier.height(8.dp))
+                        DrawerBody(
+                            items = items,
+                        ){
+                                currentMenuItem ->
+                            navController.navigate(currentMenuItem.route){
+                                navController.graph.startDestinationRoute?.let {
+                                        startDestinationRoute ->
+                                    popUpTo(startDestinationRoute){
+                                        saveState = true
+                                    }
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        }
+                    }
+                }, drawerState = drawerState
+            ) {
+                Scaffold(
+                    topBar = {
+                        AppBar (
+                            onNavigationIconClick = {
+                                scope.launch {
+                                    drawerState.open()
+                                }
+                            }
+                        )
+                    }
+                ) { innerPadding ->
+                    SetUpNavGraph(navController = navController, innerPadding = innerPadding)
+                }
+                AddNewProject()
+            }
         }
     }
 
