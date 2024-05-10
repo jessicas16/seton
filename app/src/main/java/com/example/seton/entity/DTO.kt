@@ -22,3 +22,13 @@ data class addProjectDTO(
     val members_email: List<String>?,
     val pm_email: String
 )
+
+data class addTaskDTO(
+    val title: String,
+    val description: String,
+    val deadline: String,
+    val taks_team: List<String>?,
+    val priority : String,
+    val pic_email: String,
+    val project_id : String
+)

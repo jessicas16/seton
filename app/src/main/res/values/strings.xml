@@ -8,5 +8,6 @@
     <string name="title_activity_dashboard">DashboardActivity</string>
     <string name="title_activity_list_project">ListProjectActivity</string>
     <string name="title_activity_task">TaskActivity</string>
+    <string name="title_activity_add_task">AddTaskActivity</string>
     <string name="title_activity_calendar">CalendarActivity</string>
 </resources>

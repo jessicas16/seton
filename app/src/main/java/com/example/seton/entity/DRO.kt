@@ -34,3 +34,9 @@ data class UserDRO(
     var message: String,
     var data : Users
 )
+
+data class ProjectDRO(
+    var status : String,
+    var message: String,
+    var data : Projects
+)
