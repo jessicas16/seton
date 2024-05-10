@@ -13,3 +13,12 @@ data class userLoginDTO(
     val email: String,
     val password: String
 )
+
+data class addProjectDTO(
+    val name: String,
+    val description: String,
+    val startTime : String,
+    val deadline: String,
+    val members_email: List<String>?,
+    val pm_email: String
+)

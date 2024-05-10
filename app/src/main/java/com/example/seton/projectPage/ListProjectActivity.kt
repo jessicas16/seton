@@ -79,9 +79,11 @@ import kotlinx.coroutines.launch
 class ListProjectActivity : ComponentActivity() {
     private val vm: ListProjectViewModel by viewModels<ListProjectViewModel>()
     private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    lateinit var userEmail : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        userEmail = intent.getStringExtra("userEmail").toString()
         setContent {
             val scaffoldState = rememberScaffoldState()
             val scope = rememberCoroutineScope()
@@ -209,6 +211,7 @@ class ListProjectActivity : ComponentActivity() {
             Button(
                 onClick = {
                     val intent = Intent(context, AddProjectActivity::class.java)
+                    intent.putExtra("userEmail", userEmail)
                     context.startActivity(intent)
                 },
                 colors = ButtonDefaults.buttonColors(Color(0xFF0E9794)),

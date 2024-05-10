@@ -1,9 +1,9 @@
 package com.example.seton.projectPage
 
+import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,12 +20,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HorizontalRule
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -37,9 +37,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -51,18 +53,23 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.seton.R
 import com.example.seton.component.CustomDateTimePicker
+import com.example.seton.entity.addProjectDTO
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class AddProjectActivity : ComponentActivity() {
     private val vm: AddProjectViewModel by viewModels<AddProjectViewModel>()
-    private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    private lateinit var scope: CoroutineScope
+    lateinit var userEmail : String
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        userEmail = intent.getStringExtra("userEmail").toString()
         setContent {
+            scope = rememberCoroutineScope()
             AddNewProject()
         }
     }
@@ -71,6 +78,7 @@ class AddProjectActivity : ComponentActivity() {
     @Preview(showBackground = true)
     @Composable
     fun AddNewProject() {
+        val context = LocalContext.current
         var invitedUser = mutableListOf<String>()
         val invitedUserProjects by vm.invitedUsers.observeAsState(emptyList())
         LaunchedEffect(key1 = Unit) {
@@ -211,23 +219,31 @@ class AddProjectActivity : ComponentActivity() {
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
-                
+
                 Button(
                     onClick = {
+                        if(userEmail == email.value){
+                            Toast.makeText(this@AddProjectActivity, "You cannot invite yourself", Toast.LENGTH_SHORT).show()
+                            return@Button
+                        }
+
                         if (email.value.isEmpty()) {
                             Toast.makeText(this@AddProjectActivity, "Email cannot be empty", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
-                        ioScope.launch(Dispatchers.IO) {
+
+                        scope.launch {
                             vm.checkEmailUser(email.value)
+                            delay(1000)
                             val res = vm.checkEmail.value
+                            Log.i("RES2", res.toString())
                             runOnUiThread{
                                 if(res != null){
-                                    Toast.makeText(this@AddProjectActivity, res.message, Toast.LENGTH_SHORT).show()
                                     if(res.status == "200"){
                                         invitedUser.add(email.value)
                                         Log.i("INVITED_USER", invitedUser.toString())
                                     }
+                                    Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()
                                     email.value = ""
                                 }
                             }
@@ -251,7 +267,8 @@ class AddProjectActivity : ComponentActivity() {
 
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
+                    .height(200.dp)
                     .constrainAs(listUser) {
                         top.linkTo(searchField.bottom, margin = 4.dp)
                         start.linkTo(parent.start)
@@ -262,24 +279,84 @@ class AddProjectActivity : ComponentActivity() {
             ) {
                 items(invitedUserProjects) { user ->
                     Row(
-                        horizontalArrangement = Arrangement.Center,
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(text = user.name)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Icon(
-                            imageVector = Icons.Default.HorizontalRule,
-                            contentDescription = "Remove",
-                            modifier = Modifier
-                                .size(40.dp),
-                            Color.Red
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (user.profile_picture == null){
+                                Icon(
+                                    imageVector = Icons.Default.Person,
+                                    contentDescription = "Profile Picture",
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = user.name)
+                        }
+
+                        Row {
+                            IconButton(
+                                onClick = {
+                                    vm.removeUser(user.email)
+                                    Toast.makeText(this@AddProjectActivity, "Remove", Toast.LENGTH_SHORT).show()
+                                },
+                            ){
+                                Icon(
+                                    imageVector = Icons.Default.HorizontalRule,
+                                    contentDescription = "Remove",
+                                    modifier = Modifier
+                                        .size(40.dp),
+                                    Color.Red,
+                                )
+                            }
+                        }
                     }
                 }
             }
-
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    if (projectName.value.isEmpty() || projectDesc.value.isEmpty()) {
+                        Toast.makeText(this@AddProjectActivity, "Project Name and Description cannot be empty", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
+
+                    val dto = addProjectDTO(
+                        name = projectName.value,
+                        description = projectDesc.value,
+                        startTime = startDateTimeState.value.toString(),
+                        deadline = deadlineState.value.toString(),
+                        members_email = invitedUser,
+                        pm_email = userEmail
+                    )
+
+                    Log.i("DTO", dto.toString())
+                    scope.launch {
+                        vm.addNewProject(dto)
+                        delay(1000)
+                        val res = vm.response.value
+                        Log.i("RES", res.toString())
+                        runOnUiThread {
+                            if (res != null) {
+                                Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()
+                                if (res.status == "201") {
+                                    //reset allfields
+                                    projectName.value = ""
+                                    projectDesc.value = ""
+                                    startDateTimeState.value = LocalDateTime.now()
+                                    deadlineState.value = LocalDateTime.now()
+                                    invitedUser.clear()
+
+                                    //finish activity
+                                    finish()
+                                }
+                            }
+                        }
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0E9794)),
                 modifier = Modifier
                     .constrainAs(btnCreate) {
