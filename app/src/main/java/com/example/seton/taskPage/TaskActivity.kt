@@ -64,7 +64,7 @@ class TaskActivity : ComponentActivity() {
         LaunchedEffect(key1 = Unit) {
             vm.getUserTasks()
         }
-        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+        ConstraintLayout(modifier = Modifier.fillMaxSize().background(Color.White)) {
             LazyColumn(
                 Modifier
                     .fillMaxSize()
@@ -228,9 +228,9 @@ class TaskActivity : ComponentActivity() {
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(4.dp)
                         ) {
-                            Row(modifier = Modifier.clickable(onClick = {
+                            Row(modifier = Modifier.clickable {
                                 // Go to Task Details
-                            }), verticalAlignment = Alignment.CenterVertically) {
+                            }, verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = "See Details",
                                     fontSize = 14.sp,
