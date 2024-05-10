@@ -1,4 +1,4 @@
-package com.example.seton.projectPage
+package com.example.seton.taskPage
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -7,25 +7,65 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seton.config.ApiConfiguration
 import com.example.seton.entity.BasicDRO
+import com.example.seton.entity.ProjectDRO
+import com.example.seton.entity.Projects
 import com.example.seton.entity.UserDRO
 import com.example.seton.entity.Users
-import com.example.seton.entity.addProjectDTO
+import com.example.seton.entity.addTaskDTO
 import kotlinx.coroutines.launch
 
-class AddProjectViewModel: ViewModel() {
+class AddTaskViewModel: ViewModel() {
     private var repo = ApiConfiguration.defaultRepo
     private val _invitedUsers = MutableLiveData<List<Users>>()
+    private val _projects = MutableLiveData<ProjectDRO>()
+    private val _users = MutableLiveData<List<Users>>()
     private val _checkEmail = MutableLiveData<UserDRO>()
     private var _response = MutableLiveData<BasicDRO>()
 
-    val invitedUsers: LiveData<List<Users>>
+    val invitedUsers: MutableLiveData<List<Users>>
         get() = _invitedUsers
 
     val checkEmail: LiveData<UserDRO>
         get() = _checkEmail
 
+    val projects: MutableLiveData<ProjectDRO>
+        get() = _projects
+
+    val users: MutableLiveData<List<Users>>
+        get() = _users
+
     val response: LiveData<BasicDRO>
         get() = _response
+
+    suspend fun getProjectById (projectId: String) {
+        viewModelScope.launch {
+            try {
+                val res = repo.getProjectById(projectId)
+                Log.i("DATA_PROJECTS", res.data.toString())
+                _projects.value = res
+            } catch (e: Exception) {
+                Log.e("ERROR", e.message.toString())
+                _projects.value = ProjectDRO(
+                    status = "500",
+                    message = "an error occurred",
+                    data = Projects(id = 0,name = "",description = "",start = "",deadline = "",pm_email = "",status = -1)
+                )
+            }
+        }
+    }
+
+    suspend fun getProjectMembers (projectId: String) {
+        viewModelScope.launch {
+            try {
+                val res = repo.getProjectMembers(projectId)
+                Log.i("Project Member", res.data.toString())
+                _users.value = res.data
+            } catch (e: Exception) {
+                Log.e("ERROR", e.message.toString())
+                _users.value = listOf()
+            }
+        }
+    }
 
     fun checkList(email: String):Boolean{
         if(_invitedUsers.value?.size == null){
@@ -39,6 +79,7 @@ class AddProjectViewModel: ViewModel() {
             return false
         }
     }
+
     suspend fun checkEmailUser(email : String = "") {
         val check = checkList(email)
         if(!check){
@@ -87,10 +128,10 @@ class AddProjectViewModel: ViewModel() {
         _invitedUsers.postValue(list)
     }
 
-    suspend fun addNewProject(project :addProjectDTO){
+    fun createTask(task : addTaskDTO){
         viewModelScope.launch {
             try {
-                val res = repo.createProject(project)
+                val res = repo.createTask(task)
                 _response.postValue(res)
             } catch (e: Exception) {
                 Log.e("ERROR", e.message.toString())

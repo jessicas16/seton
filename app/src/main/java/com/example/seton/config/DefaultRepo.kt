@@ -39,9 +39,22 @@ class DefaultRepo(
 
     suspend fun createProject(projectDTO: addProjectDTO): BasicDRO {
         return dataSourceRemote.createProject(projectDTO)
+    }
+
+    suspend fun getProjectById(projectId: String): ProjectDRO {
+        return dataSourceRemote.getProjectById(projectId)
+    }
 
     //TASKS
     suspend fun getUserTasks(force:Boolean = false, email: String = "ivan.s21@mhs.istts.ac.id"): ListTaskDRO {
         return dataSourceRemote.getUserTasks(email)
+    }
+
+    suspend fun getProjectMembers(projectId: String): ListUserDRO {
+        return dataSourceRemote.getProjectMembers(projectId)
+    }
+
+    suspend fun createTask(taskDTO: addTaskDTO): BasicDRO {
+        return dataSourceRemote.createTask(taskDTO)
     }
 }

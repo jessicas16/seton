@@ -2,6 +2,7 @@ package com.example.seton.projectPage
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -90,6 +91,7 @@ import com.example.seton.Screens
 import com.example.seton.SetUpNavGraph
 import com.example.seton.loginRegister.LoginActivity
 import com.example.seton.mainPage.DashboardActivity
+import com.example.seton.taskPage.AddTaskActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -218,6 +220,7 @@ class ListProjectActivity : ComponentActivity() {
                         return "${date.substring(8, 10)} ${monthMap[date.substring(5, 7).toInt() - 1]} ${date.substring(0, 4)}"
                     }
                     ExpandableCard(
+                        project.id,
                         project.name,
                         project.description,
                         formatDate(project.deadline),
@@ -265,6 +268,7 @@ class ListProjectActivity : ComponentActivity() {
 
     @Composable
     fun ExpandableCard(
+        id : Int,
         name: String,
         description: String,
         deadline: String,
@@ -424,7 +428,8 @@ class ListProjectActivity : ComponentActivity() {
                             modifier = Modifier.padding(4.dp)
                         ) {
                             Row(modifier = Modifier.clickable(onClick = {
-                                val intent = Intent(context, AddProjectActivity::class.java)
+                                val intent = Intent(context, AddTaskActivity::class.java)
+                                intent.putExtra("projectId", id.toString())
                                 context.startActivity(intent)
                             }), verticalAlignment = Alignment.CenterVertically) {
                                 Text(
