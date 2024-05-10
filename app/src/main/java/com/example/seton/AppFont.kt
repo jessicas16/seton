@@ -17,4 +17,10 @@ object AppFont {
     val fontSemiBold = FontFamily(
         Font(R.font.open_sans_semi_bold, FontWeight.SemiBold)
     )
+    val fontExtraBold = FontFamily(
+        Font(R.font.open_sans_extra_bold, FontWeight.ExtraBold)
+    )
+    val fontMedium = FontFamily(
+        Font(R.font.open_sans_medium, FontWeight.Medium)
+    )
 }
