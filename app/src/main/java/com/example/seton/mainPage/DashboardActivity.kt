@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -43,7 +45,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.seton.AppBar
 import com.example.seton.DrawerBody
 import com.example.seton.DrawerHeader
@@ -147,7 +151,44 @@ class DashboardActivity : ComponentActivity() {
                     }
                 ) {
                     val hai = it
-                    Modifier.padding(30.dp)
+                    chartPreview()
+                }
+            }
+        }
+    }
+
+    @Preview(showBackground = true)
+    @Composable
+    fun chartPreview() {
+        ConstraintLayout(modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)) {
+            LazyColumn(
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp, 60.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ){
+                item {
+                    chartItem()
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun chartItem() {
+        Column {
+            Text(
+                text = "Weekly Stats",
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.padding(2.dp, 10.dp)
+            )
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                Card(
+                    elevation = 8.dp,
+                    backgroundColor = Color.White,
+                ) {
                     Chart(
                         data = mapOf(
                             Pair(0.5f, 10),
@@ -156,23 +197,11 @@ class DashboardActivity : ComponentActivity() {
                             Pair(0.7f, 15),
                             Pair(0.8f, 16),
                         ),
-                        max_value = 1000
+                        max_value = 6,
+                        days = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
                     )
                 }
-//
             }
         }
     }
 }
-
-//@Composable
-//fun Dashboard() {
-//    Column(modifier = Modifier
-//        .fillMaxSize()
-//        .padding(16.dp)) {
-//        Text(text = "Weekly Stats", style = MaterialTheme.typography.h4, color = Color.White)
-//        Spacer(modifier = Modifier.height(16.dp))
-//        BarChart()
-//        TaskSummary(upcoming = 15, completed = 11, ongoing = 3)
-//    }
-//}
