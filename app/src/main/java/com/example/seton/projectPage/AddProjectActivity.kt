@@ -70,15 +70,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+//import androidx.navigation.compose.currentBackStackEntryAsState
+//import androidx.navigation.compose.rememberNavController
 import com.example.seton.AppBar
 import com.example.seton.DrawerBody
 import com.example.seton.DrawerHeader
 import com.example.seton.MenuItem
 import com.example.seton.R
 import com.example.seton.Screens
-import com.example.seton.SetUpNavGraph
+//import com.example.seton.SetUpNavGraph
 import com.example.seton.component.CustomDateTimePicker
 import com.example.seton.entity.addProjectDTO
 import com.example.seton.loginRegister.LoginActivity
@@ -98,8 +98,6 @@ class AddProjectActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         userEmail = intent.getStringExtra("userEmail").toString()
         setContent {
-            scope = rememberCoroutineScope()
-            AddNewProject()
             val items = listOf(
                 MenuItem(
                     title = "Dashboard",
@@ -132,7 +130,7 @@ class AddProjectActivity : ComponentActivity() {
                     unSelectedIcon = Icons.Outlined.Report
                 ),
                 MenuItem(
-                    title = "Dashboard",
+                    title = "Logout",
                     route = Screens.Logout.route,
                     selectedIcon = Icons.Filled.Logout,
                     unSelectedIcon = Icons.Outlined.Logout
@@ -141,19 +139,19 @@ class AddProjectActivity : ComponentActivity() {
 
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             val scope = rememberCoroutineScope()
-            val navController = rememberNavController()
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route
-
-            val topBarTitle =
-                if (currentRoute != null){
-                    items[items.indexOfFirst {
-                        it.route == currentRoute
-                    }].title
-                }
-                else {
-                    items[0].title
-                }
+//            val navController = rememberNavController()
+//            val navBackStackEntry by navController.currentBackStackEntryAsState()
+//            val currentRoute = navBackStackEntry?.destination?.route
+//
+//            val topBarTitle =
+//                if (currentRoute != null){
+//                    items[items.indexOfFirst {
+//                        it.route == currentRoute
+//                    }].title
+//                }
+//                else {
+//                    items[0].title
+//                }
 
             ModalNavigationDrawer(
                 gesturesEnabled = drawerState.isOpen,
@@ -163,22 +161,17 @@ class AddProjectActivity : ComponentActivity() {
                         Spacer(modifier = Modifier.height(8.dp))
                         DrawerBody(
                             items = items,
-                        ){
-                                currentMenuItem ->
-                            navController.navigate(currentMenuItem.route){
-                                navController.graph.startDestinationRoute?.let {
-                                        startDestinationRoute ->
-                                    popUpTo(startDestinationRoute){
-                                        saveState = true
+                            onItemClick = { currentMenuItem ->
+                                when (currentMenuItem.route){
+                                    Screens.Logout.route -> {
+                                        startActivity(Intent(this@AddProjectActivity, LoginActivity::class.java))
+                                    }
+                                    Screens.Dashboard.route -> {
+                                        startActivity(Intent(this@AddProjectActivity, DashboardActivity::class.java))
                                     }
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
-                            scope.launch {
-                                drawerState.close()
-                            }
-                        }
+                        )
                     }
                 }, drawerState = drawerState
             ) {
@@ -192,10 +185,10 @@ class AddProjectActivity : ComponentActivity() {
                             }
                         )
                     }
-                ) { innerPadding ->
-                    SetUpNavGraph(navController = navController, innerPadding = innerPadding)
+                ) {
+                    val hai = it
+                    AddNewProject()
                 }
-                AddNewProject()
             }
         }
     }

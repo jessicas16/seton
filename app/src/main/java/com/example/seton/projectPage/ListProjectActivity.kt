@@ -77,8 +77,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.example.seton.AppBar
 import com.example.seton.AppFont
 import com.example.seton.DrawerBody
@@ -86,9 +84,11 @@ import com.example.seton.DrawerHeader
 import com.example.seton.MenuItem
 import com.example.seton.R
 import com.example.seton.Screens
-import com.example.seton.SetUpNavGraph
+//import com.example.seton.SetUpNavGraph
 import com.example.seton.loginRegister.LoginActivity
 import com.example.seton.mainPage.DashboardActivity
+import com.example.seton.taskPage.AddTaskActivity
+import com.example.seton.taskPage.TaskActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -172,6 +172,9 @@ class ListProjectActivity : ComponentActivity() {
                                     }
                                     Screens.Dashboard.route -> {
                                         startActivity(Intent(this@ListProjectActivity, DashboardActivity::class.java))
+                                    }
+                                    Screens.Tasks.route -> {
+                                        startActivity(Intent(this@ListProjectActivity, TaskActivity::class.java))
                                     }
                                 }
                             }

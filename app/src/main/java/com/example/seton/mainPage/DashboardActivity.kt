@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -43,15 +45,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.seton.AppBar
 import com.example.seton.DrawerBody
 import com.example.seton.DrawerHeader
 import com.example.seton.MenuItem
 import com.example.seton.Screens
-import com.example.seton.SetUpNavGraph
+//import com.example.seton.SetUpNavGraph
 import com.example.seton.loginRegister.LoginActivity
 import com.example.seton.projectPage.ListProjectActivity
 import kotlinx.coroutines.launch
@@ -149,63 +151,57 @@ class DashboardActivity : ComponentActivity() {
                     }
                 ) {
                     val hai = it
-                    Dashboard()
+                    chartPreview()
                 }
-//
             }
         }
     }
-}
 
-@Composable
-fun Dashboard() {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
-        Text(text = "Weekly Stats", style = MaterialTheme.typography.h4, color = Color.White)
-        Spacer(modifier = Modifier.height(16.dp))
-        BarChart()
-        TaskSummary(upcoming = 15, completed = 11, ongoing = 3)
-    }
-}
-
-@Composable
-fun BarChart() {
-    // Dummy data
-    val data = listOf(0, 2, 3, 0, 0, 0, 0)
-    val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-
-    Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-        data.forEachIndexed { index, value ->
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = value.toString(), color = Color.White)
-                Box(
-                    modifier = Modifier
-                        .width(10.dp)
-                        .height((value * 10).dp)
-                        .background(Color.Blue)
-                )
-                Text(text = daysOfWeek[index], color = Color.White)
+    @Preview(showBackground = true)
+    @Composable
+    fun chartPreview() {
+        ConstraintLayout(modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)) {
+            LazyColumn(
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp, 60.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ){
+                item {
+                    chartItem()
+                }
             }
         }
     }
-}
 
-@Composable
-fun TaskSummary(upcoming: Int, completed: Int, ongoing: Int) {
-    Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-        SummaryItem(title = "Upcoming", count = upcoming, color = Color(0xFFFB8C00))
-        SummaryItem(title = "Completed", count = completed, color = Color(0xFFC0CA33))
-        SummaryItem(title = "Ongoing", count = ongoing, color = Color.Gray)
-    }
-}
-
-@Composable
-fun SummaryItem(title: String, count: Int, color: Color) {
-    Surface(color = color, shape = RoundedCornerShape(8.dp), modifier = Modifier.padding(8.dp)) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(16.dp)) {
-            Text(text = title, style = MaterialTheme.typography.body1, color = Color.White)
-            Text(text = count.toString(), style = MaterialTheme.typography.h6, color = Color.White)
+    @Composable
+    fun chartItem() {
+        Column {
+            Text(
+                text = "Weekly Stats",
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.padding(2.dp, 10.dp)
+            )
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                Card(
+                    elevation = 8.dp,
+                    backgroundColor = Color.White,
+                ) {
+                    Chart(
+                        data = mapOf(
+                            Pair(0.5f, 10),
+                            Pair(0.6f, 12),
+                            Pair(0.2f, 13),
+                            Pair(0.7f, 15),
+                            Pair(0.8f, 16),
+                        ),
+                        max_value = 6,
+                        days = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+                    )
+                }
+            }
         }
     }
 }
