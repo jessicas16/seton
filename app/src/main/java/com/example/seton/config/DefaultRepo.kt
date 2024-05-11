@@ -45,6 +45,10 @@ class DefaultRepo(
         return dataSourceRemote.getProjectById(projectId)
     }
 
+    suspend fun getProjectDetail(projectId: String): ProjectDetailDRO {
+        return dataSourceRemote.getProjectDetail(projectId)
+    }
+
     //TASKS
     suspend fun getUserTasks(force:Boolean = false, email: String = "ivan.s21@mhs.istts.ac.id"): ListTaskDRO {
         return dataSourceRemote.getUserTasks(email)

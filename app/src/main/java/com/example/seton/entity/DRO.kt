@@ -1,6 +1,7 @@
 package com.example.seton.entity
 
 import com.example.seton.projectPage.DataProject
+import com.example.seton.projectPage.DetailProject
 import com.example.seton.taskPage.DataTask
 import com.squareup.moshi.JsonClass
 
@@ -39,4 +40,10 @@ data class ProjectDRO(
     var status : String,
     var message: String,
     var data : Projects
+)
+
+data class ProjectDetailDRO(
+    var status : String,
+    var message: String,
+    var data : DetailProject,
 )
