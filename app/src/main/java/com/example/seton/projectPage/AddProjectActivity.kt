@@ -138,7 +138,7 @@ class AddProjectActivity : ComponentActivity() {
             )
 
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-            val scope = rememberCoroutineScope()
+            scope = rememberCoroutineScope()
 //            val navController = rememberNavController()
 //            val navBackStackEntry by navController.currentBackStackEntryAsState()
 //            val currentRoute = navBackStackEntry?.destination?.route
@@ -387,7 +387,7 @@ class AddProjectActivity : ComponentActivity() {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(150.dp)
                     .constrainAs(listUser) {
                         top.linkTo(searchField.bottom, margin = 4.dp)
                         start.linkTo(parent.start)
