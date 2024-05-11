@@ -19,7 +19,7 @@ class ProjectDetailsViewModel: ViewModel() {
     val projects: MutableLiveData<ProjectDetailDRO>
         get() = _projects
 
-    suspend fun getProjectById (projectId: String) {
+    fun getProjectById (projectId: String) {
         viewModelScope.launch {
             try {
                 val res = repo.getProjectDetail(projectId)

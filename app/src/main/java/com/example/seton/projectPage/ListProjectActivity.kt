@@ -87,7 +87,6 @@ import com.example.seton.Screens
 //import com.example.seton.SetUpNavGraph
 import com.example.seton.loginRegister.LoginActivity
 import com.example.seton.mainPage.DashboardActivity
-import com.example.seton.taskPage.AddTaskActivity
 import com.example.seton.taskPage.TaskActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
