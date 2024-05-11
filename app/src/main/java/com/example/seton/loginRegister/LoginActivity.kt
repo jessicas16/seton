@@ -214,7 +214,7 @@ class LoginActivity : ComponentActivity() {
                                 runOnUiThread{
                                     if(res != null){
                                         if(res.status == "200"){
-                                            val intent = Intent(context, CalendarActivity::class.java)
+                                            val intent = Intent(context, ListProjectActivity::class.java)
                                             intent.putExtra("userEmail", email.value)
                                             context.startActivity(intent)
                                         } else {

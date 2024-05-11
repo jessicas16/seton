@@ -2,7 +2,6 @@ package com.example.seton.projectPage
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -30,7 +29,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -91,7 +89,6 @@ import com.example.seton.Screens
 import com.example.seton.SetUpNavGraph
 import com.example.seton.loginRegister.LoginActivity
 import com.example.seton.mainPage.DashboardActivity
-import com.example.seton.taskPage.AddTaskActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -433,7 +430,7 @@ class ListProjectActivity : ComponentActivity() {
                             modifier = Modifier.padding(4.dp)
                         ) {
                             Row(modifier = Modifier.clickable(onClick = {
-                                val intent = Intent(context, AddTaskActivity::class.java)
+                                val intent = Intent(context, ProjectDetailsActivity::class.java)
                                 intent.putExtra("projectId", id.toString())
                                 context.startActivity(intent)
                             }), verticalAlignment = Alignment.CenterVertically) {

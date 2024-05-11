@@ -1,4 +1,4 @@
-package com.example.seton.taskPage
+package com.example.seton.projectPage
 
 import android.os.Build
 import android.os.Bundle
@@ -8,9 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,12 +32,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -66,9 +61,7 @@ import com.example.seton.component.CustomDateTimePicker
 import com.example.seton.entity.ProjectDRO
 import com.example.seton.entity.Projects
 import com.example.seton.entity.Users
-import com.example.seton.entity.addProjectDTO
 import com.example.seton.entity.addTaskDTO
-import com.example.seton.projectPage.AddProjectViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -93,7 +86,7 @@ class AddTaskActivity : ComponentActivity() {
     @Composable
     fun AddNewTasks() {
         val context = LocalContext.current
-        var invitedUser = mutableListOf<String>()
+        val invitedUser = mutableListOf<String>()
         val invitedUserTask by vm.invitedUsers.observeAsState(emptyList())
         LaunchedEffect(key1 = Unit) {
             vm.invitedUsers.value

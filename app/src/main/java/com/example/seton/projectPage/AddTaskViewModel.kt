@@ -1,4 +1,4 @@
-package com.example.seton.taskPage
+package com.example.seton.projectPage
 
 import android.util.Log
 import androidx.lifecycle.LiveData
