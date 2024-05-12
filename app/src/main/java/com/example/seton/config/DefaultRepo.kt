@@ -1,9 +1,11 @@
 package com.example.seton.config
 
+import com.example.seton.config.local.AppDatabase
 import com.example.seton.entity.*
 import org.json.JSONObject
 
 class DefaultRepo(
+    private val dataSourcelocal: AppDatabase,
     private val dataSourceRemote : ApiService,
 ) {
     //TEST CONNECTION
