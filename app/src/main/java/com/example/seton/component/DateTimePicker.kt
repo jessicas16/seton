@@ -217,6 +217,7 @@ fun CustomDateTimePicker(
     Column(modifier = modifier) {
         Text(
             text = title,
+            modifier = Modifier.padding(bottom = 4.dp)
         )
         Row {
             CustomDatePicker(
@@ -225,7 +226,6 @@ fun CustomDateTimePicker(
                 onDatePicked = updateState,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(4.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
 
@@ -234,7 +234,6 @@ fun CustomDateTimePicker(
                 onTimePicked = updateState,
                 modifier = Modifier
                     .weight(.5f)
-                    .padding(4.dp)
             )
         }
     }

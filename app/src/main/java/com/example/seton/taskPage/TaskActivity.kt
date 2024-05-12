@@ -1,5 +1,6 @@
 package com.example.seton.taskPage
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,16 +25,35 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.ListAlt
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Report
+import androidx.compose.material.icons.filled.Task
+import androidx.compose.material.icons.outlined.CalendarToday
+import androidx.compose.material.icons.outlined.Dashboard
+import androidx.compose.material.icons.outlined.ListAlt
+import androidx.compose.material.icons.outlined.Logout
+import androidx.compose.material.icons.outlined.Report
+import androidx.compose.material.icons.outlined.Task
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,16 +64,123 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.seton.AppBar
 import com.example.seton.AppFont
+import com.example.seton.DrawerBody
+import com.example.seton.DrawerHeader
+import com.example.seton.MenuItem
 import com.example.seton.R
+import com.example.seton.Screens
+import com.example.seton.loginRegister.LoginActivity
+import com.example.seton.mainPage.DashboardActivity
+import com.example.seton.projectPage.ListProjectActivity
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.launch
 
 class TaskActivity : ComponentActivity() {
     private val vm: TaskViewModel by viewModels<TaskViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TaskPreview()
+            val items = listOf(
+                MenuItem(
+                    title = "Dashboard",
+                    route = Screens.Dashboard.route,
+                    selectedIcon = Icons.Filled.Dashboard,
+                    unSelectedIcon = Icons.Outlined.Dashboard
+                ),
+                MenuItem(
+                    title = "Projects",
+                    route = Screens.Projects.route,
+                    selectedIcon = Icons.Filled.ListAlt,
+                    unSelectedIcon = Icons.Outlined.ListAlt
+                ),
+                MenuItem(
+                    title = "Tasks",
+                    route = Screens.Tasks.route,
+                    selectedIcon = Icons.Filled.Task,
+                    unSelectedIcon = Icons.Outlined.Task
+                ),
+                MenuItem(
+                    title = "Calendar",
+                    route = Screens.Calendar.route,
+                    selectedIcon = Icons.Filled.CalendarToday,
+                    unSelectedIcon = Icons.Outlined.CalendarToday
+                ),
+                MenuItem(
+                    title = "Report",
+                    route = Screens.Report.route,
+                    selectedIcon = Icons.Filled.Report,
+                    unSelectedIcon = Icons.Outlined.Report
+                ),
+                MenuItem(
+                    title = "Logout",
+                    route = Screens.Logout.route,
+                    selectedIcon = Icons.Filled.Logout,
+                    unSelectedIcon = Icons.Outlined.Logout
+                ),
+            )
+
+            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+            val scope = rememberCoroutineScope()
+//            val navController = rememberNavController()
+//            val navBackStackEntry by navController.currentBackStackEntryAsState()
+//            val currentRoute = navBackStackEntry?.destination?.route
+//
+//            val topBarTitle =
+//                if (currentRoute != null){
+//                    items[items.indexOfFirst {
+//                        it.route == currentRoute
+//                    }].title
+//                }
+//                else {
+//                    items[0].title
+//                }
+
+            ModalNavigationDrawer(
+                gesturesEnabled = drawerState.isOpen,
+                drawerContent = {
+                    ModalDrawerSheet {
+                        DrawerHeader()
+                        Spacer(modifier = Modifier.height(8.dp))
+                        DrawerBody(
+                            items = items,
+                            onItemClick = { currentMenuItem ->
+                                when (currentMenuItem.route){
+                                    Screens.Logout.route -> {
+                                        startActivity(Intent(this@TaskActivity, LoginActivity::class.java))
+                                    }
+                                    Screens.Dashboard.route -> {
+                                        startActivity(Intent(this@TaskActivity, DashboardActivity::class.java))
+                                    }
+                                    Screens.Tasks.route -> {
+                                        startActivity(Intent(this@TaskActivity, TaskActivity::class.java))
+                                    }
+                                    Screens.Projects.route -> {
+                                        startActivity(Intent(this@TaskActivity, ListProjectActivity::class.java))
+                                    }
+                                }
+                            }
+                        )
+                    }
+                }, drawerState = drawerState
+            ) {
+                Scaffold(
+                    topBar = {
+                        AppBar (
+                            onNavigationIconClick = {
+                                scope.launch {
+                                    drawerState.open()
+                                }
+                            }
+                        )
+                    }
+                ) {
+                    val hai = it
+                    TaskPreview()
+                }
+            }
+
         }
     }
 
@@ -64,11 +191,11 @@ class TaskActivity : ComponentActivity() {
         LaunchedEffect(key1 = Unit) {
             vm.getUserTasks()
         }
-        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+        ConstraintLayout(modifier = Modifier.fillMaxSize().background(Color.White)) {
             LazyColumn(
                 Modifier
                     .fillMaxSize()
-                    .padding(16.dp, 16.dp),
+                    .padding(16.dp, 10.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(userTasks) {
@@ -197,37 +324,40 @@ class TaskActivity : ComponentActivity() {
                                     }
                                 }
                             }
-                            Box(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 8.dp, end = 8.dp),
-                                contentAlignment = Alignment.CenterEnd
-                            ) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    val percentage = it.checklists.filter { it.is_checked == 1 }.size.toFloat() / it.checklists.size.toFloat()
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(50.dp),
-                                        progress = { percentage },
-                                        color = Color(0xFF0E9794),
-                                        strokeWidth = 5.dp,
-                                        trackColor = Color(0xFFECFFFF)
-                                    )
-                                    Text(
-                                        text = "${(percentage * 100).toInt()}%",
-                                        color = Color.Black,
-                                        fontFamily = AppFont.fontBold,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.padding(8.dp)
-                                    )
-                                }}
+                            if (it.status == 1) {
+                                Box(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 8.dp, end = 8.dp),
+                                    contentAlignment = Alignment.CenterEnd
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        val percentage = it.checklists.filter { it.is_checked == 1 }.size.toFloat() / it.checklists.size.toFloat()
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(50.dp),
+                                            progress = { percentage },
+                                            color = Color(0xFF0E9794),
+                                            strokeWidth = 5.dp,
+                                            trackColor = Color(0xFFECFFFF)
+                                        )
+                                        Text(
+                                            text = "${(percentage * 100).toInt()}%",
+                                            color = Color.Black,
+                                            fontFamily = AppFont.fontBold,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.padding(8.dp)
+                                        )
+                                    }
+                                }
+                            }
                         }
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(4.dp)
                         ) {
-                            Row(modifier = Modifier.clickable(onClick = {
+                            Row(modifier = Modifier.clickable {
                                 // Go to Task Details
-                            }), verticalAlignment = Alignment.CenterVertically) {
+                            }, verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = "See Details",
                                     fontSize = 14.sp,

@@ -1,6 +1,5 @@
 package com.example.seton.projectPage
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -23,32 +22,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.IconButton
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HorizontalRule
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material.Scaffold
-import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.Dashboard
-import androidx.compose.material.icons.filled.ListAlt
-import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material.icons.filled.Report
-import androidx.compose.material.icons.filled.Task
-import androidx.compose.material.icons.outlined.CalendarToday
-import androidx.compose.material.icons.outlined.Dashboard
-import androidx.compose.material.icons.outlined.ListAlt
-import androidx.compose.material.icons.outlined.Logout
-import androidx.compose.material.icons.outlined.Report
-import androidx.compose.material.icons.outlined.Task
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,6 +42,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -70,138 +56,54 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-//import androidx.navigation.compose.currentBackStackEntryAsState
-//import androidx.navigation.compose.rememberNavController
-import com.example.seton.AppBar
-import com.example.seton.DrawerBody
-import com.example.seton.DrawerHeader
-import com.example.seton.MenuItem
 import com.example.seton.R
-import com.example.seton.Screens
-//import com.example.seton.SetUpNavGraph
 import com.example.seton.component.CustomDateTimePicker
-import com.example.seton.entity.addProjectDTO
-import com.example.seton.loginRegister.LoginActivity
-import com.example.seton.mainPage.DashboardActivity
+import com.example.seton.entity.ProjectDRO
+import com.example.seton.entity.Projects
+import com.example.seton.entity.Users
+import com.example.seton.entity.addTaskDTO
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
-class AddProjectActivity : ComponentActivity() {
-    private val vm: AddProjectViewModel by viewModels<AddProjectViewModel>()
+class AddTaskActivity : ComponentActivity() {
+    private val vm: AddTaskViewModel by viewModels<AddTaskViewModel>()
+    private lateinit var projectId : String
     private lateinit var scope: CoroutineScope
-    lateinit var userEmail : String
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        userEmail = intent.getStringExtra("userEmail").toString()
+        projectId = intent.getStringExtra("projectId").toString()
         setContent {
-            val items = listOf(
-                MenuItem(
-                    title = "Dashboard",
-                    route = Screens.Dashboard.route,
-                    selectedIcon = Icons.Filled.Dashboard,
-                    unSelectedIcon = Icons.Outlined.Dashboard
-                ),
-                MenuItem(
-                    title = "Projects",
-                    route = Screens.Projects.route,
-                    selectedIcon = Icons.Filled.ListAlt,
-                    unSelectedIcon = Icons.Outlined.ListAlt
-                ),
-                MenuItem(
-                    title = "Tasks",
-                    route = Screens.Tasks.route,
-                    selectedIcon = Icons.Filled.Task,
-                    unSelectedIcon = Icons.Outlined.Task
-                ),
-                MenuItem(
-                    title = "Calendar",
-                    route = Screens.Calendar.route,
-                    selectedIcon = Icons.Filled.CalendarToday,
-                    unSelectedIcon = Icons.Outlined.CalendarToday
-                ),
-                MenuItem(
-                    title = "Report",
-                    route = Screens.Report.route,
-                    selectedIcon = Icons.Filled.Report,
-                    unSelectedIcon = Icons.Outlined.Report
-                ),
-                MenuItem(
-                    title = "Logout",
-                    route = Screens.Logout.route,
-                    selectedIcon = Icons.Filled.Logout,
-                    unSelectedIcon = Icons.Outlined.Logout
-                ),
-            )
-
-            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             scope = rememberCoroutineScope()
-//            val navController = rememberNavController()
-//            val navBackStackEntry by navController.currentBackStackEntryAsState()
-//            val currentRoute = navBackStackEntry?.destination?.route
-//
-//            val topBarTitle =
-//                if (currentRoute != null){
-//                    items[items.indexOfFirst {
-//                        it.route == currentRoute
-//                    }].title
-//                }
-//                else {
-//                    items[0].title
-//                }
-
-            ModalNavigationDrawer(
-                gesturesEnabled = drawerState.isOpen,
-                drawerContent = {
-                    ModalDrawerSheet {
-                        DrawerHeader()
-                        Spacer(modifier = Modifier.height(8.dp))
-                        DrawerBody(
-                            items = items,
-                            onItemClick = { currentMenuItem ->
-                                when (currentMenuItem.route){
-                                    Screens.Logout.route -> {
-                                        startActivity(Intent(this@AddProjectActivity, LoginActivity::class.java))
-                                    }
-                                    Screens.Dashboard.route -> {
-                                        startActivity(Intent(this@AddProjectActivity, DashboardActivity::class.java))
-                                    }
-                                }
-                            }
-                        )
-                    }
-                }, drawerState = drawerState
-            ) {
-                Scaffold(
-                    topBar = {
-                        AppBar (
-                            onNavigationIconClick = {
-                                scope.launch {
-                                    drawerState.open()
-                                }
-                            }
-                        )
-                    }
-                ) {
-                    val hai = it
-                    AddNewProject()
-                }
-            }
+            AddNewTasks()
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     @Preview(showBackground = true)
     @Composable
-    fun AddNewProject() {
+    fun AddNewTasks() {
         val context = LocalContext.current
-        var invitedUser = mutableListOf<String>()
-        val invitedUserProjects by vm.invitedUsers.observeAsState(emptyList())
+        val invitedUser = mutableListOf<String>()
+        val invitedUserTask by vm.invitedUsers.observeAsState(emptyList())
         LaunchedEffect(key1 = Unit) {
             vm.invitedUsers.value
+        }
+
+        val projectMember = vm.users.observeAsState(listOf())
+        LaunchedEffect(key1 = Unit) {
+            vm.getProjectMembers(projectId)
+        }
+
+        val project by vm.projects.observeAsState(ProjectDRO(
+            status = "500",
+            message = "an error occurred",
+            data = Projects(id = 0,name = "",description = "",start = "",deadline = "",pm_email = "",status = -1)
+        ))
+        LaunchedEffect(key1 = Unit) {
+            vm.getProjectById(projectId)
         }
 
         ConstraintLayout(
@@ -209,9 +111,9 @@ class AddProjectActivity : ComponentActivity() {
                 .fillMaxSize()
                 .padding(20.dp)
         ) {
-            val (judul, etProjectName, etProjectDesc, startTime, deadline, addTeamMember, searchField, listUser, btnCreate) = createRefs()
+            val (judul, projectName, judulTask, taskDescription, deadline, priority, setPic, addTaksMember, searchField, listUser, btnCreate) = createRefs()
             Text(
-                text = "Create Project",
+                text = "Create Tasks",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily(
@@ -224,14 +126,28 @@ class AddProjectActivity : ComponentActivity() {
                     }
             )
 
-            val projectName = remember { mutableStateOf("") }
+            Text(
+                text = project.data.name,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal,
+                fontFamily = FontFamily(
+                    Font(R.font.open_sans_regular)
+                ),
+                modifier = Modifier
+                    .constrainAs(projectName) {
+                        top.linkTo(judul.bottom, margin = 8.dp)
+                        start.linkTo(parent.start)
+                    }
+            )
+
+            val taskTitle = remember { mutableStateOf("") }
             OutlinedTextField(
-                value = projectName.value ,
+                value = taskTitle.value ,
                 onValueChange = {
-                    projectName.value = it
+                    taskTitle.value = it
                 },
                 placeholder = {
-                    Text(text = "Project Name")
+                    Text(text = "Task Title")
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -239,21 +155,21 @@ class AddProjectActivity : ComponentActivity() {
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .constrainAs(etProjectName) {
-                        top.linkTo(judul.bottom, margin = 16.dp)
+                    .constrainAs(judulTask) {
+                        top.linkTo(projectName.bottom, margin = 8.dp)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
             )
 
-            val projectDesc = remember { mutableStateOf("") }
+            val taskDesc = remember { mutableStateOf("") }
             OutlinedTextField(
-                value = projectDesc.value,
+                value = taskDesc.value,
                 onValueChange = {
-                    projectDesc.value = it
+                    taskDesc.value = it
                 },
                 placeholder = {
-                    Text(text = "Project Description")
+                    Text(text = "Task Description")
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
@@ -262,47 +178,71 @@ class AddProjectActivity : ComponentActivity() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(100.dp)
-                    .constrainAs(etProjectDesc) {
-                        top.linkTo(etProjectName.bottom, margin = 8.dp)
+                    .constrainAs(taskDescription) {
+                        top.linkTo(judulTask.bottom, margin = 8.dp)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
             )
 
-            val startDateTimeState = remember { mutableStateOf(LocalDateTime.now()) }
-            CustomDateTimePicker(
-                title = "Start Time",
-                state = startDateTimeState,
-                modifier = Modifier
-                    .constrainAs(startTime) {
-                        top.linkTo(etProjectDesc.bottom, margin = 8.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-            )
-
-            val deadlineState = remember { mutableStateOf(LocalDateTime.now()) }
+            val taskDeadline = remember { mutableStateOf(LocalDateTime.now()) }
             CustomDateTimePicker(
                 title = "Deadline",
-                state = deadlineState,
+                state = taskDeadline,
                 modifier = Modifier
                     .constrainAs(deadline) {
-                        top.linkTo(startTime.bottom, margin = 8.dp)
+                        top.linkTo(taskDescription.bottom, margin = 8.dp)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
+            )
+
+            val prioritas = remember { mutableStateOf("Select Priority") }
+            DropDownTextFieldPriority(
+                selectedValue = prioritas.value,
+                options = listOf("Low", "Medium", "High"),
+                label = "Priority Level",
+                onValueChangedEvent = {
+                    prioritas.value = it
+                },
+                modifier = Modifier
+                    .constrainAs(priority) {
+                        top.linkTo(deadline.bottom, margin = 8.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                    .fillMaxWidth()
+            )
+
+            val pic = remember { mutableStateOf("Select PIC") }
+            val pic_email = remember { mutableStateOf("") }
+            DropDownPIC(
+                selectedValue = pic.value,
+                options = projectMember.value!!,
+                label = "PIC",
+                onValueChangedEvent = {
+                    pic.value = it.name
+                    pic_email.value = it.email
+                },
+                modifier = Modifier
+                    .constrainAs(setPic) {
+                        top.linkTo(priority.bottom, margin = 8.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                    .fillMaxWidth()
             )
 
             Text(
-                text = "Add Team Member",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
+                text = "Add Task Member",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal,
                 fontFamily = FontFamily(
-                    Font(R.font.open_sans_bold, FontWeight.Bold)
+                    Font(R.font.open_sans_regular, FontWeight.Normal)
                 ),
                 modifier = Modifier
-                    .constrainAs(addTeamMember) {
-                        top.linkTo(deadline.bottom, margin = 16.dp)
+                    .constrainAs(addTaksMember) {
+                        top.linkTo(setPic.bottom, margin = 16.dp)
                         start.linkTo(parent.start)
                     }
             )
@@ -314,7 +254,7 @@ class AddProjectActivity : ComponentActivity() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .constrainAs(searchField) {
-                        top.linkTo(addTeamMember.bottom, margin = 4.dp)
+                        top.linkTo(addTaksMember.bottom, margin = 4.dp)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     },
@@ -341,13 +281,13 @@ class AddProjectActivity : ComponentActivity() {
 
                 Button(
                     onClick = {
-                        if(userEmail == email.value){
-                            Toast.makeText(this@AddProjectActivity, "You cannot invite yourself", Toast.LENGTH_SHORT).show()
+                        if(pic_email.value == email.value){
+                            Toast.makeText(this@AddTaskActivity, "This email is already a PIC", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
 
                         if (email.value.isEmpty()) {
-                            Toast.makeText(this@AddProjectActivity, "Email cannot be empty", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@AddTaskActivity, "Email cannot be empty", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
 
@@ -396,7 +336,7 @@ class AddProjectActivity : ComponentActivity() {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 userScrollEnabled = true,
             ) {
-                items(invitedUserProjects) { user ->
+                items(invitedUserTask) { user ->
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
@@ -421,7 +361,6 @@ class AddProjectActivity : ComponentActivity() {
                             IconButton(
                                 onClick = {
                                     vm.removeUser(user.email)
-//                                    Toast.makeText(this@AddProjectActivity, "Remove", Toast.LENGTH_SHORT).show()
                                 },
                             ){
                                 Icon(
@@ -436,25 +375,27 @@ class AddProjectActivity : ComponentActivity() {
                     }
                 }
             }
+
             Button(
                 onClick = {
-                    if (projectName.value.isEmpty() || projectDesc.value.isEmpty()) {
-                        Toast.makeText(this@AddProjectActivity, "Project Name and Description cannot be empty", Toast.LENGTH_SHORT).show()
+                    if (taskTitle.value.isEmpty() || taskDesc.value.isEmpty() || prioritas.value == "Select Priority" || pic.value == "Select PIC") {
+                        Toast.makeText(this@AddTaskActivity, "Input must not empty", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
 
-                    val dto = addProjectDTO(
-                        name = projectName.value,
-                        description = projectDesc.value,
-                        startTime = startDateTimeState.value.toString(),
-                        deadline = deadlineState.value.toString(),
-                        members_email = invitedUser,
-                        pm_email = userEmail
+                    val dto = addTaskDTO(
+                        title = taskTitle.value,
+                        description = taskDesc.value,
+                        deadline = taskDeadline.value.toString(),
+                        taks_team = invitedUser,
+                        priority = prioritas.value,
+                        pic_email = pic_email.value,
+                        project_id = projectId
                     )
-
                     Log.i("DTO", dto.toString())
+
                     scope.launch {
-                        vm.addNewProject(dto)
+                        vm.createTask(dto)
                         delay(1000)
                         val res = vm.response.value
                         Log.i("RES", res.toString())
@@ -480,7 +421,7 @@ class AddProjectActivity : ComponentActivity() {
                 shape = RoundedCornerShape(30),
             ) {
                 Text(
-                    text = "Create Project",
+                    text = "Create Task",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.W600,
                     modifier = Modifier.padding(5.dp)
@@ -488,4 +429,93 @@ class AddProjectActivity : ComponentActivity() {
             }
         }
     }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun DropDownTextFieldPriority(
+        selectedValue: String,
+        options: List<String>,
+        label: String,
+        onValueChangedEvent: (String) -> Unit,
+        modifier: Modifier = Modifier
+    ) {
+        var expanded by remember { mutableStateOf(false) }
+
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
+            modifier = modifier
+        ) {
+            OutlinedTextField(
+                readOnly = true,
+                value = selectedValue,
+                onValueChange = {},
+                label = { Text(text = label) },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
+                colors = OutlinedTextFieldDefaults.colors(),
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+            )
+
+            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                options.forEach { option: String ->
+                    DropdownMenuItem(
+                        text = { Text(text = option) },
+                        onClick = {
+                            expanded = false
+                            onValueChangedEvent(option)
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun DropDownPIC(
+        selectedValue: String,
+        options: List<Users>,
+        label: String,
+        onValueChangedEvent: (Users) -> Unit,
+        modifier: Modifier = Modifier
+    ) {
+        var expanded by remember { mutableStateOf(false) }
+
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
+            modifier = modifier
+        ) {
+            OutlinedTextField(
+                readOnly = true,
+                value = selectedValue,
+                onValueChange = {},
+                label = { Text(text = label) },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
+                colors = OutlinedTextFieldDefaults.colors(),
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+            )
+
+            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                options.forEach { option: Users ->
+                    DropdownMenuItem(
+                        text = { Text(text = option.name) },
+                        onClick = {
+                            expanded = false
+                            onValueChangedEvent(option)
+                        }
+                    )
+                }
+            }
+        }
+    }
 }
+

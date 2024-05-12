@@ -2,6 +2,7 @@ package com.example.seton.projectPage
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -29,7 +30,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -78,8 +78,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.example.seton.AppBar
 import com.example.seton.AppFont
 import com.example.seton.DrawerBody
@@ -87,9 +85,10 @@ import com.example.seton.DrawerHeader
 import com.example.seton.MenuItem
 import com.example.seton.R
 import com.example.seton.Screens
-import com.example.seton.SetUpNavGraph
+//import com.example.seton.SetUpNavGraph
 import com.example.seton.loginRegister.LoginActivity
 import com.example.seton.mainPage.DashboardActivity
+import com.example.seton.taskPage.TaskActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -174,6 +173,9 @@ class ListProjectActivity : ComponentActivity() {
                                     Screens.Dashboard.route -> {
                                         startActivity(Intent(this@ListProjectActivity, DashboardActivity::class.java))
                                     }
+                                    Screens.Tasks.route -> {
+                                        startActivity(Intent(this@ListProjectActivity, TaskActivity::class.java))
+                                    }
                                 }
                             }
                         )
@@ -205,7 +207,7 @@ class ListProjectActivity : ComponentActivity() {
         LaunchedEffect(key1 = Unit) {
             vm.getUserProjects()
         }
-        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+        ConstraintLayout(modifier = Modifier.fillMaxSize().background(Color.White)) {
             LazyColumn(
                 Modifier
                     .fillMaxSize()
@@ -218,6 +220,7 @@ class ListProjectActivity : ComponentActivity() {
                         return "${date.substring(8, 10)} ${monthMap[date.substring(5, 7).toInt() - 1]} ${date.substring(0, 4)}"
                     }
                     ExpandableCard(
+                        project.id,
                         project.name,
                         project.description,
                         formatDate(project.deadline),
@@ -270,6 +273,7 @@ class ListProjectActivity : ComponentActivity() {
 
     @Composable
     fun ExpandableCard(
+        id : Int,
         name: String,
         description: String,
         deadline: String,
@@ -429,7 +433,8 @@ class ListProjectActivity : ComponentActivity() {
                             modifier = Modifier.padding(4.dp)
                         ) {
                             Row(modifier = Modifier.clickable(onClick = {
-                                val intent = Intent(context, AddProjectActivity::class.java)
+                                val intent = Intent(context, ProjectDetailsActivity::class.java)
+                                intent.putExtra("projectId", id.toString())
                                 context.startActivity(intent)
                             }), verticalAlignment = Alignment.CenterVertically) {
                                 Text(

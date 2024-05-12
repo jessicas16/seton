@@ -34,7 +34,19 @@ interface ApiService {
     @POST("projects/")
     suspend fun createProject(@Body projectDTO: addProjectDTO): BasicDRO
 
+    @GET("projects/getById/{projectId}")
+    suspend fun getProjectById(@Path("projectId") projectId: String): ProjectDRO
+
+    @GET("projects/getDetail/{projectId}")
+    suspend fun getProjectDetail(@Path("projectId") projectId: String): ProjectDetailDRO
+
     //TASKS
     @GET("tasks/user/{email}")
     suspend fun getUserTasks(@Path("email") email: String): ListTaskDRO
+
+    @GET("tasks/project/getMembers/{projectId}")
+    suspend fun getProjectMembers(@Path("projectId") projectId: String): ListUserDRO
+
+    @POST("tasks/")
+    suspend fun createTask(@Body taskDTO: addTaskDTO): BasicDRO
 }

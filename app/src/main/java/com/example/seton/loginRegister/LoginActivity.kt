@@ -49,9 +49,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.seton.R
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.seton.calendarPage.CalendarActivity
 import com.example.seton.entity.userLoginDTO
 import com.example.seton.mainPage.DashboardActivity
 import com.example.seton.projectPage.ListProjectActivity
+import com.example.seton.taskPage.TaskActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -212,7 +214,7 @@ class LoginActivity : ComponentActivity() {
                                 runOnUiThread{
                                     if(res != null){
                                         if(res.status == "200"){
-                                            val intent = Intent(context, ListProjectActivity::class.java)
+                                            val intent = Intent(context, DashboardActivity::class.java)
                                             intent.putExtra("userEmail", email.value)
                                             context.startActivity(intent)
                                         } else {
