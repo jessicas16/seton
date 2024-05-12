@@ -19,6 +19,7 @@ class ListProjectViewModel: ViewModel() {
         viewModelScope.launch {
             try {
                 val res = repo.getUserProjects()
+                Log.i("MESSAGE", res.message)
                 Log.i("DATA_PROJECTS", res.data.toString())
                 _projects.value = res.data
             } catch (e: Exception) {
