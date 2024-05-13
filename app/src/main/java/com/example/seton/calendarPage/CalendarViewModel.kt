@@ -14,27 +14,41 @@ import java.util.TimeZone
 
 class CalendarViewModel: ViewModel() {
     private var repo = ApiConfiguration.defaultRepo
-    private val _tasks = MutableLiveData<List<Pair<String, List<DataTask>>>>()
+    private val _tasks = MutableLiveData<List<DataTask>>()
     private val _listCalendar = MutableLiveData<List<DataCalendar>>()
-
-    val tasks: LiveData<List<Pair<String, List<DataTask>>>>
-        get() = _tasks
+    private val _cal = MutableLiveData(Calendar.getInstance(TimeZone.getTimeZone("GMT+7")))
+    private val _selected = MutableLiveData(Calendar.getInstance(TimeZone.getTimeZone("GMT+7")))
 
     val listCalendar: MutableLiveData<List<DataCalendar>>
         get() = _listCalendar
 
+    val cal: MutableLiveData<Calendar>
+        get() = _cal
+
+    val selected: MutableLiveData<Calendar>
+        get() = _selected
+
     init {
-        val calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+7"))
+        viewModelScope.launch {
+            getUserTasks()
+            updateCalendar(0)
+        }
+    }
+
+    fun updateCalendar(move: Int) {
+        val calendar = _cal.value!!.clone() as Calendar
+        calendar.add(Calendar.MONTH, move)
         calendar.set(Calendar.DAY_OF_MONTH, 1)
+        _cal.value = calendar.clone() as Calendar
 
         _listCalendar.value = listOf(
-            DataCalendar("MON", mutableListOf()),
-            DataCalendar("TUE", mutableListOf()),
-            DataCalendar("WED", mutableListOf()),
-            DataCalendar("THU", mutableListOf()),
-            DataCalendar("FRI", mutableListOf()),
-            DataCalendar("SAT", mutableListOf()),
-            DataCalendar("SUN", mutableListOf())
+            DataCalendar("MON", mutableListOf(), mutableListOf()),
+            DataCalendar("TUE", mutableListOf(), mutableListOf()),
+            DataCalendar("WED", mutableListOf(), mutableListOf()),
+            DataCalendar("THU", mutableListOf(), mutableListOf()),
+            DataCalendar("FRI", mutableListOf(), mutableListOf()),
+            DataCalendar("SAT", mutableListOf(), mutableListOf()),
+            DataCalendar("SUN", mutableListOf(), mutableListOf())
         )
         val dayFirstDate = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.ENGLISH)?.substring(0, 3)?.uppercase()
         val dayIndex = when(dayFirstDate) {
@@ -61,6 +75,20 @@ class CalendarViewModel: ViewModel() {
         while (fillDate < maxDate) {
             for (i in 0..6) {
                 _listCalendar.value!![i].date.add(Pair(fillDate.toString(), true))
+                for (task in _tasks.value!!) {
+                    val deadline = task.deadline.split("T")[0]
+                    val date = deadline.split("-")[2]
+                    val month = deadline.split("-")[1]
+                    val year = deadline.split("-")[0]
+                    if (
+                        date.toInt().toString() == fillDate.toString() &&
+                        month.toInt().toString() == (_cal.value!!.get(Calendar.MONTH) + 1).toString() &&
+                        year.toInt().toString() == _cal.value!!.get(Calendar.YEAR).toString()
+                    ) {
+                        Log.i("DEADLINE", task.deadline)
+                        _listCalendar.value!![i].tasks.add(task)
+                    }
+                }
                 fillDate++
                 if (fillDate > maxDate) {
                     fillDate = 1
@@ -75,23 +103,23 @@ class CalendarViewModel: ViewModel() {
         }
     }
 
-    fun getUserTasks() {
-        viewModelScope.launch {
-            try {
-                val res = repo.getUserTasks()
-                Log.i("DATA_TASK", res.data.toString())
-                val filteredTasks = listOf(
-                    Pair("Upcoming", res.data.filter { it.status == 0 }),
-                    Pair("Ongoing", res.data.filter { it.status == 1 }),
-                    Pair("Submitted", res.data.filter { it.status == 2 }),
-                    Pair("Revision", res.data.filter { it.status == 3 }),
-                    Pair("Completed", res.data.filter { it.status == 4 })
-                )
-                _tasks.value = filteredTasks
-            } catch (e: Exception) {
-                Log.e("ERROR", e.message.toString())
-                _tasks.value = emptyList()
-            }
+    fun changeSelected(value: Int, isActive: Boolean) {
+        val newValue = cal.value!!.clone() as Calendar
+        if (!isActive) {
+            newValue.add(Calendar.MONTH, if (value < 8) 1 else -1)
+            updateCalendar(if (value < 8) 1 else -1)
+        }
+        newValue.set(Calendar.DATE, value)
+        _selected.value = newValue.clone() as Calendar
+    }
+
+    private suspend fun getUserTasks() {
+        try {
+            val res = repo.getUserTasks()
+            _tasks.value = res.data
+        } catch (e: Exception) {
+            Log.e("ERROR", e.message.toString())
+            _tasks.value = emptyList()
         }
     }
 }
