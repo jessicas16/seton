@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -53,7 +54,9 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.seton.config.ApiConfiguration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LandingPageActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,8 +80,13 @@ private fun fragment(){
     val context = LocalContext.current
     val openAlertDialog = remember { mutableStateOf(false) }
 
-    Log.d("RESPONSE LAGI", Greeting().toString())
-    openAlertDialog.value = Greeting()
+//    Log.d("RESPONSE LAGI", Greeting().toString())
+
+    LaunchedEffect(Unit){
+        val a = Greeting()
+        openAlertDialog.value = a
+        Log.d("test", a.toString())
+    }
 
     ConstraintLayout(modifier = Modifier.fillMaxSize()){
         val (bg, pager, pageIdx, getStarted) = createRefs()
@@ -89,7 +97,7 @@ private fun fragment(){
             contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .fillMaxSize()
-                .constrainAs(bg){
+                .constrainAs(bg) {
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)
                     bottom.linkTo(parent.bottom)
@@ -121,7 +129,7 @@ private fun fragment(){
                 .wrapContentHeight()
                 .fillMaxWidth()
                 .padding(bottom = 8.dp)
-                .constrainAs(pageIdx){
+                .constrainAs(pageIdx) {
                     bottom.linkTo(getStarted.top)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -150,7 +158,7 @@ private fun fragment(){
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
-                .constrainAs(getStarted){
+                .constrainAs(getStarted) {
                     bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -343,21 +351,10 @@ private fun fitur3(){
     }
 }
 
-fun Greeting():Boolean {
+suspend fun Greeting():Boolean {
     var repo = ApiConfiguration.defaultRepo
-    val ioScope = CoroutineScope(Dispatchers.IO)
-    var returnMsg = true
 
-    ioScope.launch(Dispatchers.IO) {
-        try {
-            val res = repo.checkConnection()
-            Log.d("RESPONSE", res.toString())
-
-            returnMsg = false
-        }catch (e: Exception){
-            Log.e("ERROR", e.message.toString())
-        }
+    return withContext ( Dispatchers.IO ) {
+        repo.checkConnection()
     }
-
-    return returnMsg
 }

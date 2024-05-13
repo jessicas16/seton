@@ -12,8 +12,13 @@ class DefaultRepo(
     private val dataSourceRemote : ApiService,
 ) {
     //TEST CONNECTION
-    suspend fun checkConnection():BasicDRO {
-        return dataSourceRemote.checkConnection()
+    suspend fun checkConnection():Boolean {
+        return try {
+            dataSourceRemote.checkConnection()
+            false
+        }catch (e: Exception){
+            true
+        }
     }
 
     //USER
