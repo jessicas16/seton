@@ -346,14 +346,18 @@ private fun fitur3(){
 fun Greeting():Boolean {
     var repo = ApiConfiguration.defaultRepo
     val ioScope = CoroutineScope(Dispatchers.IO)
-    try {
-        ioScope.launch(Dispatchers.IO) {
+    var returnMsg = true
+
+    ioScope.launch(Dispatchers.IO) {
+        try {
             val res = repo.checkConnection()
             Log.d("RESPONSE", res.toString())
+
+            returnMsg = false
+        }catch (e: Exception){
+            Log.e("ERROR", e.message.toString())
         }
-        return false
-    } catch (e: Exception) {
-        Log.e("ERROR", e.message.toString())
-        return true
     }
+
+    return returnMsg
 }
