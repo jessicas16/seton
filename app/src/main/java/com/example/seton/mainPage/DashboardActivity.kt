@@ -45,9 +45,12 @@ import com.example.seton.DrawerBody
 import com.example.seton.DrawerHeader
 import com.example.seton.MenuItem
 import com.example.seton.Screens
+import com.example.seton.config.ApiConfiguration
 //import com.example.seton.SetUpNavGraph
 import com.example.seton.loginRegister.LoginActivity
 import com.example.seton.projectPage.ListProjectActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class DashboardActivity : ComponentActivity() {
@@ -122,6 +125,10 @@ class DashboardActivity : ComponentActivity() {
                             onItemClick = { currentMenuItem ->
                                 when (currentMenuItem.route){
                                     Screens.Logout.route -> {
+                                        val ioScope = CoroutineScope(Dispatchers.Main)
+                                        ioScope.launch {
+                                            ApiConfiguration.defaultRepo.logoutUser()
+                                        }
                                         startActivity(Intent(this@DashboardActivity, LoginActivity::class.java))
                                     }
                                     Screens.Projects.route -> {

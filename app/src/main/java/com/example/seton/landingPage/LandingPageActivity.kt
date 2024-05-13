@@ -1,10 +1,12 @@
 package com.example.seton.landingPage
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.Image
@@ -52,6 +54,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.seton.config.ApiConfiguration
+import com.example.seton.mainPage.DashboardActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -59,10 +62,23 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class LandingPageActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ApiConfiguration.getApiService(baseContext)
         installSplashScreen()
+
+        val ioScope = CoroutineScope(Dispatchers.Main)
+        ioScope.launch {
+            if(ApiConfiguration.defaultRepo.checkRemember()){
+                runOnUiThread{
+                    val intent = Intent(this@LandingPageActivity, DashboardActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+
+        }
+
         setContent {
             Surface(
                 modifier = Modifier.fillMaxHeight()

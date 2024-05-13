@@ -1,11 +1,14 @@
 package com.example.seton.config
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.seton.config.local.AppDatabase
 import com.example.seton.entity.*
 import com.example.seton.projectPage.DataProject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.time.LocalDate
 
 class DefaultRepo(
     private val dataSourceLocal: AppDatabase,
@@ -38,8 +41,55 @@ class DefaultRepo(
         return dataSourceRemote.registerUser(userDTO)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun checkRemember(): Boolean{
+        var check = false
+        withContext(Dispatchers.IO){
+            val remember = dataSourceLocal.rememberDao().get()
+            if(remember != null){
+                val expired = LocalDate.parse(remember.expired)
+                if(LocalDate.now().isAfter(expired)){
+                    dataSourceLocal.rememberDao().clearDb()
+                }else{
+                    check = true
+                }
+            }
+        }
+        return check
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun loginUser(userLoginDTO:userLoginDTO):BasicDRO {
-        return dataSourceRemote.loginUser(userLoginDTO)
+        var loginUser: BasicDRO? = null
+
+        try {
+            loginUser = dataSourceRemote.loginUser(userLoginDTO)
+        }catch (e: Exception){
+
+        }
+
+        withContext(Dispatchers.IO){
+            if(loginUser != null){
+                val expired = LocalDate.now().plusDays(30).toString()
+                val remember = Remember(
+                    email = userLoginDTO.email,
+                    expired = expired
+                )
+
+                dataSourceLocal.rememberDao().clearDb()
+                dataSourceLocal.rememberDao().insert(remember)
+            }
+
+
+        }
+
+        return loginUser!!
+    }
+
+    suspend fun logoutUser(){
+        withContext(Dispatchers.IO){
+            dataSourceLocal.rememberDao().clearDb()
+        }
     }
 
     //PROJECTS

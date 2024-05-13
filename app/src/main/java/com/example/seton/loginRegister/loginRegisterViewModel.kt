@@ -1,6 +1,8 @@
 package com.example.seton.loginRegister
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,6 +22,7 @@ class loginRegisterViewModel:ViewModel() {
     val response: LiveData<BasicDRO>
         get() = _response
 
+    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun loginUser(user : userLoginDTO){
         try {
             ioScope.async(Dispatchers.IO) {

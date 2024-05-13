@@ -8,6 +8,7 @@ import com.example.seton.entity.Comments
 import com.example.seton.entity.Labels
 import com.example.seton.entity.ProjectMembers
 import com.example.seton.entity.Projects
+import com.example.seton.entity.Remember
 import com.example.seton.entity.Tasks
 import com.example.seton.entity.Users
 
@@ -20,9 +21,10 @@ import com.example.seton.entity.Users
         Projects::class,
         ProjectMembers::class,
         Tasks::class,
-        Users::class
+        Users::class,
+        Remember::class
     ],
-    version = 4
+    version = 1
 )
 abstract class AppDatabase: RoomDatabase() {
     abstract fun attachmentDao(): AttachmentDao
@@ -33,4 +35,5 @@ abstract class AppDatabase: RoomDatabase() {
     abstract fun projectMemberDao(): ProjectMemberDao
     abstract fun taskDao(): TaskDao
     abstract fun userDao(): UserDao
+    abstract fun rememberDao(): RememberDao
 }

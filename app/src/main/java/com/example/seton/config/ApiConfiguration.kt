@@ -17,7 +17,7 @@ class ApiConfiguration{
                 context,
                 AppDatabase::class.java,
                 "db_seton"
-            ).build()
+            ).fallbackToDestructiveMigration().build()
 
             // API
             val moshi = Moshi.Builder()
