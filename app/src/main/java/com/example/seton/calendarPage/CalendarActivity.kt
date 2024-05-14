@@ -72,12 +72,14 @@ class CalendarActivity : ComponentActivity() {
                     Image(
                         painter = painterResource(R.drawable.prev_icon),
                         contentDescription = "previous",
-                        modifier = Modifier.weight(1f).clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ) {
-                            vm.updateCalendar(-1)
-                        }
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            ) {
+                                vm.updateCalendar(-1)
+                            }
                     )
                     Text(
                         text = "${calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.ENGLISH)} ${calendar.get(Calendar.YEAR)}",
@@ -91,12 +93,14 @@ class CalendarActivity : ComponentActivity() {
                     Image(
                         painter = painterResource(R.drawable.next_icon),
                         contentDescription = "next",
-                        modifier = Modifier.weight(1f).clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ) {
-                            vm.updateCalendar(1)
-                        }
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            ) {
+                                vm.updateCalendar(1)
+                            }
                     )
                 }
                 Row(Modifier.fillMaxWidth()) {
@@ -125,11 +129,23 @@ class CalendarActivity : ComponentActivity() {
                                             .background(
                                                 if (
                                                     date.second &&
-                                                    calendar.get(Calendar.MONTH).toString() == selected.get(Calendar.MONTH).toString() &&
-                                                    calendar.get(Calendar.YEAR).toString() == selected.get(Calendar.YEAR).toString() &&
-                                                    date.first == selected.get(Calendar.DATE).toString()
+                                                    calendar
+                                                        .get(Calendar.MONTH)
+                                                        .toString() == selected
+                                                        .get(Calendar.MONTH)
+                                                        .toString() &&
+                                                    calendar
+                                                        .get(Calendar.YEAR)
+                                                        .toString() == selected
+                                                        .get(Calendar.YEAR)
+                                                        .toString() &&
+                                                    date.first == selected
+                                                        .get(Calendar.DATE)
+                                                        .toString()
                                                 ) Color(0xFF0E9794)
-                                                else if (cal.day == "SAT" || cal.day == "SUN") Color(0xFFD8FDFF)
+                                                else if (cal.day == "SAT" || cal.day == "SUN") Color(
+                                                    0xFFD8FDFF
+                                                )
                                                 else Color.White,
                                                 RoundedCornerShape(6.dp)
                                             )
@@ -137,7 +153,10 @@ class CalendarActivity : ComponentActivity() {
                                                 indication = null,
                                                 interactionSource = remember { MutableInteractionSource() }
                                             ) {
-                                                if (date.second) vm.changeSelected(date.first.toInt(), true)
+                                                if (date.second) vm.changeSelected(
+                                                    date.first.toInt(),
+                                                    true
+                                                )
                                                 else vm.changeSelected(date.first.toInt(), false)
                                             },
                                         contentAlignment = Alignment.Center
@@ -205,8 +224,32 @@ class CalendarActivity : ComponentActivity() {
                         }
                     }
                 }
-                Row {
-                    // Detail
+                Row(
+                    Modifier
+                        .background(Color(0xFFE5E5E5))
+                        .fillMaxSize()
+                        .weight(1f)
+                ) {
+                    Column {
+                        for (cal in listCalendar) {
+                            if (cal.tasks.isNotEmpty() && cal.tasks[0].deadline.split("T")[0].split("-")[2] == selected.get(Calendar.DATE).toString()) {
+                                Row {
+                                    for (task in cal.tasks) {
+                                        Text(
+                                            text = task.title,
+                                            fontFamily = CalendarFont.fontBold,
+                                            fontSize = 12.sp,
+                                            color = Color.Black,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .align(Alignment.Bottom)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
