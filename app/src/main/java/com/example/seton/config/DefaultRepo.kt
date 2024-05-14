@@ -42,8 +42,8 @@ class DefaultRepo(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun checkRemember(): Boolean{
-        var check = false
+    suspend fun checkRemember(): String{
+        var user: String = ""
         withContext(Dispatchers.IO){
             val remember = dataSourceLocal.rememberDao().get()
             if(remember != null){
@@ -51,11 +51,11 @@ class DefaultRepo(
                 if(LocalDate.now().isAfter(expired)){
                     dataSourceLocal.rememberDao().clearDb()
                 }else{
-                    check = true
+                    user = remember.email
                 }
             }
         }
-        return check
+        return user
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -232,7 +232,41 @@ class DefaultRepo(
     }
 
     suspend fun createProject(projectDTO: addProjectDTO): BasicDRO {
-        return dataSourceRemote.createProject(projectDTO)
+        var createProject: BasicDRO? = null
+
+        try {
+            createProject = dataSourceRemote.createProject(projectDTO)
+
+            val project = Projects(
+                id = createProject.data.toString().toInt(),
+                name = projectDTO.name,
+                description = projectDTO.description,
+                start = projectDTO.startTime,
+                deadline = projectDTO.deadline,
+                pm_email = projectDTO.pm_email,
+                status = 0
+            )
+
+            withContext(Dispatchers.IO){
+                dataSourceLocal.projectDao().insert(project)
+
+                if(projectDTO.members_email != null){
+                    for(member in projectDTO.members_email){
+                        val m = ProjectMembers(
+                            project_id = createProject.data.toString().toInt(),
+                            member_email = member
+                        )
+                        dataSourceLocal.projectMemberDao().insert(m)
+                    }
+                }
+            }
+
+
+        }catch (e: Exception){
+
+        }
+
+        return createProject!!
     }
 
     suspend fun getProjectById(projectId: String): ProjectDRO {
