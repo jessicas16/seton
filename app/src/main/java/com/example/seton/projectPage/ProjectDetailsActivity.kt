@@ -10,12 +10,22 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -173,115 +183,229 @@ class ProjectDetailsActivity : ComponentActivity() {
             }
 
             if(page.value == "Details") {
-                Box(
-                    modifier = Modifier
-                        .padding(0.dp, 10.dp)
-                        .fillMaxWidth()
-                        .clip(shape = RoundedCornerShape(10.dp))
-                        .shadow(10.dp, MaterialTheme.shapes.medium)
-                        .background(Color.White)
-                        .constrainAs(projectOverview) {
-                            top.linkTo(detailsOrBoard.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }
-                ){
-                    Column {
-                        Text(
-                            text = "Project Overview",
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(10.dp),
-                            fontSize = 16.sp,
-                            fontFamily = FontFamily(
-                                Font(R.font.open_sans_bold, FontWeight.Bold)
-                            ),
-                            color = Color.Black
-                        )
-                        ProjectDetails(
-                            text1 = "Project Manager",
-                            text2 = projectDetail.data.projectManager.name,
-                        )
-                        ProjectDetails(
-                            text1 = "Deadline",
-                            text2 = projectDetail.data.projectDeadline,
-                        )
-                        ProjectDetails(
-                            text1 = "Status",
-                            text2 = projectDetail.data.projectStatus,
-                        )
-                        ProjectDetails(
-                            text1 = "Description",
-                            text2 = projectDetail.data.projectDescription,
-                        )
-
+                Column(modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxWidth()
+                    .constrainAs(projectOverview) {
+                        top.linkTo(detailsOrBoard.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
                     }
-                }
-
-                Box(
-                    modifier = Modifier
-                        .padding(0.dp, 10.dp)
-                        .fillMaxWidth()
-                        .clip(shape = RoundedCornerShape(10.dp))
-                        .shadow(10.dp, MaterialTheme.shapes.medium)
-                        .background(Color.White)
-                        .constrainAs(Stats) {
-                            top.linkTo(projectOverview.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }
                 ){
-                    Column {
-                        Text(
-                            text = "Stats",
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(10.dp),
-                            fontSize = 16.sp,
-                            fontFamily = FontFamily(
-                                Font(R.font.open_sans_bold, FontWeight.Bold)
-                            ),
-                            color = Color.Black
-                        )
+                    Box(
+                        modifier = Modifier
+                            .padding(0.dp, 10.dp)
+                            .fillMaxWidth()
+                            .clip(shape = RoundedCornerShape(10.dp))
+                            .shadow(10.dp, MaterialTheme.shapes.medium)
+                            .background(Color.White)
+                    ){
+                        Column {
+                            Text(
+                                text = "Project Overview",
+                                modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .padding(10.dp),
+                                fontSize = 16.sp,
+                                fontFamily = FontFamily(
+                                    Font(R.font.open_sans_bold, FontWeight.Bold)
+                                ),
+                                color = Color.Black
+                            )
+                            ProjectDetails(
+                                text1 = "Project Manager",
+                                text2 = projectDetail.data.projectManager.name,
+                            )
+                            ProjectDetails(
+                                text1 = "Deadline",
+                                text2 = projectDetail.data.projectDeadline,
+                            )
+                            ProjectDetails(
+                                text1 = "Status",
+                                text2 = projectDetail.data.projectStatus,
+                            )
+                            ProjectDetails(
+                                text1 = "Description",
+                                text2 = projectDetail.data.projectDescription,
+                            )
 
-                        Row (
-                            modifier = Modifier
-                                .padding(8.dp, 4.dp)
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically
-                        ){
-                            ProjectStats(
-                                text = "Project Members",
-                                content = projectDetail.data.members.size,
-                                uom = "members"
-                            )
-                            ProjectStats(
-                                text = "Upcoming Tasks",
-                                content = projectDetail.data.upcomingTask,
-                                uom = "tasks"
-                            )
-                        }
+                            Row (
+                                modifier = Modifier
+                                    .padding(8.dp, 4.dp)
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Members : ",
+                                    fontSize = 14.sp,
+                                    fontFamily = FontFamily(
+                                        Font(R.font.open_sans_regular, FontWeight.Normal)
+                                    ),
+                                    color = Color.Gray,
+                                    modifier = Modifier.weight(1.5f)
+                                )
 
-                        Row(
-                            modifier = Modifier
-                                .padding(8.dp, 4.dp)
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            ProjectStats(
-                                text = "Ongoing Tasks",
-                                content = projectDetail.data.ongoingTask,
-                                uom = "tasks"
-                            )
-                            ProjectStats(
-                                text = "Completed Tasks",
-                                content = projectDetail.data.completedTask,
-                                uom = "tasks"
-                            )
+                                Button(
+                                    onClick = {
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD8FDFF)),
+                                ) {
+                                    Text(
+                                        text = "Invite",
+                                        fontSize = 14.sp,
+                                        fontFamily = FontFamily(
+                                            Font(R.font.open_sans_regular, FontWeight.Normal)
+                                        ),
+                                        color = Color(0xFF0E9794)
+                                    )
+                                }
+                            }
+
+                            LazyColumn(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(150.dp)
+                                    .padding(8.dp, 16.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ){
+                                items(projectDetail.data.members){ member ->
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        //inisial
+                                        val arrName = member.name.split(" ")
+                                        val nama = arrName[0].first().uppercaseChar().toString() + if (arrName.size > 1) arrName[1].first().uppercaseChar().toString() else ""
+                                        Box(
+                                            modifier = Modifier
+                                                .size(48.dp)
+                                                .background(
+                                                    color = Color(0xFFECFFFF),
+                                                    shape = RoundedCornerShape(24.dp)
+                                                ),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = nama,
+                                                fontSize = 20.sp,
+                                                fontFamily = FontFamily(
+                                                    Font(R.font.open_sans_regular, FontWeight.Normal)
+                                                ),
+                                                color = Color(0xFF0E9794)
+                                            )
+                                        }
+
+                                        Spacer(modifier = Modifier.width(4.dp))
+
+                                        //nama
+                                        Text(
+                                            text = member.name,
+                                            fontSize = 14.sp,
+                                            fontFamily = FontFamily(
+                                                Font(R.font.open_sans_regular, FontWeight.Normal)
+                                            ),
+                                            color = Color.Black
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
+
+                    Box(
+                        modifier = Modifier
+                            .padding(0.dp, 10.dp)
+                            .fillMaxWidth()
+                            .clip(shape = RoundedCornerShape(10.dp))
+                            .shadow(10.dp, MaterialTheme.shapes.medium)
+                            .background(Color.White)
+
+
+
+
+                    ){
+                        Column {
+                            Text(
+                                text = "Stats",
+                                modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .padding(10.dp),
+                                fontSize = 16.sp,
+                                fontFamily = FontFamily(
+                                    Font(R.font.open_sans_bold, FontWeight.Bold)
+                                ),
+                                color = Color.Black
+                            )
+
+                            Row (
+                                modifier = Modifier
+                                    .padding(8.dp, 4.dp)
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly,
+                                verticalAlignment = Alignment.CenterVertically
+                            ){
+                                ProjectStats(
+                                    text = "Project Members",
+                                    content = projectDetail.data.members.size,
+                                    uom = "members"
+                                )
+                                ProjectStats(
+                                    text = "Upcoming Tasks",
+                                    content = projectDetail.data.upcomingTask,
+                                    uom = "tasks"
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier
+                                    .padding(8.dp, 4.dp)
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                ProjectStats(
+                                    text = "Ongoing Tasks",
+                                    content = projectDetail.data.ongoingTask,
+                                    uom = "tasks"
+                                )
+                                ProjectStats(
+                                    text = "Completed Tasks",
+                                    content = projectDetail.data.completedTask,
+                                    uom = "tasks"
+                                )
+                            }
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .padding(0.dp, 10.dp)
+                            .fillMaxWidth()
+                            .clip(shape = RoundedCornerShape(10.dp))
+                            .shadow(10.dp, MaterialTheme.shapes.medium)
+                            .background(Color.White)
+
+                    ){
+                        Column {
+                            Text(
+                                text = "Recent Changes",
+                                modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .padding(10.dp),
+                                fontSize = 16.sp,
+                                fontFamily = FontFamily(
+                                    Font(R.font.open_sans_bold, FontWeight.Bold)
+                                ),
+                                color = Color.Black
+                            )
+
+
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(75.dp))
 
                 }
             } else {
@@ -323,7 +447,7 @@ class ProjectDetailsActivity : ComponentActivity() {
                 modifier = Modifier.weight(1.5f)
             )
 
-            val color = if (text2 == "Ongoing") Color(0xFFFFDD60) else if (text2 == "Completed") Color(0xFF0E9794) else Color.Black
+            val color = if (text2 == "Ongoing") Color(0xFFF4976C) else if (text2 == "Completed") Color(0xFF0E9794) else Color.Black
             Text(
                 text = text2,
                 fontSize = 14.sp,
