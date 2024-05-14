@@ -70,9 +70,11 @@ class LandingPageActivity : ComponentActivity() {
 
         val ioScope = CoroutineScope(Dispatchers.Main)
         ioScope.launch {
-            if(ApiConfiguration.defaultRepo.checkRemember()){
+            val user = ApiConfiguration.defaultRepo.checkRemember()
+            if(user != ""){
                 runOnUiThread{
                     val intent = Intent(this@LandingPageActivity, DashboardActivity::class.java)
+                    intent.putExtra("userEmail", user)
                     startActivity(intent)
                 }
             }
