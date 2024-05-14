@@ -27,6 +27,9 @@ interface ProjectDao {
     @Query("SELECT p.id AS id, p.name AS name, p.description AS description, p.start AS start, p.deadline AS deadline, p.pm_email AS pm_email, p.status AS status FROM projects p INNER JOIN project_members pm ON p.id = pm.project_id WHERE pm.member_email = :email ")
     fun getByMember(email: String): List<Projects>
 
+    @Query("SELECT * FROM projects WHERE id = :id")
+    fun getById(id: Int): Projects?
+
     @Query("DELETE FROM projects")
     fun clearProjects()
 }

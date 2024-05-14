@@ -270,7 +270,45 @@ class DefaultRepo(
     }
 
     suspend fun getProjectById(projectId: String): ProjectDRO {
-        return dataSourceRemote.getProjectById(projectId)
+        var projectDRO: ProjectDRO?
+
+        try {
+            projectDRO = dataSourceRemote.getProjectById(projectId)
+            if(projectDRO.status != "404"){
+                withContext(Dispatchers.IO){
+                    dataSourceLocal.projectDao().update(projectDRO!!.data)
+                }
+            }
+        }catch (e: Exception){
+            withContext(Dispatchers.IO){
+                val getProjectFromLocal = dataSourceLocal.projectDao().getById(projectId.toInt())
+                if(getProjectFromLocal != null){
+                    projectDRO = ProjectDRO(
+                        status = "200",
+                        message = "Success get project by id from local!",
+                        data = getProjectFromLocal
+                    )
+                }else{
+                    val project = Projects(
+                        id = -1,
+                        name = "",
+                        description = "",
+                        start = "",
+                        deadline = "",
+                        pm_email = "",
+                        status = -1
+                    )
+
+                    projectDRO = ProjectDRO(
+                        status = "404",
+                        message = "Project not found!",
+                        data = project
+                    )
+                }
+            }
+        }
+
+        return projectDRO!!
     }
 
     suspend fun getProjectDetail(projectId: String): ProjectDetailDRO {
