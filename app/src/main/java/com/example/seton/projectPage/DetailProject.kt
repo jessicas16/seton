@@ -13,11 +13,11 @@ data class DetailProject (
     @Json(name = "projectDeadline") val projectDeadline: String,
     @Json(name = "projectManager") val projectManager: Users,
     @Json(name = "projectMembers") val members: List<Users>,
+    @Json(name = "projectTasks") val tasks: List<Tasks>,
     @Json(name = "upcomingTask") val upcomingTask: Int,
     @Json(name = "ongoingTask") val ongoingTask: Int,
     @Json(name = "submittedTask") val submittedTask: Int,
     @Json(name = "revisionTask") val revisionTask: Int,
     @Json(name = "completedTask") val completedTask: Int,
     @Json(name = "projectStatus") val projectStatus: String
-
 )
