@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -38,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.seton.AppFont
 import com.example.seton.CalendarFont
 import com.example.seton.R
 import java.util.Calendar
@@ -63,12 +67,14 @@ class CalendarActivity : ComponentActivity() {
         ConstraintLayout(
             Modifier
                 .fillMaxSize()
-                .background(Color.White)) {
+                .background(Color(0xFFF2F2F2))
+        ) {
             Column(
                 Modifier
                     .fillMaxSize()
-                    .padding(16.dp)) {
-                Row {
+                    .padding(16.dp)
+            ) {
+                Row(Modifier.padding(bottom = 16.dp)) {
                     Image(
                         painter = painterResource(R.drawable.prev_icon),
                         contentDescription = "previous",
@@ -82,7 +88,13 @@ class CalendarActivity : ComponentActivity() {
                             }
                     )
                     Text(
-                        text = "${calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.ENGLISH)} ${calendar.get(Calendar.YEAR)}",
+                        text = "${
+                            calendar.getDisplayName(
+                                Calendar.MONTH,
+                                Calendar.LONG,
+                                Locale.ENGLISH
+                            )
+                        } ${calendar.get(Calendar.YEAR)}",
                         fontFamily = CalendarFont.fontBold,
                         fontSize = 16.sp,
                         modifier = Modifier
@@ -165,7 +177,8 @@ class CalendarActivity : ComponentActivity() {
                                             Row(
                                                 Modifier
                                                     .weight(1f)
-                                                    .fillMaxWidth()) {
+                                                    .fillMaxWidth()
+                                            ) {
                                                 Text(
                                                     text = date.first,
                                                     fontFamily = CalendarFont.fontBold,
@@ -188,7 +201,7 @@ class CalendarActivity : ComponentActivity() {
                                                     .padding(top = 3.dp),
                                                 horizontalArrangement = Arrangement.Center
                                             ) {
-                                                for (i in 0..< cal.tasks.size.coerceAtMost(2)) {
+                                                for (i in 0..<cal.tasks.size.coerceAtMost(2)) {
                                                     if (cal.tasks[i].deadline.split("T")[0].split("-")[2] == date.first) {
                                                         Spacer(modifier = Modifier.padding(1.dp))
                                                         Box(
@@ -226,25 +239,95 @@ class CalendarActivity : ComponentActivity() {
                 }
                 Row(
                     Modifier
-                        .background(Color(0xFFE5E5E5))
+                        .background(Color(0xFFE5E5E5), RoundedCornerShape(12.dp))
                         .fillMaxSize()
                         .weight(1f)
                 ) {
-                    Column {
+                    Column (Modifier.padding(16.dp)) {
                         for (cal in listCalendar) {
-                            if (cal.tasks.isNotEmpty() && cal.tasks[0].deadline.split("T")[0].split("-")[2] == selected.get(Calendar.DATE).toString()) {
-                                Row {
-                                    for (task in cal.tasks) {
-                                        Text(
-                                            text = task.title,
-                                            fontFamily = CalendarFont.fontBold,
-                                            fontSize = 12.sp,
-                                            color = Color.Black,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .align(Alignment.Bottom)
-                                        )
+                            if (cal.tasks.isNotEmpty()) {
+                                val arrDeadline = cal.tasks[0].deadline.split("T")[0].split("-")
+                                if (
+                                    arrDeadline[2].toInt().toString() == selected.get(Calendar.DATE).toString() &&
+                                    arrDeadline[1].toInt().toString() == (selected.get(Calendar.MONTH) + 1).toString() &&
+                                    arrDeadline[0].toInt().toString() == selected.get(Calendar.YEAR).toString()
+                                ) {
+                                    Text(
+                                        text = "${selected.get(Calendar.DATE)} ${
+                                            calendar.getDisplayName(
+                                                Calendar.MONTH,
+                                                Calendar.LONG,
+                                                Locale.ENGLISH
+                                            )
+                                        } ${selected.get(Calendar.YEAR)}",
+                                        fontFamily = CalendarFont.fontMedium,
+                                        fontSize = 22.sp,
+                                        color = Color.Black,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                    )
+                                    LazyColumn(
+                                        Modifier
+                                            .fillMaxSize()
+                                            .padding(vertical = 16.dp),
+                                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        items(cal.tasks) { task ->
+                                            Column(
+                                                Modifier
+                                                    .background(Color.White, RoundedCornerShape(8.dp))
+                                                    .padding(top = 16.dp)
+                                                    .fillMaxWidth()
+                                            ) {
+                                                Row(
+                                                    Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(start = 16.dp, end = 16.dp, bottom = 12.dp),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Text(
+                                                        text = task.title,
+                                                        fontFamily = AppFont.fontBold,
+                                                        fontSize = 16.sp,
+                                                        color = Color.Black,
+                                                        modifier = Modifier.padding(end = 6.dp)
+                                                    )
+                                                    Text(
+                                                        text = "in ${task.project.name}",
+                                                        fontFamily = AppFont.fontBold,
+                                                        fontSize = 10.sp,
+                                                        color = Color.Black
+                                                    )
+                                                }
+                                                Row(
+                                                    Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(horizontal = 16.dp)
+                                                ) {
+                                                    Text(
+                                                        text = task.description,
+                                                        fontFamily = AppFont.fontNormal,
+                                                        fontSize = 12.sp,
+                                                        color = Color.Black,
+                                                        modifier = Modifier.padding(bottom = 12.dp)
+                                                    )
+                                                }
+                                                Row(
+                                                    Modifier
+                                                        .fillMaxWidth()
+                                                        .height(8.dp)
+                                                        .background(Color(
+                                                            when (task.status) {
+                                                                0 -> 0xFFFFDD60
+                                                                1 -> 0xFFF4976C
+                                                                2 -> 0xFF87CBCA
+                                                                3 -> 0xFFFACBB6
+                                                                else -> 0xFF2DA4A2
+                                                            }
+                                                        ), RoundedCornerShape(0.dp, 0.dp, 8.dp, 8.dp))
+                                                ) {}
+                                            }
+                                        }
                                     }
                                 }
                             }
