@@ -23,6 +23,9 @@ interface ProjectMemberDao {
     @Query("SELECT u.email AS email, u.name AS name, u.profile_picture AS profile_picture, u.password AS password, u.auth_token AS auth_token, u.status AS status FROM project_members pm INNER JOIN users u ON u.email = pm.member_email WHERE project_id = :id")
     fun getUserByProjectId(id: Int): List<Users>
 
+    @Query("SELECT * FROM project_members WHERE project_id = :id AND member_email = :email")
+    fun checkByProjectIdAndEmail(id: Int, email: String): ProjectMembers?
+
     @Query("DELETE FROM project_members")
     fun clearProjectMembers()
 

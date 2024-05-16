@@ -1,6 +1,7 @@
 package com.example.seton.config
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.seton.config.local.AppDatabase
 import com.example.seton.entity.*
@@ -137,11 +138,14 @@ class DefaultRepo(
 
                         withContext(Dispatchers.IO){
                             try {
-                                val projectMember = ProjectMembers(
-                                    project_id = data.id,
-                                    member_email = member.email
-                                )
-                                dataSourceLocal.projectMemberDao().insert(projectMember)
+                                if(dataSourceLocal.projectMemberDao().checkByProjectIdAndEmail(data.id, member.email) == null){
+                                    val projectMember = ProjectMembers(
+                                        project_id = data.id,
+                                        member_email = member.email
+                                    )
+                                    dataSourceLocal.projectMemberDao().insert(projectMember)
+                                }
+
                             }catch (e: Exception){
 
                             }
@@ -198,6 +202,7 @@ class DefaultRepo(
             getUserProjectsByMemberFromLocal = dataSourceLocal.projectDao().getByMember(email)
         }
 
+        Log.d("dataprojectmember", getUserProjectsByMemberFromLocal.toString())
         var projects: MutableList<Projects> = mutableListOf()
         projects.addAll(getUserProjectsByOwnerFromLocal)
         projects.addAll(getUserProjectsByMemberFromLocal)
@@ -221,6 +226,7 @@ class DefaultRepo(
 
 
         }
+
 
         val listProject = ListProjectDRO(
             status = status,
