@@ -491,6 +491,11 @@ class ProjectDetailsActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        vm.getProjectById(projectId)
+    }
+    
     @Composable
     fun FloatingButton() {
         val context = LocalContext.current

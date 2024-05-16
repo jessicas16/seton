@@ -421,7 +421,7 @@ class AddTaskActivity : ComponentActivity() {
                 shape = RoundedCornerShape(30),
             ) {
                 Text(
-                    text = "Create Project",
+                    text = "Create Task",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.W600,
                     modifier = Modifier.padding(5.dp)

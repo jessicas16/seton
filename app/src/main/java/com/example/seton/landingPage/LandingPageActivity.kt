@@ -1,10 +1,12 @@
 package com.example.seton.landingPage
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.Image
@@ -28,6 +30,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -51,15 +54,33 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.seton.config.ApiConfiguration
+import com.example.seton.mainPage.DashboardActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LandingPageActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ApiConfiguration.getApiService(baseContext)
         installSplashScreen()
+
+        val ioScope = CoroutineScope(Dispatchers.Main)
+        ioScope.launch {
+            val user = ApiConfiguration.defaultRepo.checkRemember()
+            if(user != ""){
+                runOnUiThread{
+                    val intent = Intent(this@LandingPageActivity, DashboardActivity::class.java)
+                    intent.putExtra("userEmail", user)
+                    startActivity(intent)
+                }
+            }
+
+        }
+
         setContent {
             Surface(
                 modifier = Modifier.fillMaxHeight()
@@ -77,8 +98,13 @@ private fun fragment(){
     val context = LocalContext.current
     val openAlertDialog = remember { mutableStateOf(false) }
 
-    Log.d("RESPONSE LAGI", Greeting().toString())
-    openAlertDialog.value = Greeting()
+//    Log.d("RESPONSE LAGI", Greeting().toString())
+
+    LaunchedEffect(Unit){
+        val a = Greeting()
+        openAlertDialog.value = a
+        Log.d("test", a.toString())
+    }
 
     ConstraintLayout(modifier = Modifier.fillMaxSize()){
         val (bg, pager, pageIdx, getStarted) = createRefs()
@@ -89,7 +115,7 @@ private fun fragment(){
             contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .fillMaxSize()
-                .constrainAs(bg){
+                .constrainAs(bg) {
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)
                     bottom.linkTo(parent.bottom)
@@ -121,7 +147,7 @@ private fun fragment(){
                 .wrapContentHeight()
                 .fillMaxWidth()
                 .padding(bottom = 8.dp)
-                .constrainAs(pageIdx){
+                .constrainAs(pageIdx) {
                     bottom.linkTo(getStarted.top)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -150,7 +176,7 @@ private fun fragment(){
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
-                .constrainAs(getStarted){
+                .constrainAs(getStarted) {
                     bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -343,17 +369,10 @@ private fun fitur3(){
     }
 }
 
-fun Greeting():Boolean {
+suspend fun Greeting():Boolean {
     var repo = ApiConfiguration.defaultRepo
-    val ioScope = CoroutineScope(Dispatchers.IO)
-    try {
-        ioScope.launch(Dispatchers.IO) {
-            val res = repo.checkConnection()
-            Log.d("RESPONSE", res.toString())
-        }
-        return false
-    } catch (e: Exception) {
-        Log.e("ERROR", e.message.toString())
-        return true
+
+    return withContext ( Dispatchers.IO ) {
+        repo.checkConnection()
     }
 }
