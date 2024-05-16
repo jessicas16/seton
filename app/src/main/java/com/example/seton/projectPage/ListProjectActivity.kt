@@ -85,6 +85,7 @@ import com.example.seton.DrawerHeader
 import com.example.seton.MenuItem
 import com.example.seton.R
 import com.example.seton.Screens
+import com.example.seton.calendarPage.CalendarActivity
 //import com.example.seton.SetUpNavGraph
 import com.example.seton.loginRegister.LoginActivity
 import com.example.seton.mainPage.DashboardActivity
@@ -175,6 +176,9 @@ class ListProjectActivity : ComponentActivity() {
                                     }
                                     Screens.Tasks.route -> {
                                         startActivity(Intent(this@ListProjectActivity, TaskActivity::class.java))
+                                    }
+                                    Screens.Calendar.route -> {
+                                        startActivity(Intent(this@ListProjectActivity, CalendarActivity::class.java))
                                     }
                                 }
                             }

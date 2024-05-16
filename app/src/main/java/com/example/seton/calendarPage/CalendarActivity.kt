@@ -1,5 +1,6 @@
 package com.example.seton.calendarPage
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -22,12 +23,31 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.ListAlt
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Report
+import androidx.compose.material.icons.filled.Task
+import androidx.compose.material.icons.outlined.CalendarToday
+import androidx.compose.material.icons.outlined.Dashboard
+import androidx.compose.material.icons.outlined.ListAlt
+import androidx.compose.material.icons.outlined.Logout
+import androidx.compose.material.icons.outlined.Report
+import androidx.compose.material.icons.outlined.Task
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -41,9 +61,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.seton.AppBar
 import com.example.seton.AppFont
 import com.example.seton.CalendarFont
+import com.example.seton.DrawerBody
+import com.example.seton.DrawerHeader
+import com.example.seton.MenuItem
 import com.example.seton.R
+import com.example.seton.Screens
+import com.example.seton.loginRegister.LoginActivity
+import com.example.seton.mainPage.DashboardActivity
+import com.example.seton.taskPage.TaskActivity
+import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
@@ -53,7 +82,104 @@ class CalendarActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            CalendarPreview()
+            val items = listOf(
+                MenuItem(
+                    title = "Dashboard",
+                    route = Screens.Dashboard.route,
+                    selectedIcon = Icons.Filled.Dashboard,
+                    unSelectedIcon = Icons.Outlined.Dashboard
+                ),
+                MenuItem(
+                    title = "Projects",
+                    route = Screens.Projects.route,
+                    selectedIcon = Icons.Filled.ListAlt,
+                    unSelectedIcon = Icons.Outlined.ListAlt
+                ),
+                MenuItem(
+                    title = "Tasks",
+                    route = Screens.Tasks.route,
+                    selectedIcon = Icons.Filled.Task,
+                    unSelectedIcon = Icons.Outlined.Task
+                ),
+                MenuItem(
+                    title = "Calendar",
+                    route = Screens.Calendar.route,
+                    selectedIcon = Icons.Filled.CalendarToday,
+                    unSelectedIcon = Icons.Outlined.CalendarToday
+                ),
+                MenuItem(
+                    title = "Report",
+                    route = Screens.Report.route,
+                    selectedIcon = Icons.Filled.Report,
+                    unSelectedIcon = Icons.Outlined.Report
+                ),
+                MenuItem(
+                    title = "Logout",
+                    route = Screens.Logout.route,
+                    selectedIcon = Icons.Filled.Logout,
+                    unSelectedIcon = Icons.Outlined.Logout
+                ),
+            )
+
+            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+            val scope = rememberCoroutineScope()
+//            val navController = rememberNavController()
+//            val navBackStackEntry by navController.currentBackStackEntryAsState()
+//            val currentRoute = navBackStackEntry?.destination?.route
+//
+//            val topBarTitle =
+//                if (currentRoute != null){
+//                    items[items.indexOfFirst {
+//                        it.route == currentRoute
+//                    }].title
+//                }
+//                else {
+//                    items[0].title
+//                }
+
+            ModalNavigationDrawer(
+                gesturesEnabled = drawerState.isOpen,
+                drawerContent = {
+                    ModalDrawerSheet {
+                        DrawerHeader()
+                        Spacer(modifier = Modifier.height(8.dp))
+                        DrawerBody(
+                            items = items,
+                            onItemClick = { currentMenuItem ->
+                                when (currentMenuItem.route){
+                                    Screens.Logout.route -> {
+                                        startActivity(Intent(this@CalendarActivity, LoginActivity::class.java))
+                                    }
+                                    Screens.Dashboard.route -> {
+                                        startActivity(Intent(this@CalendarActivity, DashboardActivity::class.java))
+                                    }
+                                    Screens.Tasks.route -> {
+                                        startActivity(Intent(this@CalendarActivity, TaskActivity::class.java))
+                                    }
+                                    Screens.Calendar.route -> {
+                                        startActivity(Intent(this@CalendarActivity, CalendarActivity::class.java))
+                                    }
+                                }
+                            }
+                        )
+                    }
+                }, drawerState = drawerState
+            ) {
+                Scaffold(
+                    topBar = {
+                        AppBar (
+                            onNavigationIconClick = {
+                                scope.launch {
+                                    drawerState.open()
+                                }
+                            }
+                        )
+                    }
+                ) {
+                    val hai = it
+                    CalendarPreview()
+                }
+            }
         }
     }
 
