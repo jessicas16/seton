@@ -24,7 +24,7 @@ import com.example.seton.entity.Users
         Users::class,
         Remember::class
     ],
-    version = 1
+    version = 2
 )
 abstract class AppDatabase: RoomDatabase() {
     abstract fun attachmentDao(): AttachmentDao

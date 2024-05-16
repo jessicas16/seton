@@ -435,7 +435,37 @@ class DefaultRepo(
     }
 
     suspend fun getProjectMembers(projectId: String): ListUserDRO {
-        return dataSourceRemote.getProjectMembers(projectId)
+        var message = "Success get project by id from local!"
+        try {
+            val getMemberFromApi = withContext(Dispatchers.IO){dataSourceRemote.getProjectMembers(projectId)}
+            val data = getMemberFromApi.data
+
+            for(member in data){
+
+                withContext(Dispatchers.IO){
+                    try {
+                        if(dataSourceLocal.projectMemberDao().checkByProjectIdAndEmail(projectId.toInt(), member.email) == null){
+                            val projectMember = ProjectMembers(
+                                project_id = projectId.toInt(),
+                                member_email = member.email
+                            )
+                            dataSourceLocal.projectMemberDao().insert(projectMember)
+                        }
+
+                    }catch (e: Exception){}
+                }
+            }
+        }catch (e: Exception){}
+
+        var getMemberFromLocal = withContext(Dispatchers.IO){dataSourceLocal.projectMemberDao().getUserByProjectId(projectId.toInt())}
+
+        val listUserDRO = ListUserDRO(
+            status = "200",
+            message = message,
+            data = getMemberFromLocal
+        )
+
+        return listUserDRO
     }
 
     suspend fun createTask(taskDTO: addTaskDTO): BasicDRO {
