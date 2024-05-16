@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import com.example.seton.config.local.AppDatabase
 import com.example.seton.entity.*
 import com.example.seton.projectPage.DataProject
+import com.example.seton.projectPage.DetailProject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -201,8 +202,7 @@ class DefaultRepo(
             getUserProjectsByOwnerFromLocal = dataSourceLocal.projectDao().getByOwner(email)
             getUserProjectsByMemberFromLocal = dataSourceLocal.projectDao().getByMember(email)
         }
-
-        Log.d("dataprojectmember", getUserProjectsByMemberFromLocal.toString())
+        
         var projects: MutableList<Projects> = mutableListOf()
         projects.addAll(getUserProjectsByOwnerFromLocal)
         projects.addAll(getUserProjectsByMemberFromLocal)
@@ -318,7 +318,115 @@ class DefaultRepo(
     }
 
     suspend fun getProjectDetail(projectId: String): ProjectDetailDRO {
-        return dataSourceRemote.getProjectDetail(projectId)
+        var projectDetailDRO: ProjectDetailDRO? = null
+        var message = "Success get project by id from local!"
+
+        try {
+            val getProjectDetailFromApi = dataSourceRemote.getProjectDetail(projectId)
+            val data = getProjectDetailFromApi.data
+
+            val project = Projects(
+                id = projectId.toInt(),
+                name = data.projectName,
+                description = data.projectDescription,
+                start = data.projectStart,
+                deadline = data.projectDeadline,
+                pm_email = data.projectManager.email,
+                status = if(data.projectStatus == "Ongoing") 0 else 1
+            )
+
+            withContext(Dispatchers.IO){
+                try {
+                    dataSourceLocal.projectDao().update(project)
+                }catch (e: Exception){}
+
+                try {
+                    dataSourceLocal.userDao().update(data.projectManager)
+                }catch (e: Exception){}
+            }
+
+            for(member in data.members){
+
+                withContext(Dispatchers.IO){
+                    try {
+                        if(dataSourceLocal.projectMemberDao().checkByProjectIdAndEmail(projectId.toInt(), member.email) == null){
+                            val projectMember = ProjectMembers(
+                                project_id = projectId.toInt(),
+                                member_email = member.email
+                            )
+                            dataSourceLocal.projectMemberDao().insert(projectMember)
+                        }
+
+                    }catch (e: Exception){}
+                }
+            }
+
+            for(task in data.tasks){
+                withContext(Dispatchers.IO){
+                    try {
+                        if(dataSourceLocal.taskDao().getById(task.id) == null){
+                            dataSourceLocal.taskDao().insert(task)
+                        }else{
+                            dataSourceLocal.taskDao().update(task)
+                        }
+                    }catch (e: Exception){}
+                }
+            }
+
+            message = "Success get project by id from API!"
+        }catch (e: Exception){}
+
+        val project = withContext(Dispatchers.IO){dataSourceLocal.projectDao().getById(projectId.toInt())}
+        val projectManager = withContext(Dispatchers.IO){dataSourceLocal.userDao().getByEmail(project!!.pm_email)}
+        val projectMembers = withContext(Dispatchers.IO){dataSourceLocal.projectMemberDao().getUserByProjectId(projectId.toInt())}
+        val projectTasks = withContext(Dispatchers.IO){dataSourceLocal.taskDao().getByProjectId(projectId.toInt()).toMutableList()}
+
+        projectTasks.sortWith(compareBy<Tasks> { it.status }.thenBy { it.title })
+
+        var upcomingTask = 0
+        var ongoingTask = 0
+        var submittedTask = 0
+        var revisionTask = 0
+        var completedTask = 0
+
+        for(t in projectTasks){
+            if (t.status == 0) {
+                upcomingTask++
+            } else if (t.status == 1) {
+                ongoingTask++
+            } else if (t.status == 2) {
+                submittedTask++
+            } else if (t.status == 3) {
+                revisionTask++
+            } else if (t.status == 4) {
+                completedTask++
+            }
+        }
+
+        val detailProject = DetailProject(
+            projectName = project!!.name,
+            projectDescription = project.description,
+            projectStart = project.start,
+            projectDeadline = project.deadline,
+            projectManager = projectManager,
+            members = projectMembers,
+            tasks = projectTasks,
+            upcomingTask = upcomingTask,
+            ongoingTask = ongoingTask,
+            submittedTask = submittedTask,
+            revisionTask = revisionTask,
+            completedTask = completedTask,
+            projectStatus = if(project.status == 0) "Ongoing" else "Completed"
+        )
+
+        projectDetailDRO = ProjectDetailDRO(
+            status = "200",
+            message = message,
+            data = detailProject
+        )
+
+
+        return projectDetailDRO!!
     }
 
     //TASKS
