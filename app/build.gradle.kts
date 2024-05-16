@@ -131,4 +131,8 @@ dependencies {
 
     //scrollbar
     implementation ("com.github.nanihadesuka:LazyColumnScrollbar:2.1.0")
+
+    //stepper
+    implementation("com.github.binayshaw7777:KotStep:1.1.0")
+    implementation("com.github.transferwise:sequence-layout:1.2.0")
 }

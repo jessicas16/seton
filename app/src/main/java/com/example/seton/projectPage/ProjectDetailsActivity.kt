@@ -1,9 +1,11 @@
 package com.example.seton.projectPage
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +26,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
@@ -38,13 +42,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.times
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.binayshaw7777.kotstep.ui.vertical.VerticalIconStepper
 import com.example.seton.R
 import com.example.seton.entity.ProjectDetailDRO
 import com.example.seton.entity.Users
@@ -60,6 +67,12 @@ class ProjectDetailsActivity : ComponentActivity() {
             ProjectDetail()
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        vm.getProjectById(projectId)
+    }
+
     @Preview(showBackground = true)
     @Composable
     fun ProjectDetail() {
@@ -76,6 +89,7 @@ class ProjectDetailsActivity : ComponentActivity() {
                     projectDeadline = "",
                     projectManager = Users(email = "",name = "",profile_picture = "",password = "",auth_token = "",status = 0),
                     members = listOf(),
+                    tasks = listOf(),
                     upcomingTask = 0,
                     ongoingTask = 0,
                     submittedTask = 0,
@@ -321,10 +335,6 @@ class ProjectDetailsActivity : ComponentActivity() {
                             .clip(shape = RoundedCornerShape(10.dp))
                             .shadow(10.dp, MaterialTheme.shapes.medium)
                             .background(Color.White)
-
-
-
-
                     ){
                         Column {
                             Text(
@@ -382,13 +392,16 @@ class ProjectDetailsActivity : ComponentActivity() {
                     Box(
                         modifier = Modifier
                             .padding(0.dp, 10.dp)
-                            .fillMaxWidth()
                             .clip(shape = RoundedCornerShape(10.dp))
                             .shadow(10.dp, MaterialTheme.shapes.medium)
                             .background(Color.White)
 
                     ){
-                        Column {
+                        Column (
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .fillMaxWidth()
+                        ){
                             Text(
                                 text = "Recent Changes",
                                 modifier = Modifier
@@ -401,7 +414,57 @@ class ProjectDetailsActivity : ComponentActivity() {
                                 color = Color.Black
                             )
 
+                            val upcoming = mutableListOf<String>()
+                            val ongoing = mutableListOf<String>()
+                            val submitted = mutableListOf<String>()
+                            val revision = mutableListOf<String>()
+                            val completed = mutableListOf<String>()
+                            for (i in 0 until projectDetail.data.tasks.size) {
+                                when (projectDetail.data.tasks[i].status) {
+                                    0 -> upcoming.add(projectDetail.data.tasks[i].title)
+                                    1 -> ongoing.add(projectDetail.data.tasks[i].title)
+                                    2 -> submitted.add(projectDetail.data.tasks[i].title)
+                                    3 -> revision.add(projectDetail.data.tasks[i].title)
+                                    4 -> completed.add(projectDetail.data.tasks[i].title)
+                                }
+                            }
 
+                            Column {
+                                if(upcoming.isNotEmpty()){
+                                    stepper(
+                                        list = upcoming,
+                                        warna = Color(0xFFFFDD60)
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                }
+                                if(ongoing.isNotEmpty()){
+                                    stepper(
+                                        list = ongoing,
+                                        warna = Color(0xFFF4976C)
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                }
+                                if(submitted.isNotEmpty()){
+                                    stepper(
+                                        list = submitted,
+                                        warna = Color(0xFF6AC0BE)
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                }
+                                if(revision.isNotEmpty()){
+                                    stepper(
+                                        list = revision,
+                                        warna = Color(0xFFF8C5AE)
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                }
+                                if(completed.isNotEmpty()){
+                                    stepper(
+                                        list = completed,
+                                        warna = Color(0xFF0E9794)
+                                    )
+                                }
+                            }
                         }
                     }
 
@@ -422,8 +485,36 @@ class ProjectDetailsActivity : ComponentActivity() {
                             start.linkTo(parent.start)
                         }
                 )
-            }
 
+                FloatingButton()
+            }
+        }
+    }
+
+    @Composable
+    fun FloatingButton() {
+        val context = LocalContext.current
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp, 32.dp),
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            Button(
+                onClick = {
+                    val intent = Intent(context, AddTaskActivity::class.java)
+                    intent.putExtra("projectId", projectId)
+                    context.startActivity(intent)
+                },
+                colors = ButtonDefaults.buttonColors(Color(0xFF0E9794)),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
+                modifier = Modifier.size(72.dp)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.icon_plus),
+                    contentDescription = "Plus Icon"
+                )
+            }
         }
     }
 
@@ -448,9 +539,11 @@ class ProjectDetailsActivity : ComponentActivity() {
             )
 
             val color = if (text2 == "Ongoing") Color(0xFFF4976C) else if (text2 == "Completed") Color(0xFF0E9794) else Color.Black
+            val font = if (text2 == "Ongoing" || text2 == "Completed") FontWeight.Bold else FontWeight.Normal
             Text(
                 text = text2,
                 fontSize = 14.sp,
+                fontWeight = font,
                 fontFamily = FontFamily(
                     Font(R.font.open_sans_regular, FontWeight.Normal)
                 ),
@@ -495,5 +588,40 @@ class ProjectDetailsActivity : ComponentActivity() {
             )
         }
     }
+
+    @Composable
+    fun stepper (
+        list : MutableList<String>,
+        warna : Color
+    ){
+        //ONGOING
+        Box {
+            VerticalIconStepper(
+                modifier = Modifier
+                    .padding(10.dp),
+                totalSteps = list.size,
+                currentStep = 0,
+                stepSize = 25.dp,
+                stepIconsList = list.map { Icons.Default.Check },
+                incompleteColor = warna,
+                checkMarkColor = warna
+            )
+            for (i in 0..< list.size){
+                Column (
+                    modifier = Modifier
+                        .padding(top = 12.dp + (i * 43.dp))
+                        .padding(start = 45.dp)
+                ) {
+                    Text(
+                        text = list[i],
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily( Font(R.font.open_sans_semi_bold, FontWeight.SemiBold)),
+                        color = warna
+                    )
+                }
+            }
+        }
+    }
+
 
 }
