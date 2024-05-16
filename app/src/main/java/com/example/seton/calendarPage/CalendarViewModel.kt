@@ -101,6 +101,14 @@ class CalendarViewModel: ViewModel() {
                 }
             }
         }
+
+        changeSelected(
+            if (_selected.value!!.get(Calendar.DATE) > _cal.value!!.getActualMaximum(Calendar.DAY_OF_MONTH))
+                _cal.value!!.getActualMaximum(Calendar.DAY_OF_MONTH)
+            else
+                _selected.value!!.get(Calendar.DATE),
+            true
+        )
     }
 
     fun changeSelected(value: Int, isActive: Boolean) {

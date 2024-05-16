@@ -245,85 +245,88 @@ class CalendarActivity : ComponentActivity() {
                 ) {
                     Column (Modifier.padding(16.dp)) {
                         for (cal in listCalendar) {
-                            if (cal.tasks.isNotEmpty() &&
-                                cal.tasks[0].deadline
-                                    .split("T")[0]
-                                    .split("-")[2] == selected.get(Calendar.DATE).toString()
-                            ) {
-                                Text(
-                                    text = "${selected.get(Calendar.DATE)} ${
-                                        calendar.getDisplayName(
-                                            Calendar.MONTH,
-                                            Calendar.LONG,
-                                            Locale.ENGLISH
-                                        )
-                                    } ${selected.get(Calendar.YEAR)}",
-                                    fontFamily = CalendarFont.fontMedium,
-                                    fontSize = 22.sp,
-                                    color = Color.Black,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                )
-                                LazyColumn(
-                                    Modifier
-                                        .fillMaxSize()
-                                        .padding(8.dp, 16.dp),
-                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                            if (cal.tasks.isNotEmpty()) {
+                                val arrDeadline = cal.tasks[0].deadline.split("T")[0].split("-")
+                                if (
+                                    arrDeadline[2].toInt().toString() == selected.get(Calendar.DATE).toString() &&
+                                    arrDeadline[1].toInt().toString() == (selected.get(Calendar.MONTH) + 1).toString() &&
+                                    arrDeadline[0].toInt().toString() == selected.get(Calendar.YEAR).toString()
                                 ) {
-                                    items(cal.tasks) { task ->
-                                        Column(
-                                            Modifier
-                                                .background(Color.White, RoundedCornerShape(8.dp))
-                                                .padding(top = 16.dp)
-                                                .fillMaxWidth()
-                                        ) {
-                                            Row(
+                                    Text(
+                                        text = "${selected.get(Calendar.DATE)} ${
+                                            calendar.getDisplayName(
+                                                Calendar.MONTH,
+                                                Calendar.LONG,
+                                                Locale.ENGLISH
+                                            )
+                                        } ${selected.get(Calendar.YEAR)}",
+                                        fontFamily = CalendarFont.fontMedium,
+                                        fontSize = 22.sp,
+                                        color = Color.Black,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                    )
+                                    LazyColumn(
+                                        Modifier
+                                            .fillMaxSize()
+                                            .padding(vertical = 16.dp),
+                                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        items(cal.tasks) { task ->
+                                            Column(
                                                 Modifier
+                                                    .background(Color.White, RoundedCornerShape(8.dp))
+                                                    .padding(top = 16.dp)
                                                     .fillMaxWidth()
-                                                    .padding(start = 16.dp, end = 16.dp, bottom = 12.dp),
-                                                verticalAlignment = Alignment.CenterVertically
                                             ) {
-                                                Text(
-                                                    text = task.title,
-                                                    fontFamily = AppFont.fontBold,
-                                                    fontSize = 16.sp,
-                                                    color = Color.Black,
-                                                    modifier = Modifier.padding(end = 6.dp)
-                                                )
-                                                Text(
-                                                    text = "in ${task.project.name}",
-                                                    fontFamily = AppFont.fontBold,
-                                                    fontSize = 8.sp,
-                                                    color = Color.Black
-                                                )
+                                                Row(
+                                                    Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(start = 16.dp, end = 16.dp, bottom = 12.dp),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Text(
+                                                        text = task.title,
+                                                        fontFamily = AppFont.fontBold,
+                                                        fontSize = 16.sp,
+                                                        color = Color.Black,
+                                                        modifier = Modifier.padding(end = 6.dp)
+                                                    )
+                                                    Text(
+                                                        text = "in ${task.project.name}",
+                                                        fontFamily = AppFont.fontBold,
+                                                        fontSize = 10.sp,
+                                                        color = Color.Black
+                                                    )
+                                                }
+                                                Row(
+                                                    Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(horizontal = 16.dp)
+                                                ) {
+                                                    Text(
+                                                        text = task.description,
+                                                        fontFamily = AppFont.fontNormal,
+                                                        fontSize = 12.sp,
+                                                        color = Color.Black,
+                                                        modifier = Modifier.padding(bottom = 12.dp)
+                                                    )
+                                                }
+                                                Row(
+                                                    Modifier
+                                                        .fillMaxWidth()
+                                                        .height(8.dp)
+                                                        .background(Color(
+                                                            when (task.status) {
+                                                                0 -> 0xFFFFDD60
+                                                                1 -> 0xFFF4976C
+                                                                2 -> 0xFF87CBCA
+                                                                3 -> 0xFFFACBB6
+                                                                else -> 0xFF2DA4A2
+                                                            }
+                                                        ), RoundedCornerShape(0.dp, 0.dp, 8.dp, 8.dp))
+                                                ) {}
                                             }
-                                            Row(
-                                                Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(horizontal = 16.dp)
-                                            ) {
-                                                Text(
-                                                    text = task.description,
-                                                    fontFamily = AppFont.fontNormal,
-                                                    fontSize = 12.sp,
-                                                    color = Color.Black,
-                                                    modifier = Modifier.padding(bottom = 12.dp)
-                                                )
-                                            }
-                                            Row(
-                                                Modifier
-                                                    .fillMaxWidth()
-                                                    .height(8.dp)
-                                                    .background(Color(
-                                                        when (task.status) {
-                                                            0 -> 0xFFFFDD60
-                                                            1 -> 0xFFF4976C
-                                                            2 -> 0xFF87CBCA
-                                                            3 -> 0xFFFACBB6
-                                                            else -> 0xFF2DA4A2
-                                                        }
-                                                    ), RoundedCornerShape(0.dp, 0.dp, 8.dp, 8.dp))
-                                            ) {}
                                         }
                                     }
                                 }
