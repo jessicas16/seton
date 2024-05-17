@@ -244,28 +244,33 @@ class DefaultRepo(
         try {
             createProject = dataSourceRemote.createProject(projectDTO)
 
-            val project = Projects(
-                id = createProject.data.toString().toInt(),
-                name = projectDTO.name,
-                description = projectDTO.description,
-                start = projectDTO.startTime,
-                deadline = projectDTO.deadline,
-                pm_email = projectDTO.pm_email,
-                status = 0
-            )
+            if(createProject.status == "201"){
+                val project = Projects(
+                    id = createProject.data.toString().toInt(),
+                    name = projectDTO.name,
+                    description = projectDTO.description,
+                    start = projectDTO.startTime,
+                    deadline = projectDTO.deadline,
+                    pm_email = projectDTO.pm_email,
+                    status = 0
+                )
 
-            withContext(Dispatchers.IO){
-                dataSourceLocal.projectDao().insert(project)
+                withContext(Dispatchers.IO){
+                    dataSourceLocal.projectDao().insert(project)
 
-                if(projectDTO.members_email != null){
-                    for(member in projectDTO.members_email){
-                        val m = ProjectMembers(
-                            project_id = createProject.data.toString().toInt(),
-                            member_email = member
-                        )
-                        dataSourceLocal.projectMemberDao().insert(m)
+                    if(projectDTO.members_email != null){
+                        for(member in projectDTO.members_email){
+                            val m = ProjectMembers(
+                                project_id = createProject.data.toString().toInt(),
+                                member_email = member
+                            )
+                            dataSourceLocal.projectMemberDao().insert(m)
+                        }
                     }
                 }
+
+            }else{
+                createProject = null
             }
 
 
@@ -588,6 +593,48 @@ class DefaultRepo(
     }
 
     suspend fun createTask(taskDTO: addTaskDTO): BasicDRO {
-        return dataSourceRemote.createTask(taskDTO)
+        var createTask: BasicDRO? = null
+
+        try {
+            createTask = dataSourceRemote.createTask(taskDTO)
+
+            if(createTask.status == "201"){
+                val task = Tasks(
+                    id = createTask.data.toString().toInt(),
+                    title = taskDTO.title,
+                    deadline = taskDTO.deadline,
+                    description = taskDTO.description,
+                    priority = if(taskDTO.priority == "Low") 0 else if(taskDTO.priority == "Medium") 1 else 2,
+                    status = 0,
+                    pic_email = taskDTO.pic_email,
+                    project_id = taskDTO.project_id.toInt()
+                )
+
+                withContext(Dispatchers.IO){
+                    dataSourceLocal.taskDao().insert(task)
+                }
+
+                if(taskDTO.task_team != null){
+                    for(team in taskDTO.task_team){
+                        if(dataSourceLocal.taskTeamDao().checkByTaskIdAndEmail(createTask.data.toString().toInt(), team) == null){
+                            val createTeam = TaskTeams(
+                                task_id = createTask.data.toString().toInt(),
+                                team_email = team
+                            )
+
+                            withContext(Dispatchers.IO){
+                                dataSourceLocal.taskTeamDao().insert(createTeam)
+                            }
+                        }
+                    }
+                }
+
+            }else{
+                createTask = null
+            }
+
+        }catch(e: Exception){}
+
+        return createTask!!
     }
 }

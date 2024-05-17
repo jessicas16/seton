@@ -387,7 +387,7 @@ class AddTaskActivity : ComponentActivity() {
                         title = taskTitle.value,
                         description = taskDesc.value,
                         deadline = taskDeadline.value.toString(),
-                        taks_team = invitedUser,
+                        task_team = invitedUser,
                         priority = prioritas.value,
                         pic_email = pic_email.value,
                         project_id = projectId

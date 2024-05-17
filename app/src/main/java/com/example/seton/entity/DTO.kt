@@ -27,7 +27,7 @@ data class addTaskDTO(
     val title: String,
     val description: String,
     val deadline: String,
-    val taks_team: List<String>?,
+    val task_team: List<String>?,
     val priority : String,
     val pic_email: String,
     val project_id : String
