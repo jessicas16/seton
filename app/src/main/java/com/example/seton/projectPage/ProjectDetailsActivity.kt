@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -296,7 +297,8 @@ class ProjectDetailsActivity : ComponentActivity() {
                             LazyColumn(
                                 Modifier
                                     .fillMaxWidth()
-                                    .height(150.dp)
+                                    .heightIn(0.dp, 150.dp)
+//                                    .height(150.dp)
                                     .padding(8.dp, 16.dp),
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ){

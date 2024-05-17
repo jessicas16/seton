@@ -9,6 +9,7 @@ import com.example.seton.entity.Labels
 import com.example.seton.entity.ProjectMembers
 import com.example.seton.entity.Projects
 import com.example.seton.entity.Remember
+import com.example.seton.entity.TaskTeams
 import com.example.seton.entity.Tasks
 import com.example.seton.entity.Users
 
@@ -23,7 +24,7 @@ import com.example.seton.entity.Users
         Tasks::class,
         Users::class,
         Remember::class,
-        Tasks::class
+        TaskTeams::class
     ],
     version = 3
 )
