@@ -30,6 +30,8 @@ interface ProjectDao {
     @Query("SELECT * FROM projects WHERE id = :id")
     fun getById(id: Int): Projects?
 
+    //@Query("SELECT p.id AS id, p.name AS name, p.description AS description, p.start AS start, p.deadline AS deadline, p.pm_email AS pm_email, p.status AS status FROM projects p INNER JOIN tasks t ON p.id = t.project_id")
+
     @Query("DELETE FROM projects")
     fun clearProjects()
 }

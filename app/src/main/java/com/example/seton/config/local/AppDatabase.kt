@@ -22,9 +22,10 @@ import com.example.seton.entity.Users
         ProjectMembers::class,
         Tasks::class,
         Users::class,
-        Remember::class
+        Remember::class,
+        Tasks::class
     ],
-    version = 1
+    version = 3
 )
 abstract class AppDatabase: RoomDatabase() {
     abstract fun attachmentDao(): AttachmentDao
@@ -36,4 +37,5 @@ abstract class AppDatabase: RoomDatabase() {
     abstract fun taskDao(): TaskDao
     abstract fun userDao(): UserDao
     abstract fun rememberDao(): RememberDao
+    abstract fun taskTeamDao(): TaskTeamDao
 }

@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import com.example.seton.entity.Projects
 import com.example.seton.entity.Tasks
 
 @Dao
@@ -26,4 +27,10 @@ interface TaskDao {
 
     @Query("SELECT * FROM tasks WHERE id = :id")
     fun getById(id: Int): Tasks?
+
+    @Query("SELECT * FROM tasks WHERE pic_email = :email")
+    fun getByPIC(email: String): List<Tasks>
+
+    @Query("SELECT t.id AS id, t.title AS title, t.deadline AS deadline, t.description AS description, t.priority AS priority, t.status AS status, t.pic_email AS pic_email, t.project_id AS project_id FROM tasks t INNER JOIN task_teams tt ON t.id = tt.task_id WHERE tt.team_email = :email ")
+    fun getByTeam(email: String): List<Tasks>
 }
