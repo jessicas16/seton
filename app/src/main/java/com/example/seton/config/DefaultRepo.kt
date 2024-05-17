@@ -261,7 +261,7 @@ class DefaultRepo(
                     if(projectDTO.members_email != null){
                         for(member in projectDTO.members_email){
                             val m = ProjectMembers(
-                                project_id = createProject.data.toString().toInt(),
+                                project_id = createProject!!.data.toString().toInt(),
                                 member_email = member
                             )
                             dataSourceLocal.projectMemberDao().insert(m)
@@ -616,15 +616,13 @@ class DefaultRepo(
 
                 if(taskDTO.task_team != null){
                     for(team in taskDTO.task_team){
-                        if(dataSourceLocal.taskTeamDao().checkByTaskIdAndEmail(createTask.data.toString().toInt(), team) == null){
-                            val createTeam = TaskTeams(
-                                task_id = createTask.data.toString().toInt(),
-                                team_email = team
-                            )
+                        val createTeam = TaskTeams(
+                            task_id = createTask.data.toString().toInt(),
+                            team_email = team
+                        )
 
-                            withContext(Dispatchers.IO){
-                                dataSourceLocal.taskTeamDao().insert(createTeam)
-                            }
+                        withContext(Dispatchers.IO){
+                            dataSourceLocal.taskTeamDao().insert(createTeam)
                         }
                     }
                 }
