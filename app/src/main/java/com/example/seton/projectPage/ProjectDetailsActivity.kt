@@ -2,6 +2,7 @@ package com.example.seton.projectPage
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -23,6 +24,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -30,12 +32,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,16 +52,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
+import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.binayshaw7777.kotstep.ui.vertical.VerticalIconStepper
 import com.example.seton.R
 import com.example.seton.entity.ProjectDetailDRO
 import com.example.seton.entity.Users
-
 
 class ProjectDetailsActivity : ComponentActivity() {
     private val vm: ProjectDetailsViewModel by viewModels<ProjectDetailsViewModel>()
@@ -108,7 +116,7 @@ class ProjectDetailsActivity : ComponentActivity() {
                 .fillMaxSize()
                 .padding(20.dp)
         ) {
-            val (projectName, detailsOrBoard, projectOverview, Stats, RecentChanges) = createRefs()
+            val (projectName, detailsOrBoard, projectOverview) = createRefs()
 
             Text(
                 text = projectDetail.data.projectName,
@@ -197,6 +205,14 @@ class ProjectDetailsActivity : ComponentActivity() {
             }
 
             if(page.value == "Details") {
+                val shouldShowDialog = remember { mutableStateOf(false) }
+
+                if (shouldShowDialog.value) {
+                    MyDialog{
+                        shouldShowDialog.value = false
+                    }
+                }
+
                 Column(modifier = Modifier
                     .verticalScroll(rememberScrollState())
                     .fillMaxWidth()
@@ -262,6 +278,7 @@ class ProjectDetailsActivity : ComponentActivity() {
 
                                 Button(
                                     onClick = {
+                                        shouldShowDialog.value = true
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD8FDFF)),
                                 ) {
@@ -626,6 +643,75 @@ class ProjectDetailsActivity : ComponentActivity() {
                         fontFamily = FontFamily( Font(R.font.open_sans_semi_bold, FontWeight.SemiBold)),
                         color = warna
                     )
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun MyDialog(
+        onDismiss:() -> Unit
+    ) {
+        val context = LocalContext.current
+        var email by remember { mutableStateOf("")}
+        Dialog(onDismissRequest = { onDismiss() }) {
+            Card(
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier.padding(12.dp),
+            ) {
+                Column(
+                    Modifier
+                        .background(Color.White)
+                        .padding(12.dp)
+                ) {
+                    Text(
+                        text = "Invite New Member",
+                        modifier = Modifier.padding(4.dp),
+                        fontSize = 20.sp
+                    )
+
+                    OutlinedTextField(
+                        value = email,
+                        onValueChange = { email = it },
+                        modifier = Modifier.padding(8.dp),
+                        label = { Text("Enter an Email") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Done,
+                        ),
+                    )
+
+                    Row {
+                        OutlinedButton(
+                            onClick = { onDismiss() },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .weight(1f)
+                        ) {
+                            Text(
+                                text = "Cancel",
+                                color = Color(0xFF0E9794)
+                            )
+                        }
+
+                        Button(
+                            onClick = {
+                                Toast.makeText(context, email, Toast.LENGTH_SHORT).show()
+                                onDismiss()
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD8FDFF)),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .weight(1f)
+                        ) {
+                            Text(
+                                text = "Invite",
+                                color = Color(0xFF0E9794)
+                            )
+                        }
+                    }
                 }
             }
         }
