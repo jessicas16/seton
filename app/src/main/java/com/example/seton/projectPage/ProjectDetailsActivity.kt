@@ -431,35 +431,35 @@ class ProjectDetailsActivity : ComponentActivity() {
 
                             Column {
                                 if(upcoming.isNotEmpty()){
-                                    stepper(
+                                    Stepper(
                                         list = upcoming,
                                         warna = Color(0xFFFFDD60)
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                 }
                                 if(ongoing.isNotEmpty()){
-                                    stepper(
+                                    Stepper(
                                         list = ongoing,
                                         warna = Color(0xFFF4976C)
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                 }
                                 if(submitted.isNotEmpty()){
-                                    stepper(
+                                    Stepper(
                                         list = submitted,
                                         warna = Color(0xFF6AC0BE)
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                 }
                                 if(revision.isNotEmpty()){
-                                    stepper(
+                                    Stepper(
                                         list = revision,
                                         warna = Color(0xFFF8C5AE)
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                 }
                                 if(completed.isNotEmpty()){
-                                    stepper(
+                                    Stepper(
                                         list = completed,
                                         warna = Color(0xFF0E9794)
                                     )
@@ -523,6 +523,14 @@ class ProjectDetailsActivity : ComponentActivity() {
         text1: String,
         text2: String,
     ) {
+        var tgl = ""
+        if(text1 == "Deadline"){
+            val monthMap = listOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+            if(text2 != ""){
+                tgl =  "${text2.substring(8, 10)} ${monthMap[text2.substring(5, 7).toInt() - 1]} ${text2.substring(0, 4)}"
+            }
+        }
+
         Row (
             modifier = Modifier
                 .padding(8.dp, 4.dp)
@@ -541,7 +549,7 @@ class ProjectDetailsActivity : ComponentActivity() {
             val color = if (text2 == "Ongoing") Color(0xFFF4976C) else if (text2 == "Completed") Color(0xFF0E9794) else Color.Black
             val font = if (text2 == "Ongoing" || text2 == "Completed") FontWeight.Bold else FontWeight.Normal
             Text(
-                text = text2,
+                text = if(text1 == "Deadline") tgl else text2,
                 fontSize = 14.sp,
                 fontWeight = font,
                 fontFamily = FontFamily(
@@ -590,7 +598,7 @@ class ProjectDetailsActivity : ComponentActivity() {
     }
 
     @Composable
-    fun stepper (
+    fun Stepper (
         list : MutableList<String>,
         warna : Color
     ){
@@ -622,6 +630,4 @@ class ProjectDetailsActivity : ComponentActivity() {
             }
         }
     }
-
-
 }
