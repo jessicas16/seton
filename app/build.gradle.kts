@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.seton"
+    namespace = "id.ac.istts.seton"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.seton"
+        applicationId = "id.ac.istts.seton"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -135,4 +135,10 @@ dependencies {
     //stepper
     implementation("com.github.binayshaw7777:KotStep:1.1.0")
     implementation("com.github.transferwise:sequence-layout:1.2.0")
+
+    //google auth
+    implementation("androidx.credentials:credentials:1.3.0-alpha04")
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha04")
+
+
 }

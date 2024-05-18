@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.seton">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -57,19 +56,9 @@
             android:label="@string/title_activity_register"
             android:theme="@style/Theme.SETON" />
         <activity
-            android:name=".landingPage.LandingPage3Activity"
-            android:exported="false"
-            android:label="@string/title_activity_login"
-            android:theme="@style/Theme.SETON" />
-        <activity
             android:name=".loginRegister.LoginActivity"
             android:exported="false"
             android:label="@string/title_activity_landing_page3"
-            android:theme="@style/Theme.SETON" />
-        <activity
-            android:name=".landingPage.LandingPage2Activity"
-            android:exported="false"
-            android:label="@string/title_activity_landing_page2"
             android:theme="@style/Theme.SETON" />
         <activity
             android:name=".landingPage.LandingPageActivity"
