@@ -344,7 +344,7 @@ class ProjectDetailsActivity : ComponentActivity() {
                                                     text = nama,
                                                     fontSize = 20.sp,
                                                     fontFamily = FontFamily(
-                                                        Font(R.font.open_sans_regular, FontWeight.Normal)
+                                                        Font(R.font.open_sans_bold, FontWeight.Bold)
                                                     ),
                                                     color = Color(0xFF0E9794)
                                                 )
