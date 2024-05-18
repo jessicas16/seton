@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.seton.config.ApiConfiguration
+import com.example.seton.entity.BasicDRO
 import com.example.seton.entity.ProjectDetailDRO
 import com.example.seton.entity.UserDRO
 import com.example.seton.entity.Users
@@ -16,6 +17,7 @@ class ProjectDetailsViewModel: ViewModel() {
     private val _projects = MutableLiveData<ProjectDetailDRO>()
     private val _invitedUsers = MutableLiveData<List<Users>>()
     private val _checkEmail = MutableLiveData<UserDRO>()
+    private val _response = MutableLiveData<BasicDRO>()
 
     val invitedUsers: MutableLiveData<List<Users>>
         get() = _invitedUsers
@@ -24,6 +26,9 @@ class ProjectDetailsViewModel: ViewModel() {
 
     val projects: MutableLiveData<ProjectDetailDRO>
         get() = _projects
+
+    val response: LiveData<BasicDRO>
+        get() = _response
 
     fun getProjectById (projectId: String) {
         viewModelScope.launch {
@@ -109,6 +114,34 @@ class ProjectDetailsViewModel: ViewModel() {
                 data = Users("", "", null, "", null, -1)
             )
             _checkEmail.postValue(res)
+        }
+    }
+
+    fun removeMember(projectId: String, email: String){
+        viewModelScope.launch {
+            try{
+                val res = repo.deleteMemberProject(projectId = projectId, email = email)
+                Log.d("RES", res.toString())
+                if (res.status == "200") {
+                    val list = _invitedUsers.value?.toMutableList() ?: mutableListOf()
+                    for (i in list){
+                        if (i.email == email){
+                            list.remove(i)
+                            break
+                        }
+                    }
+                    _invitedUsers.postValue(list)
+                }
+                _response.postValue(res)
+            } catch (e: Exception){
+                Log.e("ERROR", e.message.toString())
+                val res =  BasicDRO(
+                    status = "500",
+                    message = "An error occurred! Please try again later.",
+                    data = ""
+                )
+                _response.postValue(res)
+            }
         }
     }
 }

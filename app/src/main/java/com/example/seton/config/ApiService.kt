@@ -45,6 +45,12 @@ interface ApiService {
         @Path("email") email: String
     ): BasicDRO
 
+    @DELETE("projects/deleteMember/{projectId}/{email}")
+    suspend fun deleteMemberProject(
+        @Path("projectId") projectId: String,
+        @Path("email") email: String
+    ): BasicDRO
+
     //TASKS
     @GET("tasks/user/{email}")
     suspend fun getUserTasks(@Path("email") email: String): ListTaskDRO

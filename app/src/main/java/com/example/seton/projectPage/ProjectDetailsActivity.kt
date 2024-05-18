@@ -28,13 +28,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.HorizontalRule
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
@@ -318,43 +321,72 @@ class ProjectDetailsActivity : ComponentActivity() {
                             ){
                                 items(invitedUserTask){ member ->
                                     Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        //inisial
-                                        val arrName = member.name.split(" ")
-                                        val nama = arrName[0].first().uppercaseChar().toString() + if (arrName.size > 1) arrName[1].first().uppercaseChar().toString() else ""
-                                        Box(
-                                            modifier = Modifier
-                                                .size(48.dp)
-                                                .background(
-                                                    color = Color(0xFFECFFFF),
-                                                    shape = RoundedCornerShape(24.dp)
-                                                ),
-                                            contentAlignment = Alignment.Center
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically
                                         ) {
+                                            //inisial
+                                            val arrName = member.name.split(" ")
+                                            val nama = arrName[0].first().uppercaseChar().toString() + if (arrName.size > 1) arrName[1].first().uppercaseChar().toString() else ""
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(48.dp)
+                                                    .background(
+                                                        color = Color(0xFFECFFFF),
+                                                        shape = RoundedCornerShape(24.dp)
+                                                    ),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(
+                                                    text = nama,
+                                                    fontSize = 20.sp,
+                                                    fontFamily = FontFamily(
+                                                        Font(R.font.open_sans_regular, FontWeight.Normal)
+                                                    ),
+                                                    color = Color(0xFF0E9794)
+                                                )
+                                            }
+
+                                            Spacer(modifier = Modifier.width(4.dp))
+
+                                            //nama
                                             Text(
-                                                text = nama,
-                                                fontSize = 20.sp,
+                                                text = member.name,
+                                                fontSize = 14.sp,
                                                 fontFamily = FontFamily(
                                                     Font(R.font.open_sans_regular, FontWeight.Normal)
                                                 ),
-                                                color = Color(0xFF0E9794)
+                                                color = Color.Black
                                             )
                                         }
-
-                                        Spacer(modifier = Modifier.width(4.dp))
-
-                                        //nama
-                                        Text(
-                                            text = member.name,
-                                            fontSize = 14.sp,
-                                            fontFamily = FontFamily(
-                                                Font(R.font.open_sans_regular, FontWeight.Normal)
-                                            ),
-                                            color = Color.Black
-                                        )
+                                        Row{
+                                            IconButton(
+                                                onClick = {
+                                                    scope.launch {
+                                                        vm.removeMember(projectId, member.email)
+                                                        delay(1000)
+                                                        val res = vm.response.value
+                                                        Log.i("RES", res.toString())
+                                                        runOnUiThread {
+                                                            if (res != null) {
+                                                                Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                            ){
+                                                Icon(
+                                                    imageVector = Icons.Default.HorizontalRule,
+                                                    contentDescription = "Remove",
+                                                    modifier = Modifier
+                                                        .size(40.dp),
+                                                    Color.Red,
+                                                )
+                                            }
+                                        }
                                     }
                                 }
                             }

@@ -409,6 +409,8 @@ class AddProjectActivity : ComponentActivity() {
                                     modifier = Modifier
                                         .size(40.dp)
                                 )
+                            } else {
+                                //tampilkan profile..
                             }
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(text = user.name)
@@ -418,7 +420,6 @@ class AddProjectActivity : ComponentActivity() {
                             IconButton(
                                 onClick = {
                                     vm.removeUser(user.email)
-//                                    Toast.makeText(this@AddProjectActivity, "Remove", Toast.LENGTH_SHORT).show()
                                 },
                             ){
                                 Icon(

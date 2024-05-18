@@ -352,6 +352,8 @@ class AddTaskActivity : ComponentActivity() {
                                     modifier = Modifier
                                         .size(40.dp)
                                 )
+                            } else {
+                                //tampilkan profile..
                             }
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(text = user.name)

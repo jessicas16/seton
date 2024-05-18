@@ -453,6 +453,10 @@ class DefaultRepo(
         return dataSourceRemote.addMemberProject(projectId, email)
     }
 
+    suspend fun deleteMemberProject(projectId: String, email: String) : BasicDRO{
+        return dataSourceRemote.deleteMemberProject(projectId, email)
+    }
+
     //TASKS
     suspend fun getUserTasks(force:Boolean = true, email: String = "ivan.s21@mhs.istts.ac.id"): ListTaskDRO {
         var message = "Success get project by id from local!"
