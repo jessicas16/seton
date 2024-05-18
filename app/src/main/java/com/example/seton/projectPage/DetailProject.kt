@@ -19,5 +19,5 @@ data class DetailProject (
     @Json(name = "submittedTask") val submittedTask: Int,
     @Json(name = "revisionTask") val revisionTask: Int,
     @Json(name = "completedTask") val completedTask: Int,
-    @Json(name = "projectStatus") val projectStatus: String
+    @Json(name = "projectStatus") val projectStatus: String = ""
 )

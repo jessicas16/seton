@@ -1,5 +1,8 @@
 package com.example.seton.projectPage
 
+//import androidx.navigation.compose.currentBackStackEntryAsState
+//import androidx.navigation.compose.rememberNavController
+//import com.example.seton.SetUpNavGraph
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -23,20 +26,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.IconButton
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.HorizontalRule
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.HorizontalRule
 import androidx.compose.material.icons.filled.ListAlt
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.filled.Task
 import androidx.compose.material.icons.outlined.CalendarToday
@@ -45,11 +42,15 @@ import androidx.compose.material.icons.outlined.ListAlt
 import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material.icons.outlined.Task
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -70,21 +71,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-//import androidx.navigation.compose.currentBackStackEntryAsState
-//import androidx.navigation.compose.rememberNavController
 import com.example.seton.AppBar
 import com.example.seton.DrawerBody
 import com.example.seton.DrawerHeader
 import com.example.seton.MenuItem
 import com.example.seton.R
 import com.example.seton.Screens
-//import com.example.seton.SetUpNavGraph
 import com.example.seton.component.CustomDateTimePicker
 import com.example.seton.entity.addProjectDTO
 import com.example.seton.loginRegister.LoginActivity
 import com.example.seton.mainPage.DashboardActivity
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -198,7 +195,7 @@ class AddProjectActivity : ComponentActivity() {
     @Composable
     fun AddNewProject() {
         val context = LocalContext.current
-        var invitedUser = mutableListOf<String>()
+        val invitedUser = mutableListOf<String>()
         val invitedUserProjects by vm.invitedUsers.observeAsState(emptyList())
         LaunchedEffect(key1 = Unit) {
             vm.invitedUsers.value

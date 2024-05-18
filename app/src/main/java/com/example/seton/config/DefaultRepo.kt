@@ -1,16 +1,30 @@
 package com.example.seton.config
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import com.example.seton.config.local.AppDatabase
-import com.example.seton.entity.*
+import com.example.seton.entity.BasicDRO
+import com.example.seton.entity.ListProjectDRO
+import com.example.seton.entity.ListTaskDRO
+import com.example.seton.entity.ListUserDRO
+import com.example.seton.entity.ProjectDRO
+import com.example.seton.entity.ProjectDetailDRO
+import com.example.seton.entity.ProjectMembers
+import com.example.seton.entity.Projects
+import com.example.seton.entity.Remember
+import com.example.seton.entity.TaskTeams
+import com.example.seton.entity.Tasks
+import com.example.seton.entity.UserDRO
+import com.example.seton.entity.Users
+import com.example.seton.entity.addProjectDTO
+import com.example.seton.entity.addTaskDTO
+import com.example.seton.entity.userDTO
+import com.example.seton.entity.userLoginDTO
 import com.example.seton.projectPage.DataProject
 import com.example.seton.projectPage.DetailProject
 import com.example.seton.taskPage.DataTask
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
 import java.time.LocalDate
 
 class DefaultRepo(
@@ -433,6 +447,10 @@ class DefaultRepo(
 
 
         return projectDetailDRO
+    }
+
+    suspend fun addMemberProject(projectId: String, email: String) : BasicDRO{
+        return dataSourceRemote.addMemberProject(projectId, email)
     }
 
     //TASKS

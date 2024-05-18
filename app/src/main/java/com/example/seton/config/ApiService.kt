@@ -1,7 +1,6 @@
 package com.example.seton.config
 
 import com.example.seton.entity.*
-import org.json.JSONObject
 import retrofit2.http.*
 
 interface ApiService {
@@ -39,6 +38,12 @@ interface ApiService {
 
     @GET("projects/getDetail/{projectId}")
     suspend fun getProjectDetail(@Path("projectId") projectId: String): ProjectDetailDRO
+
+    @POST("projects/addMember/{projectId}/{email}")
+    suspend fun addMemberProject(
+        @Path("projectId") projectId: String,
+        @Path("email") email: String
+    ): BasicDRO
 
     //TASKS
     @GET("tasks/user/{email}")

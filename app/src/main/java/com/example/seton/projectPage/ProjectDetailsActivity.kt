@@ -2,6 +2,7 @@ package com.example.seton.projectPage
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -42,6 +43,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,14 +67,19 @@ import com.binayshaw7777.kotstep.ui.vertical.VerticalIconStepper
 import com.example.seton.R
 import com.example.seton.entity.ProjectDetailDRO
 import com.example.seton.entity.Users
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class ProjectDetailsActivity : ComponentActivity() {
     private val vm: ProjectDetailsViewModel by viewModels<ProjectDetailsViewModel>()
+    private lateinit var scope: CoroutineScope
     private lateinit var projectId : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         projectId = intent.getStringExtra("projectId").toString()
         setContent {
+            scope = rememberCoroutineScope()
             ProjectDetail()
         }
     }
@@ -206,12 +213,20 @@ class ProjectDetailsActivity : ComponentActivity() {
             }
 
             if(page.value == "Details") {
-                val shouldShowDialog = remember { mutableStateOf(false) }
+                val invitedUser = mutableListOf<String>()
+                val invitedUserTask by vm.invitedUsers.observeAsState(emptyList())
+                LaunchedEffect(key1 = Unit) {
+                    vm.invitedUsers.value
+                }
 
+                Log.i("INVITED_USER", invitedUserTask.toString())
+
+                val shouldShowDialog = remember { mutableStateOf(false) }
                 if (shouldShowDialog.value) {
-                    MyDialog{
-                        shouldShowDialog.value = false
-                    }
+                    MyDialog(
+                        invitedUser = invitedUser,
+                        pm_email = projectDetail.data.projectManager.email
+                    ){ shouldShowDialog.value = false }
                 }
 
                 Column(modifier = Modifier
@@ -298,11 +313,10 @@ class ProjectDetailsActivity : ComponentActivity() {
                                 Modifier
                                     .fillMaxWidth()
                                     .heightIn(0.dp, 150.dp)
-//                                    .height(150.dp)
                                     .padding(8.dp, 16.dp),
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ){
-                                items(projectDetail.data.members){ member ->
+                                items(invitedUserTask){ member ->
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth(),
@@ -621,7 +635,6 @@ class ProjectDetailsActivity : ComponentActivity() {
         list : MutableList<String>,
         warna : Color
     ){
-        //ONGOING
         Box {
             VerticalIconStepper(
                 modifier = Modifier
@@ -652,6 +665,8 @@ class ProjectDetailsActivity : ComponentActivity() {
 
     @Composable
     fun MyDialog(
+        invitedUser : MutableList<String>,
+        pm_email : String,
         onDismiss:() -> Unit
     ) {
         val context = LocalContext.current
@@ -699,8 +714,35 @@ class ProjectDetailsActivity : ComponentActivity() {
 
                         Button(
                             onClick = {
-                                Toast.makeText(context, email, Toast.LENGTH_SHORT).show()
-                                onDismiss()
+                                if (email.isEmpty()){
+                                    Toast.makeText(context, "Email cannot be empty", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    if(email == pm_email){
+                                        Toast.makeText(context, "You cannot invite project manager", Toast.LENGTH_SHORT).show()
+                                        email = ""
+                                    } else {
+                                        scope.launch {
+                                            vm.checkEmailUser(projectId, email)
+                                            delay(1000)
+                                            val res = vm.checkEmail.value
+                                            Log.i("RES2", res.toString())
+                                            runOnUiThread{
+                                                if(res != null){
+                                                    if(res.status == "200"){
+                                                        invitedUser.add(res.data.name)
+                                                        Log.i("INVITED_USER", invitedUser.toString())
+
+                                                        Toast.makeText(context, "Success invite new member", Toast.LENGTH_SHORT).show()
+                                                        onDismiss()
+                                                    } else {
+                                                        Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()
+                                                    }
+                                                    email = ""
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD8FDFF)),
                             modifier = Modifier
