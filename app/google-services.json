@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "77834221419",
+    "project_id": "seton-70931",
+    "storage_bucket": "seton-70931.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:77834221419:android:f5a92a63958c7ef4153e2e",
+        "android_client_info": {
+          "package_name": "id.ac.istts.seton"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "77834221419-ho4n66d23togs95g8hibgu37o83p8p47.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "id.ac.istts.seton",
+            "certificate_hash": "ef68b497d0fee4ff1bc024b56ec78be3af472fc0"
+          }
+        },
+        {
+          "client_id": "77834221419-0e8sklciokdlrqqtb1b135ip0j81gvhg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYhw6RIgDexgIS3M2qrl9pPmK_8COt_zA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "77834221419-0e8sklciokdlrqqtb1b135ip0j81gvhg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

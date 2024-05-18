@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
     id("kotlin-kapt")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -136,9 +137,8 @@ dependencies {
     implementation("com.github.binayshaw7777:KotStep:1.1.0")
     implementation("com.github.transferwise:sequence-layout:1.2.0")
 
-    //google auth
-    implementation("androidx.credentials:credentials:1.3.0-alpha04")
-    implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha04")
-
-
+    //firebase
+    implementation("com.google.firebase:firebase-auth:23.0.0")
+    implementation (platform("com.google.firebase:firebase-bom:31.5.0"))
+    implementation ("com.google.android.gms:play-services-auth:21.1.1")
 }
