@@ -3,6 +3,7 @@ package id.ac.istts.seton.mainPage
 //import com.example.seton.SetUpNavGraph
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -41,10 +42,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import id.ac.istts.seton.AppBar
 import id.ac.istts.seton.DrawerBody
 import id.ac.istts.seton.DrawerHeader
 import id.ac.istts.seton.MenuItem
+import id.ac.istts.seton.R
 import id.ac.istts.seton.Screens
 import id.ac.istts.seton.config.ApiConfiguration
 import id.ac.istts.seton.loginRegister.LoginActivity
@@ -55,10 +63,14 @@ import kotlinx.coroutines.launch
 
 class DashboardActivity : ComponentActivity() {
     lateinit var userEmail : String
+    private lateinit var mGoogleSignInClient: GoogleSignInClient
+    private lateinit var mAuth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userEmail = intent.getStringExtra("userEmail").toString()
         setContent {
+            mAuth = FirebaseAuth.getInstance()
+
             val items = listOf(
                 MenuItem(
                     title = "Dashboard",
@@ -137,6 +149,14 @@ class DashboardActivity : ComponentActivity() {
                                                 .putExtra("userEmail", userEmail)
                                         )
                                     }
+                                    Screens.Logout.route -> {
+                                        mAuth.signOut()
+                                        mGoogleSignInClient.signOut().addOnCompleteListener(this@DashboardActivity) {
+                                            val intent = Intent(this@DashboardActivity, LoginActivity::class.java)
+                                            startActivity(intent)
+                                            finish()
+                                        }
+                                    }
                                 }
                             }
                         )
@@ -157,6 +177,21 @@ class DashboardActivity : ComponentActivity() {
                     val hai = it
                     chartPreview()
                 }
+            }
+
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+
+            mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+
+            val auth = Firebase.auth
+            val user = auth.currentUser
+
+            if (user != null) {
+                val userName = user.displayName
+                Toast.makeText(this, "Welcome $userName", Toast.LENGTH_SHORT).show()
             }
         }
     }
