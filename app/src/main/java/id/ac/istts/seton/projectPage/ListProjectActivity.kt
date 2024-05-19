@@ -89,13 +89,10 @@ import id.ac.istts.seton.calendarPage.CalendarActivity
 import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
 import id.ac.istts.seton.taskPage.TaskActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ListProjectActivity : ComponentActivity() {
     private val vm: ListProjectViewModel by viewModels<ListProjectViewModel>()
-    private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
     lateinit var userEmail : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -208,7 +205,7 @@ class ListProjectActivity : ComponentActivity() {
     fun ListProjectPreview() {
         val userProjects by vm.projects.observeAsState(emptyList())
         LaunchedEffect(key1 = Unit) {
-            vm.getUserProjects()
+            vm.getUserProjects(userEmail)
         }
         ConstraintLayout(modifier = Modifier.fillMaxSize().background(Color.White)) {
             LazyColumn(
@@ -244,7 +241,7 @@ class ListProjectActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        vm.getUserProjects()
+        vm.getUserProjects(userEmail)
     }
 
     @Composable

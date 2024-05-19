@@ -34,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -59,12 +60,11 @@ import id.ac.istts.seton.R
 import id.ac.istts.seton.entity.userLoginDTO
 import id.ac.istts.seton.mainPage.DashboardActivity
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class LoginActivity : ComponentActivity() {
     val vm: loginRegisterViewModel by viewModels<loginRegisterViewModel>()
-    private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    lateinit var scope: CoroutineScope
     companion object {
         private const val RC_SIGN_IN = 9001
     }
@@ -74,6 +74,7 @@ class LoginActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             auth = FirebaseAuth.getInstance()
+            scope = rememberCoroutineScope()
             Surface {
                 LoginPage()
             }
@@ -219,7 +220,7 @@ class LoginActivity : ComponentActivity() {
                                 email = email.value,
                                 password = password.value,
                             )
-                            ioScope.launch {
+                            scope.launch {
                                 vm.loginUser(user)
                                 val res = vm.response.value
                                 runOnUiThread{
@@ -345,12 +346,12 @@ class LoginActivity : ComponentActivity() {
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
-
         val googleSignInClient = GoogleSignIn.getClient(this, gso)
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -365,15 +366,39 @@ class LoginActivity : ComponentActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    Toast.makeText(this, "Signed in as ${user?.displayName}", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, DashboardActivity::class.java))
-                    finish()
+                    scope.launch {
+                        vm.loginUserWithGoogle(user?.email.toString())
+                        val res = vm.response.value
+                        runOnUiThread{
+                            if(res != null){
+                                if(res.status == "200"){
+                                    Toast.makeText(this@LoginActivity, res.message, Toast.LENGTH_SHORT).show()
+                                    val intent = Intent(this@LoginActivity, DashboardActivity::class.java)
+                                    intent.putExtra("userEmail", user?.email)
+                                    startActivity(intent)
+                                    finish()
+                                } else {
+                                    Toast.makeText(this@LoginActivity, res.message, Toast.LENGTH_SHORT).show()
+                                    if(auth.currentUser != null){
+                                        auth.signOut()
+                                        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                                            .requestIdToken(getString(R.string.default_web_client_id))
+                                            .requestEmail()
+                                            .build()
+                                        val googleSignInClient = GoogleSignIn.getClient(this@LoginActivity, gso)
+                                        googleSignInClient.signOut()
+                                    }
+                                }
+                            }
+                        }
+                    }
                 } else {
                     Toast.makeText(this, "Authentication failed", Toast.LENGTH_SHORT).show()
                 }

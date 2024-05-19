@@ -11,7 +11,7 @@ data class userDTO (
 
 data class userLoginDTO(
     val email: String,
-    val password: String
+    val password: String?
 )
 
 data class addProjectDTO(

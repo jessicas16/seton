@@ -12,6 +12,7 @@ import id.ac.istts.seton.entity.addProjectDTO
 import id.ac.istts.seton.entity.addTaskDTO
 import id.ac.istts.seton.entity.userDTO
 import id.ac.istts.seton.entity.userLoginDTO
+import id.ac.istts.seton.loginRegister.authUser
 import retrofit2.http.*
 
 interface ApiService {
@@ -34,8 +35,16 @@ interface ApiService {
         @Body userDTO : userDTO
     ): BasicDRO
 
+    @POST("users/registerWithGoogle")
+    suspend fun registerUserWithGoogle(
+        @Body user : authUser
+    ): BasicDRO
+
     @POST("users/login/")
     suspend fun loginUser(@Body userLoginDRO: userLoginDTO):BasicDRO
+
+    @POST("users/loginWithGoogle/{email}")
+    suspend fun loginUserWithGoogle(@Path("email") email: String):BasicDRO
 
     //PROJECTS
     @GET("projects/{email}")

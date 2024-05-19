@@ -15,10 +15,10 @@ class ListProjectViewModel: ViewModel() {
     val projects: LiveData<List<DataProject>>
         get() = _projects
 
-    fun getUserProjects() {
+    fun getUserProjects(email : String) {
         viewModelScope.launch {
             try {
-                val res = repo.getUserProjects()
+                val res = repo.getUserProjects(false, email)
                 Log.i("MESSAGE", res.message)
                 Log.i("DATA_PROJECTS", res.data.toString())
                 _projects.value = res.data

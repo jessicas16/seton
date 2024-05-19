@@ -3,7 +3,6 @@ package id.ac.istts.seton.mainPage
 //import com.example.seton.SetUpNavGraph
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -70,6 +69,12 @@ class DashboardActivity : ComponentActivity() {
         userEmail = intent.getStringExtra("userEmail").toString()
         setContent {
             mAuth = FirebaseAuth.getInstance()
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+            mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+            val auth = Firebase.auth
 
             val items = listOf(
                 MenuItem(
@@ -141,21 +146,21 @@ class DashboardActivity : ComponentActivity() {
                                         ioScope.launch {
                                             ApiConfiguration.defaultRepo.logoutUser()
                                         }
-                                        startActivity(Intent(this@DashboardActivity, LoginActivity::class.java))
+
+                                        if(mAuth.currentUser != null){
+                                            mAuth.signOut()
+                                            mGoogleSignInClient.signOut()
+                                        }
+
+                                        val intent = Intent(this@DashboardActivity, LoginActivity::class.java)
+                                        startActivity(intent)
+                                        finish()
                                     }
                                     Screens.Projects.route -> {
                                         startActivity(
                                             Intent(this@DashboardActivity, ListProjectActivity::class.java)
                                                 .putExtra("userEmail", userEmail)
                                         )
-                                    }
-                                    Screens.Logout.route -> {
-                                        mAuth.signOut()
-                                        mGoogleSignInClient.signOut().addOnCompleteListener(this@DashboardActivity) {
-                                            val intent = Intent(this@DashboardActivity, LoginActivity::class.java)
-                                            startActivity(intent)
-                                            finish()
-                                        }
                                     }
                                 }
                             }
@@ -177,21 +182,6 @@ class DashboardActivity : ComponentActivity() {
                     val hai = it
                     chartPreview()
                 }
-            }
-
-            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build()
-
-            mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
-
-            val auth = Firebase.auth
-            val user = auth.currentUser
-
-            if (user != null) {
-                val userName = user.displayName
-                Toast.makeText(this, "Welcome $userName", Toast.LENGTH_SHORT).show()
             }
         }
     }

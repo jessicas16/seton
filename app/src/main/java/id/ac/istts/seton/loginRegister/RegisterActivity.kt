@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -49,19 +50,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import id.ac.istts.seton.R
 import id.ac.istts.seton.entity.userDTO
 import id.ac.istts.seton.mainPage.DashboardActivity
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class RegisterActivity : ComponentActivity() {
     val vm:loginRegisterViewModel by viewModels<loginRegisterViewModel>()
-    private val ioScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    lateinit var scope: CoroutineScope
+    companion object {
+        private const val RC_SIGN_IN = 9001
+    }
+    private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            auth = FirebaseAuth.getInstance()
+            scope = rememberCoroutineScope()
             Surface {
                 RegisterPage()
             }
@@ -275,7 +286,7 @@ class RegisterActivity : ComponentActivity() {
                                 email = email.value,
                                 password = password.value,
                             )
-                            ioScope.launch {
+                            scope.launch {
                                 vm.registerUser(user)
                                 Thread.sleep(750)
                                 val res = vm.response.value
@@ -283,6 +294,7 @@ class RegisterActivity : ComponentActivity() {
                                     if(res != null){
                                         if(res.status == "201"){
                                             val intent = Intent(context, DashboardActivity::class.java)
+                                            intent.putExtra("userEmail", email.value)
                                             context.startActivity(intent)
                                         } else {
                                             Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()
@@ -365,7 +377,7 @@ class RegisterActivity : ComponentActivity() {
                     }
 
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { signIn() },
                         modifier = Modifier
                             .constrainAs(btnLoginGoogle) {
                                 top.linkTo(textOr.bottom, margin = 16.dp)
@@ -382,7 +394,7 @@ class RegisterActivity : ComponentActivity() {
                                 contentDescription = "Google Icon",
                             )
                             Text(
-                                text = "Log In With Google",
+                                text = "Register With Google",
                                 fontSize = 16.sp,
                                 color = Color.Black,
                                 modifier = Modifier.padding(start = 10.dp)
@@ -392,5 +404,74 @@ class RegisterActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun signIn() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+
+        val googleSignInClient = GoogleSignIn.getClient(this, gso)
+        val signInIntent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                firebaseAuthWithGoogle(account.idToken!!)
+            } catch (e: ApiException) {
+                Toast.makeText(this, "Google sign in failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    val user = auth.currentUser
+                    //masuk ke db
+                    scope.launch {
+                        val userLogin = authUser(
+                            email = user?.email.toString(),
+                            name = user?.displayName.toString()
+                        )
+                        vm.registerUserWithGoogle(userLogin)
+                        Thread.sleep(750)
+                        val res = vm.response.value
+                        runOnUiThread{
+                            if(res != null){
+                                if(res.status == "201"){
+                                    Toast.makeText(this@RegisterActivity, "Register success", Toast.LENGTH_SHORT).show()
+                                    val intent = Intent(this@RegisterActivity, DashboardActivity::class.java)
+                                    intent.putExtra("userEmail", user?.email)
+                                    startActivity(intent)
+                                    finish()
+                                } else {
+                                    Toast.makeText(this@RegisterActivity, res.message, Toast.LENGTH_SHORT).show()
+                                    if(auth.currentUser != null){
+                                        auth.signOut()
+                                        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                                            .requestIdToken(getString(R.string.default_web_client_id))
+                                            .requestEmail()
+                                            .build()
+                                        val googleSignInClient = GoogleSignIn.getClient(this@RegisterActivity, gso)
+                                        googleSignInClient.signOut()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    Toast.makeText(this, "Authentication failed", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 }

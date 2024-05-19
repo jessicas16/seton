@@ -1,6 +1,7 @@
 package id.ac.istts.seton.config
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import id.ac.istts.seton.config.local.AppDatabase
 import id.ac.istts.seton.entity.BasicDRO
@@ -20,6 +21,7 @@ import id.ac.istts.seton.entity.addProjectDTO
 import id.ac.istts.seton.entity.addTaskDTO
 import id.ac.istts.seton.entity.userDTO
 import id.ac.istts.seton.entity.userLoginDTO
+import id.ac.istts.seton.loginRegister.authUser
 import id.ac.istts.seton.projectPage.DataProject
 import id.ac.istts.seton.projectPage.DetailProject
 import id.ac.istts.seton.taskPage.DataTask
@@ -56,6 +58,34 @@ class DefaultRepo(
 
     suspend fun registerUser(userDTO : userDTO): BasicDRO {
         return dataSourceRemote.registerUser(userDTO)
+    }
+    suspend fun registerUserWithGoogle(user:authUser): BasicDRO {
+        return dataSourceRemote.registerUserWithGoogle(user)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun loginUserWithGoogle(email: String):BasicDRO {
+        var loginUser: BasicDRO? = null
+
+        try {
+            loginUser = dataSourceRemote.loginUserWithGoogle(email)
+        }catch (e: Exception){
+
+        }
+        Log.i("LOGIN USER", loginUser.toString())
+        withContext(Dispatchers.IO){
+            if(loginUser != null){
+                val expired = LocalDate.now().plusDays(30).toString()
+                val remember = Remember(
+                    email = email,
+                    expired = expired
+                )
+                dataSourceLocal.rememberDao().clearDb()
+                dataSourceLocal.rememberDao().insert(remember)
+            }
+        }
+
+        return loginUser!!
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -96,8 +126,6 @@ class DefaultRepo(
                 dataSourceLocal.rememberDao().clearDb()
                 dataSourceLocal.rememberDao().insert(remember)
             }
-
-
         }
 
         return loginUser!!
@@ -110,7 +138,7 @@ class DefaultRepo(
     }
 
     //PROJECTS
-    suspend fun getUserProjects(force:Boolean = true, email: String = "ivan.s21@mhs.istts.ac.id"): ListProjectDRO {
+    suspend fun getUserProjects(force:Boolean = true, email: String ): ListProjectDRO {
         var status = "200"
         var message = "Success get user projects from local!"
 

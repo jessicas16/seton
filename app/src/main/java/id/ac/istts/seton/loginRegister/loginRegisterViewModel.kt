@@ -56,4 +56,40 @@ class loginRegisterViewModel:ViewModel() {
             _response.postValue(res)
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun loginUserWithGoogle(email : String){
+        Log.e("EMAIL", email)
+        try {
+            ioScope.async(Dispatchers.IO) {
+                val res = repo.loginUserWithGoogle(email)
+                _response.postValue(res)
+            }.await()
+        } catch (e: Exception) {
+            Log.e("ERROR", e.message.toString())
+            val res =  BasicDRO(
+                status = "500",
+                message = "An error occurred! Please try again later.",
+                data = ""
+            )
+            _response.postValue(res)
+        }
+    }
+
+    suspend fun registerUserWithGoogle(user : authUser){
+        try {
+            ioScope.async(Dispatchers.IO) {
+                val res = repo.registerUserWithGoogle(user)
+                _response.postValue(res)
+            }.await()
+        } catch (e: Exception) {
+            Log.e("ERROR", e.message.toString())
+            val res =  BasicDRO(
+                status = "500",
+                message = "An error occurred! Please try again later.",
+                data = ""
+            )
+            _response.postValue(res)
+        }
+    }
 }
