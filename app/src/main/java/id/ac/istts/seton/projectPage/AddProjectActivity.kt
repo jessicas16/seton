@@ -175,6 +175,7 @@ class AddProjectActivity : ComponentActivity() {
                 Scaffold(
                     topBar = {
                         AppBar (
+                            name = "Projects",
                             onNavigationIconClick = {
                                 scope.launch {
                                     drawerState.open()

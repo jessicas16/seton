@@ -53,9 +53,11 @@ import id.ac.istts.seton.DrawerHeader
 import id.ac.istts.seton.MenuItem
 import id.ac.istts.seton.R
 import id.ac.istts.seton.Screens
+import id.ac.istts.seton.calendarPage.CalendarActivity
 import id.ac.istts.seton.config.ApiConfiguration
 import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
+import id.ac.istts.seton.taskPage.TaskActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -66,6 +68,7 @@ class DashboardActivity : ComponentActivity() {
     private lateinit var mAuth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         userEmail = intent.getStringExtra("userEmail").toString()
         setContent {
             mAuth = FirebaseAuth.getInstance()
@@ -162,6 +165,18 @@ class DashboardActivity : ComponentActivity() {
                                         startActivity(intent)
                                         finish()
                                     }
+                                    Screens.Tasks.route -> {
+                                        val intent = Intent(this@DashboardActivity, TaskActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
+                                        startActivity(intent)
+                                        finish()
+                                    }
+                                    Screens.Calendar.route -> {
+                                        val intent = Intent(this@DashboardActivity, CalendarActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
+                                        startActivity(intent)
+                                        finish()
+                                    }
                                 }
                             }
                         )
@@ -171,6 +186,7 @@ class DashboardActivity : ComponentActivity() {
                 Scaffold(
                     topBar = {
                         AppBar (
+                            name = "Dashboard",
                             onNavigationIconClick = {
                                 scope.launch {
                                     drawerState.open()

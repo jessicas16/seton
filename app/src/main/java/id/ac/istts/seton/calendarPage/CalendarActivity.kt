@@ -163,6 +163,7 @@ class CalendarActivity : ComponentActivity() {
                 Scaffold(
                     topBar = {
                         AppBar (
+                            name = "Calendar",
                             onNavigationIconClick = {
                                 scope.launch {
                                     drawerState.open()

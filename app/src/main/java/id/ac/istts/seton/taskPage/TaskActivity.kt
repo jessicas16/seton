@@ -168,6 +168,7 @@ class TaskActivity : ComponentActivity() {
                 Scaffold(
                     topBar = {
                         AppBar (
+                            name = "Tasks",
                             onNavigationIconClick = {
                                 scope.launch {
                                     drawerState.open()

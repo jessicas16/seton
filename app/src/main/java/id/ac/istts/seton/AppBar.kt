@@ -8,18 +8,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 
 @Composable
 fun AppBar(
+    name : String,
     onNavigationIconClick: () -> Unit
 ) {
     TopAppBar (
         title = {
-            Text(text = stringResource(id = R.string.app_name))
+            Text(text = name)
         },
-        backgroundColor = Color(0xFF0E9794),
-        contentColor = Color.White,
+        backgroundColor = Color.White,
+        contentColor =  Color(0xFF0E9794),
         navigationIcon = {
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
