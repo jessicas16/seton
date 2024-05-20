@@ -157,10 +157,10 @@ class DashboardActivity : ComponentActivity() {
                                         finish()
                                     }
                                     Screens.Projects.route -> {
-                                        startActivity(
-                                            Intent(this@DashboardActivity, ListProjectActivity::class.java)
-                                                .putExtra("userEmail", userEmail)
-                                        )
+                                        val intent = Intent(this@DashboardActivity, ListProjectActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
+                                        startActivity(intent)
+                                        finish()
                                     }
                                 }
                             }

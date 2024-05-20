@@ -18,7 +18,7 @@ class ListProjectViewModel: ViewModel() {
     fun getUserProjects(email : String) {
         viewModelScope.launch {
             try {
-                val res = repo.getUserProjects(false, email)
+                val res = repo.getUserProjects(true, email)
                 Log.i("MESSAGE", res.message)
                 Log.i("DATA_PROJECTS", res.data.toString())
                 _projects.value = res.data
