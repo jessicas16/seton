@@ -43,8 +43,10 @@ interface ApiService {
     @POST("users/login/")
     suspend fun loginUser(@Body userLoginDRO: userLoginDTO):BasicDRO
 
-    @POST("users/loginWithGoogle/{email}")
-    suspend fun loginUserWithGoogle(@Path("email") email: String):BasicDRO
+    @POST("users/loginWithGoogle")
+    suspend fun loginUserWithGoogle(
+        @Body user : authUser
+    ):BasicDRO
 
     //PROJECTS
     @GET("projects/{email}")

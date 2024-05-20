@@ -64,11 +64,11 @@ class DefaultRepo(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun loginUserWithGoogle(email: String):BasicDRO {
+    suspend fun loginUserWithGoogle(user:authUser):BasicDRO {
         var loginUser: BasicDRO? = null
 
         try {
-            loginUser = dataSourceRemote.loginUserWithGoogle(email)
+            loginUser = dataSourceRemote.loginUserWithGoogle(user)
         }catch (e: Exception){
 
         }
@@ -77,7 +77,7 @@ class DefaultRepo(
             if(loginUser != null){
                 val expired = LocalDate.now().plusDays(30).toString()
                 val remember = Remember(
-                    email = email,
+                    email = user.email,
                     expired = expired
                 )
                 dataSourceLocal.rememberDao().clearDb()

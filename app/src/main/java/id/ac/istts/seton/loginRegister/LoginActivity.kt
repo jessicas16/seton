@@ -374,11 +374,15 @@ class LoginActivity : ComponentActivity() {
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     scope.launch {
-                        vm.loginUserWithGoogle(user?.email.toString())
+                        val userLogin = authUser(
+                            email = user?.email.toString(),
+                            name = user?.displayName.toString()
+                        )
+                        vm.loginUserWithGoogle(userLogin)
                         val res = vm.response.value
                         runOnUiThread{
                             if(res != null){
-                                if(res.status == "200"){
+                                if(res.status == "200" || res.status == "201"){
                                     Toast.makeText(this@LoginActivity, res.message, Toast.LENGTH_SHORT).show()
                                     val intent = Intent(this@LoginActivity, DashboardActivity::class.java)
                                     intent.putExtra("userEmail", user?.email)

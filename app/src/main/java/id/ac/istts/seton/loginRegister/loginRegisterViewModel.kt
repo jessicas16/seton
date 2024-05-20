@@ -30,7 +30,7 @@ class loginRegisterViewModel:ViewModel() {
                 _response.postValue(res)
             }.await()
         } catch (e: Exception) {
-            Log.e("ERROR", e.message.toString())
+            Log.e("Login ERROR", e.message.toString())
             val res =  BasicDRO(
                 status = "500",
                 message = "An error occurred! Please try again later.",
@@ -58,15 +58,14 @@ class loginRegisterViewModel:ViewModel() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun loginUserWithGoogle(email : String){
-        Log.e("EMAIL", email)
+    suspend fun loginUserWithGoogle(user : authUser){
         try {
             ioScope.async(Dispatchers.IO) {
-                val res = repo.loginUserWithGoogle(email)
+                val res = repo.loginUserWithGoogle(user)
                 _response.postValue(res)
             }.await()
         } catch (e: Exception) {
-            Log.e("ERROR", e.message.toString())
+            Log.e("login google ERROR", e.message.toString())
             val res =  BasicDRO(
                 status = "500",
                 message = "An error occurred! Please try again later.",
