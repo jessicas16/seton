@@ -1,6 +1,7 @@
 package id.ac.istts.seton.entity
 
 import com.squareup.moshi.JsonClass
+import id.ac.istts.seton.mainPage.DataTaskDashboard
 import id.ac.istts.seton.projectPage.DataProject
 import id.ac.istts.seton.projectPage.DetailProject
 import id.ac.istts.seton.taskPage.DataTask
@@ -22,6 +23,12 @@ data class ListTaskDRO(
     var status : String,
     var message: String,
     var data : List<DataTask>
+)
+
+data class ListTaskDashboardDRO(
+    var status: String,
+    var message: String,
+    var data : List<DataTaskDashboard>
 )
 
 data class ListUserDRO(

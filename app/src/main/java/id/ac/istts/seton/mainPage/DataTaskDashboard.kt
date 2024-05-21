@@ -10,7 +10,7 @@ import id.ac.istts.seton.entity.Projects
 import id.ac.istts.seton.entity.Users
 
 @JsonClass(generateAdapter = true)
-data class DataTask(
+data class DataTaskDashboard(
     @Json(name = "id") val id: Int,
     @Json(name = "title") val title: String,
     @Json(name = "deadline") val deadline: String,

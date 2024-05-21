@@ -11,15 +11,15 @@ import kotlinx.coroutines.launch
 
 class DashboardViewModel: ViewModel(){
     private var repo = ApiConfiguration.defaultRepo
-    private val _tasks = MutableLiveData<List<Pair<String, List<DataTask>>>>()
+    private val _tasks = MutableLiveData<List<Pair<String, List<DataTaskDashboard>>>>()
 
-    val tasks: LiveData<List<Pair<String, List<DataTask>>>>
+    val tasks: LiveData<List<Pair<String, List<DataTaskDashboard>>>>
         get() = _tasks
 
-    fun getUserTasks() {
+    fun getUserTasksDashboard() {
         viewModelScope.launch {
             try {
-                val res = repo.getUserTasks()
+                val res = repo.getUserTasksDashboard()
                 Log.i("DATA_TASK", res.data.toString())
                 val filteredTasks = listOf(
                     Pair("Upcoming", res.data.filter { it.status == 0 }),
