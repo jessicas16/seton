@@ -7,6 +7,7 @@ import id.ac.istts.seton.config.local.AppDatabase
 import id.ac.istts.seton.entity.BasicDRO
 import id.ac.istts.seton.entity.ListProjectDRO
 import id.ac.istts.seton.entity.ListTaskDRO
+import id.ac.istts.seton.entity.ListTaskDashboardDRO
 import id.ac.istts.seton.entity.ListUserDRO
 import id.ac.istts.seton.entity.ProjectDRO
 import id.ac.istts.seton.entity.ProjectDetailDRO
@@ -22,6 +23,7 @@ import id.ac.istts.seton.entity.addTaskDTO
 import id.ac.istts.seton.entity.userDTO
 import id.ac.istts.seton.entity.userLoginDTO
 import id.ac.istts.seton.loginRegister.authUser
+import id.ac.istts.seton.mainPage.DataTaskDashboard
 import id.ac.istts.seton.projectPage.DataProject
 import id.ac.istts.seton.projectPage.DetailProject
 import id.ac.istts.seton.taskPage.DataTask
@@ -604,6 +606,126 @@ class DefaultRepo(
         )
 
         return listTaskDRO
+    }
+
+    suspend fun getUserTasksDashboard(force:Boolean = true, email: String = "ivan.s21@mhs.istts.ac.id"): ListTaskDashboardDRO {
+        var message = "Success get project by id from local!"
+
+        if(force){
+            try {
+                val getUserTaskFromApi = withContext(Dispatchers.IO){dataSourceRemote.getUserTasks(email)}
+
+                for(data in getUserTaskFromApi.data){
+                    val task = Tasks(
+                        id = data.id,
+                        title = data.title,
+                        deadline = data.deadline,
+                        description = data.description,
+                        priority = data.priority,
+                        status = data.status,
+                        pic_email = data.pic.email,
+                        project_id = data.project.id
+                    )
+
+                    withContext(Dispatchers.IO){
+                        try {
+                            if(dataSourceLocal.taskDao().getById(data.id) == null){
+                                dataSourceLocal.taskDao().insert(task)
+                            }else{
+                                dataSourceLocal.taskDao().update(task)
+                            }
+
+                        }catch (e: Exception){}
+                    }
+
+                    for(team in data.teams){
+                        try {
+                            dataSourceLocal.userDao().insert(team)
+                        }catch (e: Exception){}
+
+                        try {
+                            if(dataSourceLocal.taskTeamDao().checkByTaskIdAndEmail(data.id, team.email) == null){
+                                val taskTeam = TaskTeams(
+                                    task_id = data.id,
+                                    team_email = team.email
+                                )
+                                dataSourceLocal.taskTeamDao().insert(taskTeam)
+                            }
+                        }catch (e: Exception){}
+                    }
+
+                    for(comment in data.comments){
+                        try {
+                            dataSourceLocal.commentDao().insert(comment)
+                        }catch (e: Exception){}
+                    }
+
+                    for(attachment in data.attachments){
+                        try {
+                            dataSourceLocal.attachmentDao().insert(attachment)
+                        }catch (e: Exception){}
+                    }
+
+                    for(checklist in data.checklists){
+                        try {
+                            dataSourceLocal.checklistDao().insert(checklist)
+                        }catch (e: Exception){}
+                    }
+
+                    for(label in data.labels){
+                        try {
+                            dataSourceLocal.labelDao().insert(label)
+                        }catch (e: Exception){}
+                    }
+                }
+                message = "Success get project by id from API!"
+            }catch (e: Exception){}
+        }
+
+        var getUserTasksByPICFromLocal = withContext(Dispatchers.IO){dataSourceLocal.taskDao().getByPIC(email)}
+        var getUserTasksByTeamFromLocal = withContext(Dispatchers.IO){dataSourceLocal.taskDao().getByTeam(email)}
+
+        var tasks: MutableList<Tasks> = mutableListOf()
+        tasks.addAll(getUserTasksByPICFromLocal)
+        tasks.addAll(getUserTasksByTeamFromLocal)
+
+        var dataTaskDashboard: MutableList<DataTaskDashboard> = mutableListOf()
+
+        for(task in tasks){
+            val pic = withContext(Dispatchers.IO){ dataSourceLocal.userDao().getByEmail(task.pic_email) }
+            val project = withContext(Dispatchers.IO){ dataSourceLocal.projectDao().getById(task.project_id)}
+            val teams = withContext(Dispatchers.IO){ dataSourceLocal.userDao().getByTaskId(task.id) }
+            val comments = withContext(Dispatchers.IO){ dataSourceLocal.commentDao().getByTaskId(task.id) }
+            val attachments = withContext(Dispatchers.IO){ dataSourceLocal.attachmentDao().getByTaskId(task.id) }
+            val checklists = withContext(Dispatchers.IO){ dataSourceLocal.checklistDao().getByTaskId(task.id) }
+            val labels = withContext(Dispatchers.IO){ dataSourceLocal.labelDao().getByTaskId(task.id) }
+
+            dataTaskDashboard.add(
+                DataTaskDashboard(
+                    id = task.id,
+                    title = task.title,
+                    deadline = task.deadline,
+                    description = task.description,
+                    priority = task.priority,
+                    status = task.status,
+                    pic = pic,
+                    project = project!!,
+                    teams = teams,
+                    comments = comments,
+                    attachments = attachments,
+                    checklists = checklists,
+                    labels = labels
+                )
+            )
+        }
+
+        val listTaskDashboardDRO = ListTaskDashboardDRO(
+            status = "200",
+            message = message,
+            data = dataTaskDashboard
+        )
+
+        return listTaskDashboardDRO
     }
 
     suspend fun getProjectMembers(projectId: String): ListUserDRO {
