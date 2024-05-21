@@ -122,7 +122,7 @@ class RegisterActivity : ComponentActivity() {
             )
 
             Column(modifier = Modifier
-                .padding(top = 300.dp)
+                .padding(top = 250.dp)
                 .constrainAs(et) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)

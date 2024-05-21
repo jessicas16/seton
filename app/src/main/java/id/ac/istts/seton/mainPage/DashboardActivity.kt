@@ -8,11 +8,15 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -29,6 +33,7 @@ import androidx.compose.material.icons.outlined.ListAlt
 import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material.icons.outlined.Task
+import androidx.compose.material.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -38,8 +43,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -207,17 +214,21 @@ class DashboardActivity : ComponentActivity() {
 
     @Composable
     fun chartItem() {
-        Column {
-            Text(
-                text = "Weekly Stats",
-                style = MaterialTheme.typography.h6,
-                modifier = Modifier.padding(2.dp, 10.dp)
-            )
-            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Card(
-                    elevation = 8.dp,
-                    backgroundColor = Color.White,
-                ) {
+        Text(
+            text = "Weekly Stats",
+            style = MaterialTheme.typography.h6,
+            modifier = Modifier.padding(2.dp, 10.dp)
+        )
+        Card (
+            elevation = 20.dp,
+            backgroundColor = Color.White,
+            modifier = Modifier.fillMaxWidth()
+        ){
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.padding(bottom = 15.dp)) {
+                Column (
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                ){
                     Chart(
                         data = mapOf(
                             Pair(0.5f, 10),
@@ -229,6 +240,61 @@ class DashboardActivity : ComponentActivity() {
                         max_value = 6,
                         days = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
                     )
+                }
+                Row (
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ){
+                    Button(
+                        onClick = { /*TODO*/ },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(0xfffff4d4),
+                            contentColor = Color.Black
+                        ),
+                        modifier = Modifier
+                            .height(50.dp)
+                    ) {
+                        Text(
+                            text = "Upcoming",
+                            color = Color.Black,
+                            style = TextStyle(
+                                fontSize = 18.sp
+                            )
+                        )
+                        Text(
+                            text = "5",
+                            style = TextStyle(
+                                fontSize = 18.sp
+                            ),
+                            modifier = Modifier.padding(start = 25.dp)
+                        )
+                    }
+                    Button(
+                        onClick = { /*TODO*/ },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(0xffe0fcfc),
+                            contentColor = Color.Black
+                        ),
+                        modifier = Modifier
+                            .height(50.dp)
+                    ) {
+                        Text(
+                            text = "Completed",
+                            color = Color.Black,
+                            style = TextStyle(
+                                fontSize = 18.sp
+                            )
+                        )
+                        Text(
+                            text = "0",
+                            style = TextStyle(
+                                fontSize = 18.sp
+                            ),
+                            modifier = Modifier.padding(start = 25.dp)
+                        )
+                    }
                 }
             }
         }
