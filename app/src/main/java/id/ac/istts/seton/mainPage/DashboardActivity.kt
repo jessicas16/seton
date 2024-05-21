@@ -312,6 +312,66 @@ class DashboardActivity : ComponentActivity() {
                         )
                     }
                 }
+                Row (
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ){
+                    Button(
+                        onClick = { /*TODO*/ },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(0xffffccb4),
+                            contentColor = Color.Black
+                        ),
+                        modifier = Modifier
+                            .height(50.dp)
+//                            .weight(0.3f)
+                            .width(320.dp)
+                    ) {
+                        Text(
+                            text = "Ongoing",
+                            color = Color.Black,
+                            style = TextStyle(
+                                fontSize = 18.sp
+                            )
+                        )
+                        Text(
+                            text = "0",
+                            style = TextStyle(
+                                fontSize = 18.sp
+                            ),
+                            modifier = Modifier.padding(start = 25.dp)
+                        )
+                    }
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(30.dp))
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(
+                onClick = { /*TODO*/ },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color(0xff109494),
+                    contentColor = Color.Black
+                ),
+                modifier = Modifier
+                    .height(50.dp)
+//                            .weight(0.3f)
+                    .width(320.dp)
+            ) {
+                Text(
+                    text = "Create New Project",
+                    color = Color.White ,
+                    style = TextStyle(
+                        fontSize = 18.sp
+                    )
+                )
             }
         }
     }
