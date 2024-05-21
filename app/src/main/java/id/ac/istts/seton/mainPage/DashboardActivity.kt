@@ -259,7 +259,9 @@ class DashboardActivity : ComponentActivity() {
                     )
                 }
                 items(userTasks) {
-                    RowPart(it.first, it.second)
+                    if (it.first == "Ongoing" || it.first == "Revision"){
+                        RowPart(it.first, it.second)
+                    }
                 }
             }
         }
