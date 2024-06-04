@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
@@ -43,7 +44,6 @@ import androidx.compose.material.icons.outlined.ListAlt
 import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material.icons.outlined.Task
-import androidx.compose.material.Button
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
@@ -87,7 +87,6 @@ import id.ac.istts.seton.config.ApiConfiguration
 import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.projectPage.AddProjectActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
-import id.ac.istts.seton.taskPage.DataTask
 import id.ac.istts.seton.taskPage.TaskActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -248,7 +247,7 @@ class DashboardActivity : ComponentActivity() {
             LazyColumn(
                 Modifier
                     .fillMaxSize()
-                    .padding(16.dp, 60.dp),
+                    .padding(16.dp, 56.dp, 16.dp, 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ){
                 item {
