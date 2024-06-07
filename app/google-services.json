@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "77834221419-n75km614k372nqtjsi9oa82nr1ltkh0i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "id.ac.istts.seton",
+            "certificate_hash": "5b63a427d4b6a27281cbf307cf5a961707f8cf03"
+          }
+        },
+        {
           "client_id": "77834221419-0e8sklciokdlrqqtb1b135ip0j81gvhg.apps.googleusercontent.com",
           "client_type": 3
         }

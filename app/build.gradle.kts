@@ -65,10 +65,12 @@ dependencies {
     implementation("androidx.navigation:navigation-runtime-ktx:2.7.7")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
+    implementation(platform("androidx.compose:compose-bom:2023.08.00"))
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
     implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
 
     val composeBom = platform("androidx.compose:compose-bom:2024.04.00")
     implementation(composeBom)
@@ -141,4 +143,14 @@ dependencies {
     implementation("com.google.firebase:firebase-auth:23.0.0")
     implementation (platform("com.google.firebase:firebase-bom:31.5.0"))
     implementation ("com.google.android.gms:play-services-auth:21.1.1")
+
+    //chart vico
+    implementation("com.patrykandpatrick.vico:compose:2.0.0-alpha.20")
+    implementation("com.patrykandpatrick.vico:compose-m2:2.0.0-alpha.20")
+    implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.20")
+    implementation("com.patrykandpatrick.vico:core:2.0.0-alpha.20")
+    implementation("com.patrykandpatrick.vico:views:2.0.0-alpha.20")
+
+    //Comnposable-graph
+    implementation("com.github.jaikeerthick:Composable-Graphs:v1.2.3")
 }
