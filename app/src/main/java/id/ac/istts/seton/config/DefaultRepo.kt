@@ -14,6 +14,7 @@ import id.ac.istts.seton.entity.ProjectDetailDRO
 import id.ac.istts.seton.entity.ProjectMembers
 import id.ac.istts.seton.entity.Projects
 import id.ac.istts.seton.entity.Remember
+import id.ac.istts.seton.entity.TaskDRO
 import id.ac.istts.seton.entity.TaskTeams
 import id.ac.istts.seton.entity.Tasks
 import id.ac.istts.seton.entity.UserDRO
@@ -806,5 +807,9 @@ class DefaultRepo(
         }catch(e: Exception){}
 
         return createTask!!
+    }
+
+    suspend fun getTaskDetail(taskId : String): TaskDRO {
+        return dataSourceRemote.getTaskById(taskId)
     }
 }

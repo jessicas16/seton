@@ -6,6 +6,7 @@ import id.ac.istts.seton.entity.ListTaskDRO
 import id.ac.istts.seton.entity.ListUserDRO
 import id.ac.istts.seton.entity.ProjectDRO
 import id.ac.istts.seton.entity.ProjectDetailDRO
+import id.ac.istts.seton.entity.TaskDRO
 import id.ac.istts.seton.entity.UserDRO
 import id.ac.istts.seton.entity.Users
 import id.ac.istts.seton.entity.addProjectDTO
@@ -82,4 +83,7 @@ interface ApiService {
 
     @POST("tasks/")
     suspend fun createTask(@Body taskDTO: addTaskDTO): BasicDRO
+
+    @GET("tasks/{taskId}")
+    suspend fun getTaskById(@Path("taskId") taskId: String): TaskDRO
 }

@@ -54,3 +54,10 @@ data class ProjectDetailDRO(
     var message: String,
     var data : DetailProject,
 )
+
+data class TaskDRO(
+    var status : String,
+    var message: String,
+    var data : DataTask
+)
+

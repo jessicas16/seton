@@ -2,6 +2,7 @@ package id.ac.istts.seton.taskPage
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -359,6 +360,9 @@ class TaskActivity : ComponentActivity() {
                         ) {
                             Row(modifier = Modifier.clickable {
                                 // Go to Task Details
+                                val intent = Intent(this@TaskActivity, TaskDetailActivity::class.java)
+                                intent.putExtra("taskId", it.id.toString())
+                                startActivity(intent)
                             }, verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = "See Details",

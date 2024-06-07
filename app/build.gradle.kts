@@ -65,10 +65,12 @@ dependencies {
     implementation("androidx.navigation:navigation-runtime-ktx:2.7.7")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
+    implementation(platform("androidx.compose:compose-bom:2023.08.00"))
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
     implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
 
     val composeBom = platform("androidx.compose:compose-bom:2024.04.00")
     implementation(composeBom)
