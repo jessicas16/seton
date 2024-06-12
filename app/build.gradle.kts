@@ -143,4 +143,14 @@ dependencies {
     implementation("com.google.firebase:firebase-auth:23.0.0")
     implementation (platform("com.google.firebase:firebase-bom:31.5.0"))
     implementation ("com.google.android.gms:play-services-auth:21.1.1")
+
+    //chart vico
+    implementation("com.patrykandpatrick.vico:compose:2.0.0-alpha.20")
+    implementation("com.patrykandpatrick.vico:compose-m2:2.0.0-alpha.20")
+    implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.20")
+    implementation("com.patrykandpatrick.vico:core:2.0.0-alpha.20")
+    implementation("com.patrykandpatrick.vico:views:2.0.0-alpha.20")
+
+    //Comnposable-graph
+    implementation("com.github.jaikeerthick:Composable-Graphs:v1.2.3")
 }
