@@ -1,6 +1,5 @@
 package id.ac.istts.seton.taskPage
 
-import android.content.Intent
 import android.graphics.Color.parseColor
 import android.os.Bundle
 import android.widget.Toast
@@ -22,27 +21,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Discount
-import androidx.compose.material.icons.filled.ListAlt
-import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material.icons.filled.Report
-import androidx.compose.material.icons.filled.Task
-import androidx.compose.material.icons.outlined.CalendarToday
-import androidx.compose.material.icons.outlined.Dashboard
-import androidx.compose.material.icons.outlined.ListAlt
-import androidx.compose.material.icons.outlined.Logout
-import androidx.compose.material.icons.outlined.Report
-import androidx.compose.material.icons.outlined.Task
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -61,20 +44,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import id.ac.istts.seton.AppBar
-import id.ac.istts.seton.DrawerBody
-import id.ac.istts.seton.DrawerHeader
-import id.ac.istts.seton.MenuItem
 import id.ac.istts.seton.R
-import id.ac.istts.seton.Screens
 import id.ac.istts.seton.entity.Projects
 import id.ac.istts.seton.entity.TaskDRO
 import id.ac.istts.seton.entity.Users
-import id.ac.istts.seton.loginRegister.LoginActivity
-import id.ac.istts.seton.mainPage.DashboardActivity
-import id.ac.istts.seton.projectPage.ListProjectActivity
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 class TaskDetailActivity : ComponentActivity() {
     private val vm: TaskDetailViewModel by viewModels<TaskDetailViewModel>()
@@ -87,112 +61,113 @@ class TaskDetailActivity : ComponentActivity() {
         setContent {
             scope = rememberCoroutineScope()
 
-            val items = listOf(
-                MenuItem(
-                    title = "Dashboard",
-                    route = Screens.Dashboard.route,
-                    selectedIcon = Icons.Filled.Dashboard,
-                    unSelectedIcon = Icons.Outlined.Dashboard
-                ),
-                MenuItem(
-                    title = "Projects",
-                    route = Screens.Projects.route,
-                    selectedIcon = Icons.Filled.ListAlt,
-                    unSelectedIcon = Icons.Outlined.ListAlt
-                ),
-                MenuItem(
-                    title = "Tasks",
-                    route = Screens.Tasks.route,
-                    selectedIcon = Icons.Filled.Task,
-                    unSelectedIcon = Icons.Outlined.Task
-                ),
-                MenuItem(
-                    title = "Calendar",
-                    route = Screens.Calendar.route,
-                    selectedIcon = Icons.Filled.CalendarToday,
-                    unSelectedIcon = Icons.Outlined.CalendarToday
-                ),
-                MenuItem(
-                    title = "Report",
-                    route = Screens.Report.route,
-                    selectedIcon = Icons.Filled.Report,
-                    unSelectedIcon = Icons.Outlined.Report
-                ),
-                MenuItem(
-                    title = "Logout",
-                    route = Screens.Logout.route,
-                    selectedIcon = Icons.Filled.Logout,
-                    unSelectedIcon = Icons.Outlined.Logout
-                ),
-            )
-
-            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-//            val navController = rememberNavController()
-//            val navBackStackEntry by navController.currentBackStackEntryAsState()
-//            val currentRoute = navBackStackEntry?.destination?.route
+//            val items = listOf(
+//                MenuItem(
+//                    title = "Dashboard",
+//                    route = Screens.Dashboard.route,
+//                    selectedIcon = Icons.Filled.Dashboard,
+//                    unSelectedIcon = Icons.Outlined.Dashboard
+//                ),
+//                MenuItem(
+//                    title = "Projects",
+//                    route = Screens.Projects.route,
+//                    selectedIcon = Icons.Filled.ListAlt,
+//                    unSelectedIcon = Icons.Outlined.ListAlt
+//                ),
+//                MenuItem(
+//                    title = "Tasks",
+//                    route = Screens.Tasks.route,
+//                    selectedIcon = Icons.Filled.Task,
+//                    unSelectedIcon = Icons.Outlined.Task
+//                ),
+//                MenuItem(
+//                    title = "Calendar",
+//                    route = Screens.Calendar.route,
+//                    selectedIcon = Icons.Filled.CalendarToday,
+//                    unSelectedIcon = Icons.Outlined.CalendarToday
+//                ),
+//                MenuItem(
+//                    title = "Report",
+//                    route = Screens.Report.route,
+//                    selectedIcon = Icons.Filled.Report,
+//                    unSelectedIcon = Icons.Outlined.Report
+//                ),
+//                MenuItem(
+//                    title = "Logout",
+//                    route = Screens.Logout.route,
+//                    selectedIcon = Icons.Filled.Logout,
+//                    unSelectedIcon = Icons.Outlined.Logout
+//                ),
+//            )
 //
-//            val topBarTitle =
-//                if (currentRoute != null){
-//                    items[items.indexOfFirst {
-//                        it.route == currentRoute
-//                    }].title
+//            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+////            val navController = rememberNavController()
+////            val navBackStackEntry by navController.currentBackStackEntryAsState()
+////            val currentRoute = navBackStackEntry?.destination?.route
+////
+////            val topBarTitle =
+////                if (currentRoute != null){
+////                    items[items.indexOfFirst {
+////                        it.route == currentRoute
+////                    }].title
+////                }
+////                else {
+////                    items[0].title
+////                }
+//
+//            ModalNavigationDrawer(
+//                gesturesEnabled = drawerState.isOpen,
+//                drawerContent = {
+//                    ModalDrawerSheet {
+//                        DrawerHeader()
+//                        Spacer(modifier = Modifier.height(8.dp))
+//                        DrawerBody(
+//                            items = items,
+//                            onItemClick = { currentMenuItem ->
+//                                when (currentMenuItem.route){
+//                                    Screens.Logout.route -> {
+//                                        startActivity(Intent(this@TaskDetailActivity, LoginActivity::class.java))
+//                                    }
+//                                    Screens.Dashboard.route -> {
+//                                        startActivity(Intent(this@TaskDetailActivity, DashboardActivity::class.java))
+//                                    }
+//                                    Screens.Tasks.route -> {
+//                                        startActivity(Intent(this@TaskDetailActivity, TaskActivity::class.java))
+//                                    }
+//                                    Screens.Projects.route -> {
+//                                        startActivity(Intent(this@TaskDetailActivity, ListProjectActivity::class.java))
+//                                    }
+//                                }
+//                            }
+//                        )
+//                    }
+//                }, drawerState = drawerState
+//            ) {
+//                Scaffold(
+//                    topBar = {
+//                        AppBar (
+//                            name = "Task Detail",
+//                            onNavigationIconClick = {
+//                                scope.launch {
+//                                    drawerState.open()
+//                                }
+//                            }
+//                        )
+//                    }
+//                ) {
+//                    val hai = it
+//                    Detail()
 //                }
-//                else {
-//                    items[0].title
-//                }
-
-            ModalNavigationDrawer(
-                gesturesEnabled = drawerState.isOpen,
-                drawerContent = {
-                    ModalDrawerSheet {
-                        DrawerHeader()
-                        Spacer(modifier = Modifier.height(8.dp))
-                        DrawerBody(
-                            items = items,
-                            onItemClick = { currentMenuItem ->
-                                when (currentMenuItem.route){
-                                    Screens.Logout.route -> {
-                                        startActivity(Intent(this@TaskDetailActivity, LoginActivity::class.java))
-                                    }
-                                    Screens.Dashboard.route -> {
-                                        startActivity(Intent(this@TaskDetailActivity, DashboardActivity::class.java))
-                                    }
-                                    Screens.Tasks.route -> {
-                                        startActivity(Intent(this@TaskDetailActivity, TaskActivity::class.java))
-                                    }
-                                    Screens.Projects.route -> {
-                                        startActivity(Intent(this@TaskDetailActivity, ListProjectActivity::class.java))
-                                    }
-                                }
-                            }
-                        )
-                    }
-                }, drawerState = drawerState
-            ) {
-                Scaffold(
-                    topBar = {
-                        AppBar (
-                            name = "Task Detail",
-                            onNavigationIconClick = {
-                                scope.launch {
-                                    drawerState.open()
-                                }
-                            }
-                        )
-                    }
-                ) {
-                    val hai = it
-                    Detail()
-                }
-            }
+//            }
+            Detail()
         }
     }
 
 
-    override fun onResume() {
-        super.onResume()
-        vm.getTaskById(taskId)
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        vm.getTaskById(taskId)
+//    }
 
     @Preview(showBackground = true)
     @Composable
@@ -207,15 +182,15 @@ class TaskDetailActivity : ComponentActivity() {
                     title = "",
                     deadline = "",
                     description = "",
-                    priority = 0,
-                    status = 0,
+                    priority = -1,
+                    status = -1,
                     pic = Users(
                         email = "",
                         name = "",
                         profile_picture = "",
                         password = "",
                         auth_token = "",
-                        status = 0
+                        status = -1
                     ),
                     project = Projects(
                         id = -1,
@@ -224,7 +199,7 @@ class TaskDetailActivity : ComponentActivity() {
                         start = "",
                         deadline = "",
                         pm_email = "",
-                        status = 0
+                        status = -1
                     ),
                     teams = listOf(),
                     comments = listOf(),
@@ -286,25 +261,24 @@ class TaskDetailActivity : ComponentActivity() {
                             tgl =  "${taskDetail.data.deadline.substring(8, 10)} ${monthMap[taskDetail.data.deadline.substring(5, 7).toInt() - 1]} ${taskDetail.data.deadline.substring(0, 4)}"
                         }
 
-
-                            Box(
-                                modifier = Modifier
-                                    .background(
-                                        color = Color(0xFFECFFFF),
-                                        shape = RoundedCornerShape(16.dp)
-                                    )
-                                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                            ) {
-                                Text(
-                                    text = tgl,
-                                    fontSize = 16.sp,
-                                    fontFamily = FontFamily(
-                                        Font(R.font.open_sans_regular, FontWeight.Normal)
-                                    ),
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    color = Color(0xFFECFFFF),
+                                    shape = RoundedCornerShape(16.dp)
                                 )
-                            }
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            Text(
+                                text = tgl,
+                                fontSize = 16.sp,
+                                fontFamily = FontFamily(
+                                    Font(R.font.open_sans_regular, FontWeight.Normal)
+                                ),
+                            )
+                        }
 
-
+                        Toast.makeText(context, taskDetail.data.status.toString(), Toast.LENGTH_SHORT).show()
                         var status=""
                         when(taskDetail.data.status){
                             0 -> status = "Upcoming"
@@ -327,14 +301,23 @@ class TaskDetailActivity : ComponentActivity() {
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
                         ){
-                            Text(
-                                text = selectedText,
+                            Row(
                                 modifier = Modifier
-                                    .clickable{ expanded = true }
-                                    .padding(horizontal = 0.dp, vertical = 8.dp),
-                                color = items.first { it.first == selectedText }.second,
-                                fontSize = 16.sp
-                            )
+                                    .clickable { expanded = true }
+                                    .padding(horizontal = 0.dp, vertical = 8.dp)
+                            ) {
+                                Text(
+                                    text = selectedText,
+                                    color = items.first { it.first == selectedText }.second,
+                                    fontSize = 16.sp
+                                )
+                                Icon(
+                                    imageVector = Icons.Filled.ArrowDropDown,
+                                    contentDescription = "Arrow Down",
+                                    tint = Color.Gray,
+                                    modifier = Modifier.padding(start = 8.dp)
+                                )
+                            }
 
                             DropdownMenu(
                                 expanded = expanded,
@@ -343,8 +326,20 @@ class TaskDetailActivity : ComponentActivity() {
                                 items.forEach { (text, color) ->
                                     DropdownMenuItem(
                                         onClick = {
-                                            selectedText = text
-                                            expanded = false
+                                            if(selectedText != text){
+                                                selectedText = text
+                                                expanded = false
+
+                                                var statusInt = "-1"
+                                                when(selectedText){
+                                                    "Upcoming" -> statusInt = "0"
+                                                    "Ongoing" -> statusInt = "1"
+                                                    "Submitted" -> statusInt = "2"
+                                                    "Revision" -> statusInt = "3"
+                                                    "Completed" -> statusInt = "4"
+                                                }
+                                                vm.updateTaskStatus(taskId, statusInt)
+                                            }
                                         }
                                     ) {
                                         Text(text = text, color = color, fontSize = 16.sp)

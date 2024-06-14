@@ -19,7 +19,8 @@ class TaskViewModel: ViewModel() {
         viewModelScope.launch {
             try {
                 val res = repo.getUserTasks()
-                Log.i("DATA_TASK", res.data.toString())
+
+                Log.i("LALALALLALALLA", res.data.toString())
                 val filteredTasks = listOf(
                     Pair("Upcoming", res.data.filter { it.status == 0 }),
                     Pair("Ongoing", res.data.filter { it.status == 1 }),
@@ -27,6 +28,7 @@ class TaskViewModel: ViewModel() {
                     Pair("Revision", res.data.filter { it.status == 3 }),
                     Pair("Completed", res.data.filter { it.status == 4 })
                 )
+                Log.i("LILILILILILI", filteredTasks.toString())
                 _tasks.value = filteredTasks
             } catch (e: Exception) {
                 Log.e("ERROR", e.message.toString())

@@ -86,4 +86,10 @@ interface ApiService {
 
     @GET("tasks/{taskId}")
     suspend fun getTaskById(@Path("taskId") taskId: String): TaskDRO
+
+    @PUT("tasks/{taskId}/{status}")
+    suspend fun updateTaskStatus(
+        @Path("taskId") taskId: String,
+        @Path("status") status: String,
+    ): BasicDRO
 }

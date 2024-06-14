@@ -26,7 +26,7 @@ import id.ac.istts.seton.entity.Users
         Remember::class,
         TaskTeams::class
     ],
-    version = 3
+    version = 4
 )
 abstract class AppDatabase: RoomDatabase() {
     abstract fun attachmentDao(): AttachmentDao
