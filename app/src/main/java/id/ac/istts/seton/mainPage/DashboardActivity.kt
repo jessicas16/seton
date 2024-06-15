@@ -56,6 +56,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
@@ -238,10 +239,12 @@ class DashboardActivity : ComponentActivity() {
     @Composable
     fun chartPreview() {
         val userTasks by vm.tasks.observeAsState(emptyList())
-        LaunchedEffect(key1 = Unit){
+        val (selectedChart, setSelectedChart) = remember { mutableStateOf("Upcoming") }
+
+        LaunchedEffect(key1 = Unit) {
             vm.getUserTasksDashboard()
         }
-        
+
         ConstraintLayout(modifier = Modifier
             .fillMaxSize()
             .background(Color.White)) {
@@ -250,16 +253,18 @@ class DashboardActivity : ComponentActivity() {
                     .fillMaxSize()
                     .padding(16.dp, 60.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
-            ){
+            ) {
                 item {
                     chartItem(
+                        selectedChart = selectedChart,
                         upcomingCount = userTasks.firstOrNull { it.first == "Upcoming" }?.second?.size ?: 0,
                         ongoingCount = userTasks.firstOrNull { it.first == "Ongoing" }?.second?.size ?: 0,
-                        completedCount = userTasks.firstOrNull { it.first == "Completed" }?.second?.size ?: 0
+                        completedCount = userTasks.firstOrNull { it.first == "Completed" }?.second?.size ?: 0,
+                        onButtonClick = { chartType -> setSelectedChart(chartType) }
                     )
                 }
                 items(userTasks) {
-                    if (it.first == "Ongoing" || it.first == "Revision"){
+                    if (it.first == "Ongoing" || it.first == "Revision") {
                         RowPart(it.first, it.second)
                     }
                 }
@@ -268,118 +273,133 @@ class DashboardActivity : ComponentActivity() {
     }
 
     @Composable
-    fun chartItem(upcomingCount: Int, ongoingCount: Int, completedCount: Int) {
+    fun chartItem(
+        selectedChart: String,
+        upcomingCount: Int,
+        ongoingCount: Int,
+        completedCount: Int,
+        onButtonClick: (String) -> Unit
+    ) {
         Text(
             text = "Weekly Stats",
             style = MaterialTheme.typography.h6,
             modifier = Modifier.padding(2.dp, 10.dp)
         )
-        Card (
+        Card(
             elevation = 20.dp,
             backgroundColor = Color.White,
             modifier = Modifier.fillMaxWidth()
-        ){
+        ) {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.padding(bottom = 15.dp)) {
-                Column (
+                Column(
                     modifier = Modifier
                         .padding(top = 16.dp)
-                ){
+                ) {
+                    val data = when (selectedChart) {
+                        "Upcoming" -> {
+                            mapOf(
+                                Pair(0.5f, 10),
+                                Pair(0.6f, 12),
+                                Pair(0.2f, 13),
+                                Pair(0.7f, 15),
+                                Pair(0.8f, 16)
+                            )
+                        }
+                        "Completed" -> {
+                            // Ganti ini dengan data sebenarnya dari Completed
+                            mapOf(
+                                Pair(0.3f, 5),
+                                Pair(0.6f, 8),
+                                Pair(0.9f, 20),
+                                Pair(1.0f, 25)
+                            )
+                        }
+                        "Ongoing" -> {
+                            // Ganti ini dengan data sebenarnya dari Ongoing
+                            mapOf(
+                                Pair(0.4f, 7),
+                                Pair(0.5f, 10),
+                                Pair(0.6f, 13),
+                                Pair(0.8f, 16)
+                            )
+                        }
+                        else -> mapOf()
+                    }
                     Chart(
-                        data = mapOf(
-                            Pair(0.5f, 10),
-                            Pair(0.6f, 12),
-                            Pair(0.2f, 13),
-                            Pair(0.7f, 15),
-                            Pair(0.8f, 16),
-                        ),
-                        max_value = 6,
+                        data = data,
+                        max_value = data.values.maxOrNull() ?: 0,
                         days = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
                     )
                 }
-                Row (
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
-                ){
+                ) {
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { onButtonClick("Upcoming") },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = Color(0xfffff4d4),
                             contentColor = Color.Black
                         ),
-                        modifier = Modifier
-                            .height(50.dp)
+                        modifier = Modifier.height(50.dp)
                     ) {
                         Text(
                             text = "Upcoming",
                             color = Color.Black,
-                            style = TextStyle(
-                                fontSize = 18.sp
-                            )
+                            style = TextStyle(fontSize = 18.sp)
                         )
                         Text(
                             text = upcomingCount.toString(),
-                            style = TextStyle(
-                                fontSize = 18.sp
-                            ),
+                            style = TextStyle(fontSize = 18.sp),
                             modifier = Modifier.padding(start = 25.dp)
                         )
                     }
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { onButtonClick("Completed") },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = Color(0xffe0fcfc),
                             contentColor = Color.Black
                         ),
-                        modifier = Modifier
-                            .height(50.dp)
+                        modifier = Modifier.height(50.dp)
                     ) {
                         Text(
                             text = "Completed",
                             color = Color.Black,
-                            style = TextStyle(
-                                fontSize = 18.sp
-                            )
+                            style = TextStyle(fontSize = 18.sp)
                         )
                         Text(
                             text = completedCount.toString(),
-                            style = TextStyle(
-                                fontSize = 18.sp
-                            ),
+                            style = TextStyle(fontSize = 18.sp),
                             modifier = Modifier.padding(start = 25.dp)
                         )
                     }
                 }
-                Row (
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
-                ){
+                ) {
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { onButtonClick("Ongoing") },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = Color(0xffffccb4),
                             contentColor = Color.Black
                         ),
                         modifier = Modifier
                             .height(50.dp)
-//                            .weight(0.3f)
                             .width(320.dp)
                     ) {
                         Text(
                             text = "Ongoing",
                             color = Color.Black,
-                            style = TextStyle(
-                                fontSize = 18.sp
-                            )
+                            style = TextStyle(fontSize = 18.sp)
                         )
                         Text(
                             text = ongoingCount.toString(),
-                            style = TextStyle(
-                                fontSize = 18.sp
-                            ),
+                            style = TextStyle(fontSize = 18.sp),
                             modifier = Modifier.padding(start = 25.dp)
                         )
                     }
