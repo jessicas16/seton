@@ -88,6 +88,7 @@ import id.ac.istts.seton.Screens
 import id.ac.istts.seton.calendarPage.CalendarActivity
 import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
+import id.ac.istts.seton.reportPage.ReportActivity
 import id.ac.istts.seton.taskPage.TaskActivity
 import kotlinx.coroutines.launch
 
@@ -175,6 +176,12 @@ class ListProjectActivity : ComponentActivity() {
                                     }
                                     Screens.Calendar.route -> {
                                         startActivity(Intent(this@ListProjectActivity, CalendarActivity::class.java))
+                                    }
+                                    Screens.Report.route -> {
+                                        val intent = Intent(this@ListProjectActivity, ReportActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
+                                        startActivity(intent)
+                                        finish()
                                     }
                                 }
                             }

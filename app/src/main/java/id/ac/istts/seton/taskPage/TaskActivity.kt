@@ -75,6 +75,7 @@ import id.ac.istts.seton.Screens
 import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
+import id.ac.istts.seton.reportPage.ReportActivity
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 
@@ -159,6 +160,12 @@ class TaskActivity : ComponentActivity() {
                                     }
                                     Screens.Projects.route -> {
                                         startActivity(Intent(this@TaskActivity, ListProjectActivity::class.java))
+                                    }
+                                    Screens.Report.route -> {
+                                        val intent = Intent(this@TaskActivity, ReportActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
+                                        startActivity(intent)
+                                        finish()
                                     }
                                 }
                             }

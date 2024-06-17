@@ -66,6 +66,7 @@ import id.ac.istts.seton.R
 import id.ac.istts.seton.Screens
 import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
+import id.ac.istts.seton.reportPage.ReportActivity
 import id.ac.istts.seton.taskPage.TaskActivity
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -74,8 +75,10 @@ import java.util.TimeZone
 
 class CalendarActivity : ComponentActivity() {
     private val vm: CalendarViewModel by viewModels<CalendarViewModel>()
+    lateinit var userEmail : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        userEmail = intent.getStringExtra("userEmail").toString()
         setContent {
             val items = listOf(
                 MenuItem(
@@ -153,6 +156,12 @@ class CalendarActivity : ComponentActivity() {
                                     }
                                     Screens.Calendar.route -> {
                                         startActivity(Intent(this@CalendarActivity, CalendarActivity::class.java))
+                                    }
+                                    Screens.Report.route -> {
+                                        val intent = Intent(this@CalendarActivity, ReportActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
+                                        startActivity(intent)
+                                        finish()
                                     }
                                 }
                             }
