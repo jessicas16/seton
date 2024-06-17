@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import id.ac.istts.seton.config.local.AppDatabase
 import id.ac.istts.seton.entity.BasicDRO
+import id.ac.istts.seton.entity.LabelDRO
+import id.ac.istts.seton.entity.Labels
 import id.ac.istts.seton.entity.ListProjectDRO
 import id.ac.istts.seton.entity.ListTaskDRO
 import id.ac.istts.seton.entity.ListTaskDashboardDRO
@@ -62,6 +64,7 @@ class DefaultRepo(
     suspend fun registerUser(userDTO : userDTO): BasicDRO {
         return dataSourceRemote.registerUser(userDTO)
     }
+
     suspend fun registerUserWithGoogle(user:authUser): BasicDRO {
         return dataSourceRemote.registerUserWithGoogle(user)
     }
@@ -991,5 +994,29 @@ class DefaultRepo(
             )
             return dro
         }
+    }
+
+    suspend fun addLabelToTask(taskId: String, label: String): LabelDRO {
+        var addLabel: LabelDRO? = null
+
+        try {
+            addLabel = dataSourceRemote.addLabelToTask(taskId, label)
+
+            if(addLabel.status == "201"){
+                var label = Labels(
+                    id = addLabel.data.id,
+                    title = addLabel.data.title,
+                    color = addLabel.data.color,
+                    task_id = addLabel.data.task_id
+                )
+
+                withContext(Dispatchers.IO){
+                    dataSourceLocal.labelDao().insert(label)
+                }
+            }else{
+                addLabel = null
+            }
+        }catch (e: Exception){}
+        return addLabel!!
     }
 }

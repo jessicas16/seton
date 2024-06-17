@@ -3,7 +3,6 @@ package id.ac.istts.seton.taskPage
 import android.content.Intent
 import android.graphics.Color.parseColor
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,17 +15,23 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Attachment
 import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.CheckBox
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Discount
 import androidx.compose.material.icons.filled.ListAlt
@@ -39,10 +44,15 @@ import androidx.compose.material.icons.outlined.ListAlt
 import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material.icons.outlined.Task
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -52,14 +62,20 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import id.ac.istts.seton.AppBar
 import id.ac.istts.seton.DrawerBody
@@ -74,6 +90,7 @@ import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class TaskDetailActivity : ComponentActivity() {
@@ -231,13 +248,22 @@ class TaskDetailActivity : ComponentActivity() {
             vm.getTaskById(taskId)
         }
 
+        //DIALOG
+        val showLabelDialog = remember { mutableStateOf(false) }
+        if (showLabelDialog.value) {
+            ModalForLabels(
+                taskId = taskId
+            ){ showLabelDialog.value = false }
+        }
+
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(20.dp)
         ) {
-            val (title, member) = createRefs()
+            val (title, member, desc, add, attach, goal, comment) = createRefs()
 
+            //overview
             Row(
                 modifier = Modifier.constrainAs(title) {
                     top.linkTo(parent.top)
@@ -315,7 +341,6 @@ class TaskDetailActivity : ComponentActivity() {
                                 ),
                             )
                         }
-                        Log.i("STATUS TASKK int", taskDetail.data.statusTask.toString())
                         var status = ""
                         when (taskDetail.data.statusTask) {
                             0 -> status = "Upcoming"
@@ -407,7 +432,7 @@ class TaskDetailActivity : ComponentActivity() {
             //PIC and Team
             Row(
                 modifier = Modifier.constrainAs(member) {
-                    top.linkTo(title.bottom, margin = 16.dp)
+                    top.linkTo(title.bottom, margin = 8.dp)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 },
@@ -424,26 +449,31 @@ class TaskDetailActivity : ComponentActivity() {
                         ),
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
-//                    val arrName = taskDetail.data.pic.name.split(" ")
-//                    val nama = arrName[0].first().uppercaseChar().toString() + if (arrName.size > 1) arrName[1].first().uppercaseChar().toString() else ""
-//                    Box(
-//                        modifier = Modifier
-//                            .size(48.dp)
-//                            .background(
-//                                color = Color(0xFFECFFFF),
-//                                shape = RoundedCornerShape(24.dp)
-//                            ),
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                        Text(
-//                            text = nama,
-//                            fontSize = 20.sp,
-//                            fontFamily = FontFamily(
-//                                Font(R.font.open_sans_bold, FontWeight.Bold)
-//                            ),
-//                            color = Color(0xFF0E9794)
-//                        )
-//                    }
+
+                    val picName = taskDetail.data.pic.name
+                    if(picName != ""){
+                        val arrName = picName.split(' ')
+                        val nama = arrName[0].first().uppercaseChar().toString() + if (arrName.size > 1) arrName[1].first().uppercaseChar().toString() else ""
+
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .background(
+                                    color = Color(0xFFECFFFF),
+                                    shape = RoundedCornerShape(24.dp)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = nama,
+                                fontSize = 20.sp,
+                                fontFamily = FontFamily(
+                                    Font(R.font.open_sans_bold, FontWeight.Bold)
+                                ),
+                                color = Color(0xFF0E9794)
+                            )
+                        }
+                    }
                 }
                 Column (
                     modifier = Modifier.weight(2f)
@@ -456,32 +486,110 @@ class TaskDetailActivity : ComponentActivity() {
                         ),
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
-//                    LazyRow(
-//                        modifier = Modifier.padding(bottom = 8.dp)
-//                    ) {
-//                        items(taskDetail.data.teams) { team ->
-//                            val arrName = team.name.split(" ")
-//                            val nama = arrName[0].first().uppercaseChar().toString() + if (arrName.size > 1) arrName[1].first().uppercaseChar().toString() else ""
-//                            Box(
-//                                modifier = Modifier
-//                                    .size(48.dp)
-//                                    .background(
-//                                        color = Color(0xFFECFFFF),
-//                                        shape = RoundedCornerShape(24.dp)
-//                                    ),
-//                                contentAlignment = Alignment.Center
-//                            ) {
-//                                Text(
-//                                    text = nama,
-//                                    fontSize = 20.sp,
-//                                    fontFamily = FontFamily(
-//                                        Font(R.font.open_sans_bold, FontWeight.Bold)
-//                                    ),
-//                                    color = Color(0xFF0E9794)
-//                                )
-//                            }
-//                        }
-//                    }
+                    LazyRow(
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    ) {
+                        items(taskDetail.data.teams) { team ->
+                            val arrName = team.name.split(' ')
+                            val nama = arrName[0].first().uppercaseChar().toString() + if (arrName.size > 1) arrName[1].first().uppercaseChar().toString() else ""
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .background(
+                                        color = Color(0xFFECFFFF),
+                                        shape = RoundedCornerShape(24.dp)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = nama,
+                                    fontSize = 20.sp,
+                                    fontFamily = FontFamily(
+                                        Font(R.font.open_sans_bold, FontWeight.Bold)
+                                    ),
+                                    color = Color(0xFF0E9794)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            //description
+            Row(
+                modifier = Modifier.constrainAs(desc) {
+                    top.linkTo(member.bottom, margin = 8.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
+                horizontalArrangement = Arrangement.Start,
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = "Description",
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(
+                            Font(R.font.open_sans_bold, FontWeight.Bold)
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = taskDetail.data.description,
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily(
+                            Font(R.font.open_sans_regular, FontWeight.Normal)
+                        )
+                    )
+                }
+            }
+
+            //add items
+            Row(
+                modifier = Modifier.constrainAs(add) {
+                    top.linkTo(desc.bottom, margin = 8.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
+                horizontalArrangement = Arrangement.Start,
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = "Add Items",
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(
+                            Font(R.font.open_sans_bold, FontWeight.Bold)
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row (
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ){
+                        AddItems(
+                            text = "Labels",
+                            icon = Icons.Filled.Discount
+                        ) {
+//                            Toast.makeText(context, "Labels", Toast.LENGTH_SHORT).show()
+                            showLabelDialog.value = true
+                        }
+                        AddItems(
+                            text = "Checklist",
+                            icon = Icons.Filled.CheckBox
+                        ) {
+                            Toast.makeText(context, "Checklist", Toast.LENGTH_SHORT).show()
+                        }
+                        AddItems(
+                            text = "Attachments",
+                            icon = Icons.Filled.Attachment
+                        ) {
+                            Toast.makeText(context, "Attachments", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
         }
@@ -515,6 +623,131 @@ class TaskDetailActivity : ComponentActivity() {
                     Font(R.font.open_sans_regular, FontWeight.Normal)
                 ),
             )
+        }
+    }
+
+    @Composable
+    private fun AddItems(
+        text: String,
+        icon: ImageVector,
+        onClick: () -> Unit
+    ) {
+        Box(modifier = Modifier
+            .background(
+                color = Color(0xFFECFFFF),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clickable(onClick = onClick),
+            contentAlignment = Alignment.Center)
+        {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = "Add Items",
+                    modifier = Modifier
+                        .size(20.dp),
+                    tint = Color(0xFF0E9794)
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(
+                    text = text,
+                    fontSize = 12.sp,
+                    fontFamily = FontFamily(
+                        Font(R.font.open_sans_regular, FontWeight.Normal)
+                    )
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun ModalForLabels(
+        taskId : String,
+        onDismiss:() -> Unit
+    ){
+        val context = LocalContext.current
+        var title by remember { mutableStateOf("")}
+        Dialog(onDismissRequest = { onDismiss() }) {
+            Card(
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier.padding(12.dp),
+            ) {
+                Column(
+                    Modifier
+                        .background(Color.White)
+                        .padding(12.dp)
+                ) {
+                    androidx.compose.material.Text(
+                        text = "Add New Label",
+                        modifier = Modifier.padding(4.dp),
+                        fontSize = 20.sp
+                    )
+
+                    OutlinedTextField(
+                        value = title,
+                        onValueChange = { title = it },
+                        modifier = Modifier.padding(8.dp),
+                        label = { Text("Title") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Done,
+                        ),
+                    )
+
+                    Row {
+                        OutlinedButton(
+                            onClick = { onDismiss() },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .weight(1f)
+                        ) {
+                            androidx.compose.material.Text(
+                                text = "Cancel",
+                                color = Color(0xFF0E9794)
+                            )
+                        }
+
+                        Button(
+                            onClick = {
+                                if (title.isEmpty()){
+                                    Toast.makeText(context, "Title cannot be empty", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    scope.launch {
+                                        vm.addNewLabel(taskId, title)
+                                        delay(1000)
+                                        val res = vm.label.value
+                                        runOnUiThread{
+                                            if(res != null){
+                                                if(res.status == "201"){
+                                                    Toast.makeText(context, "Success add new Label", Toast.LENGTH_SHORT).show()
+                                                    onDismiss()
+                                                } else {
+                                                    Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()
+                                                }
+                                                title = ""
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD8FDFF)),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .weight(1f)
+                        ) {
+                            Text(
+                                text = "Add",
+                                color = Color(0xFF0E9794)
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 

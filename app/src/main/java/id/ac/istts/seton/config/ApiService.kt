@@ -1,6 +1,7 @@
 package id.ac.istts.seton.config
 
 import id.ac.istts.seton.entity.BasicDRO
+import id.ac.istts.seton.entity.LabelDRO
 import id.ac.istts.seton.entity.ListProjectDRO
 import id.ac.istts.seton.entity.ListTaskDRO
 import id.ac.istts.seton.entity.ListUserDRO
@@ -92,4 +93,11 @@ interface ApiService {
         @Path("taskId") taskId: String,
         @Path("status") status: String,
     ): BasicDRO
+
+    @POST("tasks/label/{taskId}")
+    suspend fun addLabelToTask(
+        @Path("taskId") taskId: String,
+        @Body label: String
+    ): LabelDRO
+
 }

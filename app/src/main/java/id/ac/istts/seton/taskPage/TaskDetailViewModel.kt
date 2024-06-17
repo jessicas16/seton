@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.ac.istts.seton.config.ApiConfiguration
 import id.ac.istts.seton.entity.BasicDRO
+import id.ac.istts.seton.entity.LabelDRO
+import id.ac.istts.seton.entity.Labels
 import id.ac.istts.seton.entity.Projects
 import id.ac.istts.seton.entity.TaskDRO
 import id.ac.istts.seton.entity.Users
@@ -15,12 +17,16 @@ class TaskDetailViewModel: ViewModel() {
     private var repo = ApiConfiguration.defaultRepo
     private val _task = MutableLiveData<TaskDRO>()
     private val _status = MutableLiveData<BasicDRO>()
+    private val _label = MutableLiveData<LabelDRO>()
 
     val task: MutableLiveData<TaskDRO>
         get() = _task
 
     val status: MutableLiveData<BasicDRO>
         get() = _status
+
+    val label: MutableLiveData<LabelDRO>
+        get() = _label
 
     fun getTaskById (taskId: String) {
         viewModelScope.launch {
@@ -84,6 +90,31 @@ class TaskDetailViewModel: ViewModel() {
                     status = "500",
                     message = "Internal Server Error",
                     data = null
+                )
+            }
+        }
+    }
+
+    fun addNewLabel(
+        taskId: String,
+        title: String,
+    ){
+        viewModelScope.launch {
+            try {
+                val res = repo.addLabelToTask(taskId, title)
+                _label.value = res
+                getTaskById(taskId)
+            } catch (e: Exception) {
+                Log.e("ERROR", e.message.toString())
+                _label.value = LabelDRO(
+                    status = "500",
+                    message = "Internal Server Error",
+                    data = Labels(
+                        id = -1,
+                        title = "",
+                        color = "",
+                        task_id = ""
+                    )
                 )
             }
         }

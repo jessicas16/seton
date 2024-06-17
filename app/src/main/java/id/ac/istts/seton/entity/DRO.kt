@@ -61,3 +61,9 @@ data class TaskDRO(
     var data : DataTask
 )
 
+data class LabelDRO(
+    var status : String,
+    var message: String,
+    var data : Labels
+)
+
