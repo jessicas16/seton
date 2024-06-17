@@ -16,6 +16,11 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".reportPage.ReportActivity"
+            android:exported="false"
+            android:label="@string/title_activity_report"
+            android:theme="@style/Theme.SETON" />
+        <activity
             android:name=".projectPage.ProjectDetailsActivity"
             android:exported="false"
             android:label="@string/title_activity_project_details"

@@ -88,6 +88,7 @@ import id.ac.istts.seton.config.ApiConfiguration
 import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.projectPage.AddProjectActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
+import id.ac.istts.seton.reportPage.ReportActivity
 import id.ac.istts.seton.taskPage.DataTask
 import id.ac.istts.seton.taskPage.TaskActivity
 import kotlinx.coroutines.CoroutineScope
@@ -206,6 +207,12 @@ class DashboardActivity : ComponentActivity() {
                                     }
                                     Screens.Calendar.route -> {
                                         val intent = Intent(this@DashboardActivity, CalendarActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
+                                        startActivity(intent)
+                                        finish()
+                                    }
+                                    Screens.Report.route -> {
+                                        val intent = Intent(this@DashboardActivity, ReportActivity::class.java)
                                         intent.putExtra("userEmail", userEmail)
                                         startActivity(intent)
                                         finish()

@@ -807,4 +807,16 @@ class DefaultRepo(
 
         return createTask!!
     }
+
+    suspend fun getUserPIC(emailList: List<String>): List<Users>{
+        var userList = arrayListOf<Users>()
+
+        Log.d("aaaaa", emailList.toString())
+        for(email in emailList){
+            userList.add(withContext(Dispatchers.IO){dataSourceLocal.userDao().getByEmail(email)})
+        }
+
+
+        return userList
+    }
 }
