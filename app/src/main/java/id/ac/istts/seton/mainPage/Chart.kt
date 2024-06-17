@@ -30,101 +30,54 @@ fun Chart(
     max_value: Int,
     days: List<String>
 ) {
-
     val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .padding(15.dp)
             .fillMaxWidth()
     ) {
-        Row (
+        // Y-Axis labels
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(180.dp),
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Start
-
-        ){
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(50.dp),
                 contentAlignment = Alignment.BottomCenter
-            ){
-                // scale
-                Column(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    Text(text = max_value.toString())
-                    Spacer(modifier = Modifier.fillMaxHeight(0.73f))
-                }
-
-                Column(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    Text(text = "1")
-                    Spacer(modifier = Modifier.fillMaxHeight(0.07f))
-                }
-
-                Column(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    Text(text = "2")
-                    Spacer(modifier = Modifier.fillMaxHeight(0.2f))
-                }
-
-                Column(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    Text(text = "3")
-                    Spacer(modifier = Modifier.fillMaxHeight(0.33f))
-                }
-
-                Column(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    Text(text = "4")
-                    Spacer(modifier = Modifier.fillMaxHeight(0.47f))
-                }
-
-                Column(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    Text(text = "5")
-                    Spacer(modifier = Modifier.fillMaxHeight(0.6f))
-                }
+            ) {
+                YAxisLabels(maxValue = max_value)
             }
 
-            Box(modifier = Modifier
-                .fillMaxHeight()
-                .width(2.dp)
-                .background(Color.Black)
+            // Y-Axis line
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(2.dp)
+                    .background(Color.Black)
             )
 
-            // graph
-            data.forEach{
+            // Graph bars
+            data.forEach { (heightFactor, value) ->
                 Box(
                     modifier = Modifier
                         .padding(start = 20.dp)
-                        .clip(RoundedCornerShape(10.dp))
                         .width(20.dp)
-                        .fillMaxHeight(it.key)
+                        .fillMaxHeight(heightFactor)
                         .background(Color.Blue)
                         .clickable {
-                            Toast
-                                .makeText(context, it.key.toString(), Toast.LENGTH_SHORT)
-                                .show()
+                            Toast.makeText(context, value.toString(), Toast.LENGTH_SHORT).show()
                         }
                 )
             }
         }
 
+        // X-Axis line
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -132,20 +85,35 @@ fun Chart(
                 .background(Color.Black)
         )
 
+        // X-Axis labels
         Row(
             modifier = Modifier
                 .padding(start = 69.dp)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(3.dp)
         ) {
-            days.forEach{
+            days.forEach {
                 Text(
                     modifier = Modifier.width(36.dp),
-                    text = it.toString(),
+                    text = it,
                     textAlign = TextAlign.Center
                 )
             }
         }
+    }
+}
 
+@Composable
+fun YAxisLabels(maxValue: Int) {
+    val labels = (0..maxValue).toList().reversed()
+
+    Column(
+        modifier = Modifier.fillMaxHeight(),
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        labels.forEach { label ->
+            Text(text = label.toString())
+        }
     }
 }
