@@ -680,4 +680,9 @@ class DashboardActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        vm.getUserTasksDashboard()
+    }
 }

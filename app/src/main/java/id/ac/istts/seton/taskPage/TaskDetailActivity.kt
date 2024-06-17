@@ -236,7 +236,7 @@ class TaskDetailActivity : ComponentActivity() {
                 .fillMaxSize()
                 .padding(20.dp)
         ) {
-            val (title) = createRefs()
+            val (title, member) = createRefs()
 
             Row(
                 modifier = Modifier.constrainAs(title) {
@@ -401,6 +401,87 @@ class TaskDetailActivity : ComponentActivity() {
                     Text(
                         text = "asdfasdasdasdasd"
                     )
+                }
+            }
+
+            //PIC and Team
+            Row(
+                modifier = Modifier.constrainAs(member) {
+                    top.linkTo(title.bottom, margin = 16.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Column (
+                    modifier = Modifier.weight(1f)
+                ){
+                    Text(
+                        text = "PIC",
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(
+                            Font(R.font.open_sans_bold, FontWeight.Bold)
+                        ),
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+//                    val arrName = taskDetail.data.pic.name.split(" ")
+//                    val nama = arrName[0].first().uppercaseChar().toString() + if (arrName.size > 1) arrName[1].first().uppercaseChar().toString() else ""
+//                    Box(
+//                        modifier = Modifier
+//                            .size(48.dp)
+//                            .background(
+//                                color = Color(0xFFECFFFF),
+//                                shape = RoundedCornerShape(24.dp)
+//                            ),
+//                        contentAlignment = Alignment.Center
+//                    ) {
+//                        Text(
+//                            text = nama,
+//                            fontSize = 20.sp,
+//                            fontFamily = FontFamily(
+//                                Font(R.font.open_sans_bold, FontWeight.Bold)
+//                            ),
+//                            color = Color(0xFF0E9794)
+//                        )
+//                    }
+                }
+                Column (
+                    modifier = Modifier.weight(2f)
+                ){
+                    Text(
+                        text = "Team",
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(
+                            Font(R.font.open_sans_bold, FontWeight.Bold)
+                        ),
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+//                    LazyRow(
+//                        modifier = Modifier.padding(bottom = 8.dp)
+//                    ) {
+//                        items(taskDetail.data.teams) { team ->
+//                            val arrName = team.name.split(" ")
+//                            val nama = arrName[0].first().uppercaseChar().toString() + if (arrName.size > 1) arrName[1].first().uppercaseChar().toString() else ""
+//                            Box(
+//                                modifier = Modifier
+//                                    .size(48.dp)
+//                                    .background(
+//                                        color = Color(0xFFECFFFF),
+//                                        shape = RoundedCornerShape(24.dp)
+//                                    ),
+//                                contentAlignment = Alignment.Center
+//                            ) {
+//                                Text(
+//                                    text = nama,
+//                                    fontSize = 20.sp,
+//                                    fontFamily = FontFamily(
+//                                        Font(R.font.open_sans_bold, FontWeight.Bold)
+//                                    ),
+//                                    color = Color(0xFF0E9794)
+//                                )
+//                            }
+//                        }
+//                    }
                 }
             }
         }

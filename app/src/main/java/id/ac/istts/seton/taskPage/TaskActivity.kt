@@ -444,4 +444,9 @@ class TaskActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        vm.getUserTasks()
+    }
 }
