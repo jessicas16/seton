@@ -16,7 +16,7 @@ data class DataTask (
     @Json(name = "deadline") val deadline: String,
     @Json(name = "description") val description: String,
     @Json(name = "priority") val priority: Int,
-    @Json(name = "status") val status: Int,
+    @Json(name = "statusTask") val statusTask: Int,
     @Json(name = "pic") val pic: Users,
     @Json(name = "project") val project: Projects,
     @Json(name = "teams") val teams: List<Users>,

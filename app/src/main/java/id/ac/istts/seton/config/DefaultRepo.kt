@@ -503,7 +503,7 @@ class DefaultRepo(
                         deadline = data.deadline,
                         description = data.description,
                         priority = data.priority,
-                        status = data.status,
+                        status = data.statusTask,
                         pic_email = data.pic.email,
                         project_id = data.project.id
                     )
@@ -597,7 +597,7 @@ class DefaultRepo(
                     deadline = task.deadline,
                     description = task.description,
                     priority = task.priority,
-                    status = task.status,
+                    statusTask = task.status,
                     pic = pic,
                     project = projects!!,
                     teams = teams,
@@ -635,7 +635,7 @@ class DefaultRepo(
                         deadline = data.deadline,
                         description = data.description,
                         priority = data.priority,
-                        status = data.status,
+                        status = data.statusTask,
                         pic_email = data.pic.email,
                         project_id = data.project.id
                     )
@@ -829,133 +829,167 @@ class DefaultRepo(
     }
 
     suspend fun getTaskDetail(taskId : String): TaskDRO {
-//        var TaskDRO: TaskDRO? = null
-//        var message = "Success get task by id from local!"
-//
-//        try {
-//            Log.i("MASOKKKKKKKKKKKKKKKKKKKKK", taskId)
-//            val getTaskDetailFormApi = withContext(Dispatchers.IO){dataSourceRemote.getTaskById(taskId)}
-//            Log.i("fdghjghjghgt", getTaskDetailFormApi.toString())
-//            val data = getTaskDetailFormApi.data
-//            Log.i("asdsdadasadsasdasddasasd", data.toString())
+        var TaskDRO: TaskDRO? = null
+        var message = "Success get task by id from local!"
 
-//            val task = Tasks(
-//                id = data.id,
-//                title = data.title,
-//                deadline = data.deadline,
-//                description = data.description,
-//                priority = data.priority,
-//                status = data.status,
-//                pic_email = data.pic.email,
-//                project_id = data.project.id
-//            )
-//
-//            Log.i("TASKasdasdsadasd", task.toString())
-//
-//            withContext(Dispatchers.IO){
-//                try {
-//                    if(dataSourceLocal.taskDao().getById(data.id) == null){
-//                        dataSourceLocal.taskDao().insert(task)
-//                    } else {
-//                        dataSourceLocal.taskDao().update(task)
-//                    }
-//                }catch (e: Exception){}
-//            }
-//
-//            for(team in data.teams){
-//                withContext(Dispatchers.IO){
-//                    try {
-//                        dataSourceLocal.userDao().update(team)
-//                    }catch (e: Exception){}
-//                }
-//
-//                withContext(Dispatchers.IO){
-//                    try {
-//                        if(dataSourceLocal.taskTeamDao().checkByTaskIdAndEmail(data.id, team.email) == null){
-//                            val taskTeam = TaskTeams(
-//                                task_id = data.id,
-//                                team_email = team.email
-//                            )
-//                            dataSourceLocal.taskTeamDao().insert(taskTeam)
-//                        }
-//                    }catch (e: Exception){}
-//                }
-//            }
-//
-//            for(comment in data.comments){
-//                withContext(Dispatchers.IO){
-//                    try {
-//                        dataSourceLocal.commentDao().insert(comment)
-//                    }catch (e: Exception){}
-//                }
-//            }
-//
-//            for(attachment in data.attachments){
-//                withContext(Dispatchers.IO){
-//                    try {
-//                        dataSourceLocal.attachmentDao().insert(attachment)
-//                    }catch (e: Exception){}
-//                }
-//            }
-//
-//            for(checklist in data.checklists){
-//                withContext(Dispatchers.IO){
-//                    try {
-//                        dataSourceLocal.checklistDao().insert(checklist)
-//                    }catch (e: Exception){}
-//                }
-//            }
-//
-//            for(label in data.labels){
-//                withContext(Dispatchers.IO){
-//                    try {
-//                        dataSourceLocal.labelDao().insert(label)
-//                    }catch (e: Exception){}
-//                }
-//            }
-//
-//            message = "Success get task by id from API!"
-//        }catch (e: Exception){
-//            Log.i("ERRORMESSAGE", e.message.toString())
-//        }
+        try {
+            val getTaskDetailFormApi = withContext(Dispatchers.IO){dataSourceRemote.getTaskById(taskId)}
+            val data = getTaskDetailFormApi.data
 
-//        val task = withContext(Dispatchers.IO){dataSourceLocal.taskDao().getById(taskId.toInt())}
-//        Log.i("2taskasdfadffasddfssdfdfsfsddf", task.toString())
-//        val pic = withContext(Dispatchers.IO){dataSourceLocal.userDao().getByEmail(task!!.pic_email)}
-//        val project = withContext(Dispatchers.IO){dataSourceLocal.projectDao().getById(task!!.project_id)}
-//        val teams = withContext(Dispatchers.IO){dataSourceLocal.userDao().getByTaskId(taskId.toInt())}
-//        val comments = withContext(Dispatchers.IO){dataSourceLocal.commentDao().getByTaskId(taskId.toInt())}
-//        val attachments = withContext(Dispatchers.IO){dataSourceLocal.attachmentDao().getByTaskId(taskId.toInt())}
-//        val checklists = withContext(Dispatchers.IO){dataSourceLocal.checklistDao().getByTaskId(taskId.toInt())}
-//        val labels = withContext(Dispatchers.IO){dataSourceLocal.labelDao().getByTaskId(taskId.toInt())}
-//
-//        val dataTask = DataTask(
-//            id = task!!.id,
-//            title = task.title,
-//            deadline = task.deadline,
-//            description = task.description,
-//            priority = task.priority,
-//            status = task.status,
-//            pic = pic,
-//            project = project!!,
-//            teams = teams,
-//            comments = comments,
-//            attachments = attachments,
-//            checklists = checklists,
-//            labels = labels
-//        )
-//
-//        TaskDRO = TaskDRO(
-//            status = "200",
-//            message = message,
-//            data = dataTask
-//        )
+            val task = Tasks(
+                id = data.id,
+                title = data.title,
+                deadline = data.deadline,
+                description = data.description,
+                priority = data.priority,
+                status = data.statusTask,
+                pic_email = data.pic.email,
+                project_id = data.project.id
+            )
 
-//        return TaskDRO
-        return dataSourceRemote.getTaskById(taskId)
+            withContext(Dispatchers.IO){
+                try {
+                    if(dataSourceLocal.taskDao().getById(data.id) == null){
+                        dataSourceLocal.taskDao().insert(task)
+                    } else {
+                        dataSourceLocal.taskDao().update(task)
+                    }
+                }catch (e: Exception){
+                    Log.i("ERRORMESSAGE", e.message.toString())
+                }
+            }
+
+            for(team in data.teams){
+                withContext(Dispatchers.IO){
+                    try {
+                        dataSourceLocal.userDao().update(team)
+                    }catch (e: Exception){}
+                }
+
+                withContext(Dispatchers.IO){
+                    try {
+                        if(dataSourceLocal.taskTeamDao().checkByTaskIdAndEmail(data.id, team.email) == null){
+                            val taskTeam = TaskTeams(
+                                task_id = data.id,
+                                team_email = team.email
+                            )
+                            dataSourceLocal.taskTeamDao().insert(taskTeam)
+                        }
+                    }catch (e: Exception){}
+                }
+            }
+
+            for(comment in data.comments){
+                withContext(Dispatchers.IO){
+                    try {
+                        dataSourceLocal.commentDao().insert(comment)
+                    }catch (e: Exception){}
+                }
+            }
+
+            for(attachment in data.attachments){
+                withContext(Dispatchers.IO){
+                    try {
+                        dataSourceLocal.attachmentDao().insert(attachment)
+                    }catch (e: Exception){}
+                }
+            }
+
+            for(checklist in data.checklists){
+                withContext(Dispatchers.IO){
+                    try {
+                        dataSourceLocal.checklistDao().insert(checklist)
+                    }catch (e: Exception){}
+                }
+            }
+
+            for(label in data.labels){
+                withContext(Dispatchers.IO){
+                    try {
+                        dataSourceLocal.labelDao().insert(label)
+                    }catch (e: Exception){}
+                }
+            }
+
+            message = "Success get task by id from API!"
+        }catch (e: Exception){
+            Log.i("ERRORMESSAGE", e.message.toString())
+        }
+
+        val task = withContext(Dispatchers.IO){dataSourceLocal.taskDao().getById(taskId.toInt())}
+        Log.i("2taskasdfadffasddfssdfdfsfsddf", task.toString())
+        val pic = withContext(Dispatchers.IO){dataSourceLocal.userDao().getByEmail(task!!.pic_email)}
+        val project = withContext(Dispatchers.IO){dataSourceLocal.projectDao().getById(task!!.project_id)}
+        val teams = withContext(Dispatchers.IO){dataSourceLocal.userDao().getByTaskId(taskId.toInt())}
+        val comments = withContext(Dispatchers.IO){dataSourceLocal.commentDao().getByTaskId(taskId.toInt())}
+        val attachments = withContext(Dispatchers.IO){dataSourceLocal.attachmentDao().getByTaskId(taskId.toInt())}
+        val checklists = withContext(Dispatchers.IO){dataSourceLocal.checklistDao().getByTaskId(taskId.toInt())}
+        val labels = withContext(Dispatchers.IO){dataSourceLocal.labelDao().getByTaskId(taskId.toInt())}
+
+        val dataTask = DataTask(
+            id = task!!.id,
+            title = task.title,
+            deadline = task.deadline,
+            description = task.description,
+            priority = task.priority,
+            statusTask = task.status,
+            pic = pic,
+            project = project!!,
+            teams = teams,
+            comments = comments,
+            attachments = attachments,
+            checklists = checklists,
+            labels = labels
+        )
+
+        TaskDRO = TaskDRO(
+            status = "200",
+            message = message,
+            data = dataTask
+        )
+
+        return TaskDRO
     }
 
     suspend fun updateTaskStatus(taskId: String, status: String): BasicDRO {
-        return dataSourceRemote.updateTaskStatus(taskId, status)
+        //update in db
+        val x = withContext(Dispatchers.IO){
+            dataSourceRemote.updateTaskStatus(taskId, status)
+        }
+        if(x.status != "200"){
+            return x
+        } else {
+            //update in local
+            try {
+                val getTaskDetailFormApi = dataSourceRemote.getTaskById(taskId)
+                val data = getTaskDetailFormApi.data
+
+                val task = Tasks(
+                    id = data.id,
+                    title = data.title,
+                    deadline = data.deadline,
+                    description = data.description,
+                    priority = data.priority,
+                    status = status.toInt(),
+                    pic_email = data.pic.email,
+                    project_id = data.project.id
+                )
+
+                withContext(Dispatchers.IO){
+                    try {
+                        dataSourceLocal.taskDao().update(task)
+                    }catch (e: Exception){}
+                }
+            } catch (e: Exception) {
+                Log.i("ERRORMESSAGE", e.message.toString())
+            }
+
+            var dro = BasicDRO(
+                status = "200",
+                message = "Success update task status!",
+                data = ""
+            )
+            return dro
+        }
     }
 }
