@@ -379,6 +379,7 @@ class TaskActivity : ComponentActivity() {
                             Row(modifier = Modifier.clickable {
                                 // Go to Task Details
                                 val intent = Intent(this@TaskActivity, TaskDetailActivity::class.java)
+                                intent.putExtra("userEmail", userEmail)
                                 intent.putExtra("taskId", it.id.toString())
                                 startActivity(intent)
                             }, verticalAlignment = Alignment.CenterVertically) {

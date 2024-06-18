@@ -119,6 +119,7 @@ dependencies {
     //connect to API
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-moshi:2.9.0")
+    implementation ("com.squareup.okhttp3:okhttp:4.9.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
     implementation ("com.squareup.moshi:moshi:1.15.0")
     implementation ("com.squareup.moshi:moshi-kotlin:1.15.0")
@@ -153,4 +154,8 @@ dependencies {
 
     //Comnposable-graph
     implementation("com.github.jaikeerthick:Composable-Graphs:v1.2.3")
+
+    //COIL for Image Loading
+    implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation("io.coil-kt:coil-svg:2.5.0")
 }

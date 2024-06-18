@@ -4,15 +4,22 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import id.ac.istts.seton.config.local.AppDatabase
+import id.ac.istts.seton.entity.AddCommentDTO
+import id.ac.istts.seton.entity.AllChecklistDRO
+import id.ac.istts.seton.entity.AllCommentDRO
 import id.ac.istts.seton.entity.BasicDRO
 import id.ac.istts.seton.entity.ChecklistDRO
 import id.ac.istts.seton.entity.Checklists
+import id.ac.istts.seton.entity.CommentDRO
+import id.ac.istts.seton.entity.FileUploadRequest
+import id.ac.istts.seton.entity.GetAttachmentDRO
 import id.ac.istts.seton.entity.LabelDRO
 import id.ac.istts.seton.entity.Labels
 import id.ac.istts.seton.entity.ListProjectDRO
 import id.ac.istts.seton.entity.ListTaskDRO
 import id.ac.istts.seton.entity.ListTaskDashboardDRO
 import id.ac.istts.seton.entity.ListUserDRO
+import id.ac.istts.seton.entity.PostAttachmentDRO
 import id.ac.istts.seton.entity.ProjectDRO
 import id.ac.istts.seton.entity.ProjectDetailDRO
 import id.ac.istts.seton.entity.ProjectMembers
@@ -51,14 +58,6 @@ class DefaultRepo(
     }
 
     //USER
-    suspend fun getAllUser(force:Boolean = false):List<Users> {
-        return dataSourceRemote.getAllUser()
-    }
-
-    suspend fun getAllUserExceptLoginUser(force:Boolean = false, email: String): ListUserDRO {
-        return dataSourceRemote.getAllUserExceptLoginUser(email)
-    }
-
     suspend fun checkEmail(email: String): UserDRO {
         return dataSourceRemote.checkEmail(email)
     }
@@ -1060,5 +1059,33 @@ class DefaultRepo(
             }
         }catch (e: Exception){}
         return addCheck!!
+    }
+
+    suspend fun postAttachment(fileUploadRequest: FileUploadRequest): PostAttachmentDRO {
+        return dataSourceRemote.uploadFile(fileUploadRequest)
+    }
+
+    suspend fun getAttachment(taskId: String): GetAttachmentDRO {
+        return dataSourceRemote.getAttachments(taskId)
+    }
+
+    suspend fun getAllChecklist(taskId: String): AllChecklistDRO {
+        return dataSourceRemote.getChecklist(taskId)
+    }
+
+    suspend fun updateChecklistStatus(checklistId: String): BasicDRO {
+        return dataSourceRemote.updateChecklistStatus(checklistId)
+    }
+
+    suspend fun deleteChecklist(checklistId: String): BasicDRO {
+        return dataSourceRemote.deleteChecklist(checklistId)
+    }
+
+    suspend fun addCommentTask(comment: AddCommentDTO): CommentDRO {
+        return dataSourceRemote.addComment(comment)
+    }
+
+    suspend fun getAllComment(taskId: String): AllCommentDRO {
+        return dataSourceRemote.getComments(taskId)
     }
 }

@@ -84,3 +84,29 @@ data class GetAttachmentDRO(
     var message : String,
     var data : List<Attachments>
 )
+
+data class AllChecklistDRO(
+    var status : String,
+    var message : String,
+    var data : List<Checklists>
+)
+
+data class DataComment(
+    val id:Int,
+    var value:String,
+    var time:String,
+    var user_email:Users,
+    var task_id:String
+)
+
+data class AllCommentDRO(
+    var status : String,
+    var message : String,
+    var data : List<DataComment>
+)
+
+data class CommentDRO(
+    var status : String,
+    var message : String,
+    var data : Comments
+)

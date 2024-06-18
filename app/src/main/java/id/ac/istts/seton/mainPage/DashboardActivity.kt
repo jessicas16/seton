@@ -89,7 +89,6 @@ import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.projectPage.AddProjectActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
 import id.ac.istts.seton.reportPage.ReportActivity
-import id.ac.istts.seton.taskPage.DataTask
 import id.ac.istts.seton.taskPage.TaskActivity
 import id.ac.istts.seton.taskPage.TaskDetailActivity
 import kotlinx.coroutines.CoroutineScope
@@ -602,6 +601,7 @@ class DashboardActivity : ComponentActivity() {
                             Row(modifier = Modifier.clickable {
                                 // Go to Task Details
                                 val intent = Intent(this@DashboardActivity, TaskDetailActivity::class.java)
+                                intent.putExtra("userEmail", userEmail)
                                 intent.putExtra("taskId", it.id.toString())
                                 startActivity(intent)
                             }, verticalAlignment = Alignment.CenterVertically) {

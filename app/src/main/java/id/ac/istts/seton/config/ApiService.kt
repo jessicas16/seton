@@ -1,11 +1,18 @@
 package id.ac.istts.seton.config
 
+import id.ac.istts.seton.entity.AddCommentDTO
+import id.ac.istts.seton.entity.AllChecklistDRO
+import id.ac.istts.seton.entity.AllCommentDRO
 import id.ac.istts.seton.entity.BasicDRO
 import id.ac.istts.seton.entity.ChecklistDRO
+import id.ac.istts.seton.entity.CommentDRO
+import id.ac.istts.seton.entity.FileUploadRequest
+import id.ac.istts.seton.entity.GetAttachmentDRO
 import id.ac.istts.seton.entity.LabelDRO
 import id.ac.istts.seton.entity.ListProjectDRO
 import id.ac.istts.seton.entity.ListTaskDRO
 import id.ac.istts.seton.entity.ListUserDRO
+import id.ac.istts.seton.entity.PostAttachmentDRO
 import id.ac.istts.seton.entity.ProjectDRO
 import id.ac.istts.seton.entity.ProjectDetailDRO
 import id.ac.istts.seton.entity.TaskDRO
@@ -89,7 +96,7 @@ interface ApiService {
     @GET("tasks/{taskId}")
     suspend fun getTaskById(@Path("taskId") taskId: String): TaskDRO
 
-    @PUT("tasks/{taskId}/{status}")
+    @PUT("tasks/status/{taskId}/{status}")
     suspend fun updateTaskStatus(
         @Path("taskId") taskId: String,
         @Path("status") status: String,
@@ -106,4 +113,31 @@ interface ApiService {
         @Path("taskId") taskId: String,
         @Path("title") title: String,
     ): ChecklistDRO
+
+    @POST("tasks/attachments")
+    suspend fun uploadFile(
+        @Body fileUploadRequest: FileUploadRequest
+    ): PostAttachmentDRO
+
+    @GET("tasks/attachment/{taskId}")
+    suspend fun getAttachments(@Path("taskId") taskId: String): GetAttachmentDRO
+
+    @GET("tasks/checklist/{taskId}")
+    suspend fun getChecklist(@Path("taskId") taskId: String): AllChecklistDRO
+
+    @PUT("tasks/checklist/{checklistId}")
+    suspend fun updateChecklistStatus(
+        @Path("checklistId") checklistId: String
+    ): BasicDRO
+
+    @DELETE("tasks/checklist/{checklistId}")
+    suspend fun deleteChecklist(
+        @Path("checklistId") checklistId: String
+    ): BasicDRO
+
+    @POST("tasks/comment")
+    suspend fun addComment(@Body comment: AddCommentDTO): CommentDRO
+
+    @GET("tasks/comment/{taskId}")
+    suspend fun getComments(@Path("taskId") taskId: String): AllCommentDRO
 }

@@ -1,11 +1,20 @@
 package id.ac.istts.seton.taskPage
 
+import android.annotation.SuppressLint
+import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.graphics.Color.parseColor
+import android.net.Uri
 import android.os.Bundle
+import android.provider.OpenableColumns
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,29 +23,41 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Attachment
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CheckBox
+import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Discount
+import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.ListAlt
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Report
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Task
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.Dashboard
@@ -68,11 +89,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -83,6 +106,7 @@ import id.ac.istts.seton.DrawerHeader
 import id.ac.istts.seton.MenuItem
 import id.ac.istts.seton.R
 import id.ac.istts.seton.Screens
+import id.ac.istts.seton.entity.AddCommentDTO
 import id.ac.istts.seton.entity.Projects
 import id.ac.istts.seton.entity.TaskDRO
 import id.ac.istts.seton.entity.Users
@@ -90,16 +114,24 @@ import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 
 class TaskDetailActivity : ComponentActivity() {
     private val vm: TaskDetailViewModel by viewModels<TaskDetailViewModel>()
     private lateinit var scope: CoroutineScope
     private lateinit var taskId : String
+    private lateinit var userEmail : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         taskId = intent.getStringExtra("taskId").toString()
+        userEmail = intent.getStringExtra("userEmail").toString()
         Toast.makeText(this, taskId, Toast.LENGTH_SHORT).show()
         setContent{
             val items = listOf(
@@ -207,7 +239,18 @@ class TaskDetailActivity : ComponentActivity() {
 
     @Composable
     private fun DetailTask() {
-        val context = LocalContext.current
+        val allAttachment by vm.getAttachment.observeAsState(emptyList())
+        LaunchedEffect(key1 = Unit) {
+            vm.getAttachments(taskId)
+        }
+        val allChecklist by vm.getChecklist.observeAsState(emptyList())
+        LaunchedEffect(key1 = Unit) {
+            vm.getChecklist(taskId)
+        }
+        val allComment by vm.getComment.observeAsState(emptyList())
+        LaunchedEffect(key1 = Unit) {
+            vm.getAllComment(taskId)
+        }
         val taskDetail by vm.task.observeAsState(
             TaskDRO(
                 status = "500",
@@ -258,6 +301,12 @@ class TaskDetailActivity : ComponentActivity() {
             ){ showLabelDialog.value = false }
         }
 
+        if (showAttachmentsDialog.value) {
+            ModalforAttachments(
+                taskId = taskId
+            ){ showAttachmentsDialog.value = false }
+        }
+
         if (showCheckListDialog.value) {
             ModalForChecklists(
                 taskId = taskId
@@ -267,7 +316,8 @@ class TaskDetailActivity : ComponentActivity() {
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(20.dp)
+                .verticalScroll(rememberScrollState())
+                .padding(20.dp),
         ) {
             val (title, member, desc, add, attach, goal, comment) = createRefs()
 
@@ -324,10 +374,7 @@ class TaskDetailActivity : ComponentActivity() {
                         var tgl = ""
                         if (taskDetail.data.deadline != "") {
                             tgl = "${
-                                taskDetail.data.deadline.substring(
-                                    8,
-                                    10
-                                )
+                                taskDetail.data.deadline.substring( 8, 10)
                             } ${
                                 monthMap[taskDetail.data.deadline.substring(5, 7).toInt() - 1]
                             } ${taskDetail.data.deadline.substring(0, 4)}"
@@ -599,9 +646,314 @@ class TaskDetailActivity : ComponentActivity() {
                     }
                 }
             }
+
+            //attach
+            Row(
+                modifier = Modifier.constrainAs(attach) {
+                    top.linkTo(add.bottom, margin = 8.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = "Attachments",
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(
+                            Font(R.font.open_sans_bold, FontWeight.Bold)
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    LazyColumn(
+                        modifier = Modifier
+                            .heightIn(0.dp, 100.dp),
+                    ){
+                        items(allAttachment){ attachment ->
+                            Row(
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp)
+                                    .height(25.dp)
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                val fileName = attachment.file_name
+                                val arrName = fileName.split('-')
+                                Text(
+                                    text = arrName[2],
+                                    fontSize = 14.sp,
+                                    fontFamily = FontFamily(
+                                        Font(R.font.open_sans_regular, FontWeight.Normal)
+                                    ),
+                                    modifier = Modifier.weight(2f)
+                                )
+                                val monthMap = listOf(
+                                    "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+                                )
+                                var tgl = ""
+                                if (attachment.upload_time != "") {
+                                    tgl = "${attachment.upload_time.substring( 8, 10)} ${ monthMap[attachment.upload_time.substring(5, 7).toInt() - 1]} ${attachment.upload_time.substring(0, 4)}"
+                                }
+
+                                Text(
+                                    text = tgl,
+                                    fontSize = 14.sp,
+                                    fontFamily = FontFamily(
+                                        Font(R.font.open_sans_regular, FontWeight.Normal)
+                                    ),
+                                    modifier = Modifier.weight(1f)
+                                )
+
+                                Box(modifier = Modifier.weight(0.5f)){
+                                    IconButton(
+                                        onClick = {
+                                            //download file
+                                        },
+                                    ){
+                                        Icon(
+                                            imageVector = Icons.Default.FileDownload,
+                                            contentDescription = "Remove",
+                                            modifier = Modifier
+                                                .size(20.dp),
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            //goal
+            Row(
+                modifier = Modifier.constrainAs(goal) {
+                    top.linkTo(attach.bottom, margin = 8.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = "Goals",
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(
+                            Font(R.font.open_sans_bold, FontWeight.Bold)
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    LazyColumn(
+                        modifier = Modifier
+                            .heightIn(0.dp, 120.dp),
+                    ){
+                        items(allChecklist){ checklist ->
+                            Row(
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp, vertical = 4.dp)
+                                    .height(25.dp)
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                val status = if (checklist.is_checked == 1) "checked" else "unchecked"
+                                Box(modifier = Modifier.weight(0.5f)){
+                                    IconButton(
+                                        onClick = {
+                                            //update checklist
+                                            scope.launch {
+                                                vm.updateChecklistStatus(taskId, checklist.id.toString())
+                                            }
+                                        },
+                                    ){
+                                        if(status == "checked"){
+                                            Icon(
+                                                imageVector = Icons.Default.CheckBox,
+                                                contentDescription = "checkbox",
+                                                modifier = Modifier
+                                                    .size(20.dp),
+                                            )
+                                        } else {
+                                            Icon(
+                                                imageVector = Icons.Default.CheckBoxOutlineBlank,
+                                                contentDescription = "checkbox",
+                                                modifier = Modifier
+                                                    .size(20.dp),
+                                            )
+                                        }
+                                    }
+                                }
+
+                                Text(
+                                    text = checklist.title,
+                                    fontSize = 14.sp,
+                                    fontFamily = FontFamily(
+                                        Font(R.font.open_sans_regular, FontWeight.Normal)
+                                    ),
+                                    modifier = Modifier.weight(2f),
+                                    style = if(status == "checked") TextStyle(textDecoration = TextDecoration.LineThrough) else TextStyle()
+                                )
+
+                                Box(modifier = Modifier.weight(0.5f)){
+                                    IconButton(
+                                        onClick = {
+                                            //delete checklist
+                                            scope.launch {
+                                                vm.deleteChecklist(taskId, checklist.id.toString())
+                                            }
+                                        },
+                                    ){
+                                        Icon(
+                                            imageVector = Icons.Default.Close,
+                                            contentDescription = "Remove",
+                                            modifier = Modifier
+                                                .size(18.dp),
+                                        )
+                                    }
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+                    }
+                }
+            }
+
+            //comment
+            Row(
+                modifier = Modifier.constrainAs(comment) {
+                    top.linkTo(goal.bottom, margin = 8.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = "Comments",
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(
+                            Font(R.font.open_sans_bold, FontWeight.Bold)
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    LazyColumn(
+                        modifier = Modifier
+                            .heightIn(0.dp, 250.dp),
+                    ){
+                        items(allComment) {comment ->
+                            Row(
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp, vertical = 4.dp)
+                                    .height(50.dp)
+                                    .fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Box{
+                                    if (comment.user_email.profile_picture == null){
+                                        Icon(
+                                            imageVector = Icons.Default.Person,
+                                            contentDescription = "Profile Picture",
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                        )
+                                    } else {
+                                        //tampilkan profile..
+                                    }
+                                }
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Column {
+                                    Row (
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ){
+                                        Text(
+                                            text = comment.user_email.name,
+                                            fontSize = 14.sp,
+                                            fontFamily = FontFamily(
+                                                Font(R.font.open_sans_semi_bold, FontWeight.SemiBold)
+                                            ),
+                                        )
+                                        Spacer(modifier = Modifier.width(16.dp))
+                                        var waktu = ""
+                                        if (comment.time != "") {
+                                            val jam = comment.time.substring(11, 13).toInt()
+                                            val menit = comment.time.substring(14, 16)
+                                            waktu = if (jam > 12) "${jam - 12}:$menit PM" else "$jam:$menit AM"
+                                        }
+                                        Text(
+                                            text = waktu,
+                                            fontSize = 12.sp,
+                                            fontFamily = FontFamily(
+                                                Font(R.font.open_sans_regular, FontWeight.Normal)
+                                            ),
+                                            color = Color.Gray
+                                        )
+                                    }
+                                    Text(
+                                        text = comment.value,
+                                        fontSize = 12.sp,
+                                        fontFamily = FontFamily(
+                                            Font(R.font.open_sans_regular, FontWeight.Normal)
+                                        ),
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+                    }
+
+                    val value = remember { mutableStateOf("") }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        TextField(
+                            value = value.value,
+                            onValueChange = {value.value = it},
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp),
+                            label = { Text("Type Here") },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Done,
+                            ),
+                        )
+                        IconButton(
+                            onClick = {
+                                //add comment
+                                val dto = AddCommentDTO(
+                                    task_id = taskId,
+                                    email = userEmail,
+                                    value = value.value
+                                )
+                                Log.i("CommentDTO", dto.toString())
+                                scope.launch {
+                                    vm.addCommentTask(taskId, dto)
+                                    delay(1000)
+                                    val res = vm.addComment.value
+                                    if (res != null){
+                                        if (res.status == "201"){
+                                            Toast.makeText(this@TaskDetailActivity, "Success add new Comment", Toast.LENGTH_SHORT).show()
+                                            value.value = ""
+                                        } else {
+                                            Toast.makeText(this@TaskDetailActivity, res.message, Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                }
+                            },
+                        ){
+                            Icon(
+                                imageVector = Icons.Default.Send,
+                                contentDescription = "send",
+                                modifier = Modifier
+                                    .fillMaxHeight(),
+                                Color(0xFF0E9794),
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -814,7 +1166,7 @@ class TaskDetailActivity : ComponentActivity() {
                                     scope.launch {
                                         vm.addNewChecklist(taskId, goal)
                                         delay(1000)
-                                        val res = vm.label.value
+                                        val res = vm.checklist.value
                                         runOnUiThread{
                                             if(res != null){
                                                 if(res.status == "201"){
@@ -823,7 +1175,7 @@ class TaskDetailActivity : ComponentActivity() {
                                                 } else {
                                                     Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()
                                                 }
-                                                title = ""
+                                                goal = ""
                                             }
                                         }
                                     }
@@ -844,6 +1196,161 @@ class TaskDetailActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private @Composable
+    fun ModalforAttachments(
+        taskId : String,
+        onDismiss:() -> Unit
+    ) {
+        val context = LocalContext.current
+        val result = remember { mutableStateOf<List<Uri>?>(null)}
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.OpenMultipleDocuments(),
+            onResult = {
+                result.value = it
+            }
+        )
+        Dialog(onDismissRequest = { onDismiss() }) {
+            Card(
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier.padding(12.dp),
+            ) {
+                Column(
+                    Modifier
+                        .background(Color.White)
+                        .padding(12.dp)
+                ) {
+                    Text(
+                        text = "Add New Attachments",
+                        modifier = Modifier.padding(4.dp),
+                        fontSize = 20.sp
+                    )
+
+                    result.value?.forEach { uri ->
+                        val fileName = getFileName(context, uri) ?: "Unknown file"
+                        Text(
+                            text = "File Name: $fileName",
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        onClick = {
+                            launcher.launch(arrayOf("image/*", "application/pdf", "application/zip", "text/markdown"))
+                        }
+                    ) {
+                        Text(text = "Pick file")
+                    }
+
+                    Row {
+                        OutlinedButton(
+                            onClick = { onDismiss() },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .weight(1f)
+                        ) {
+                            Text(
+                                text = "Cancel",
+                                color = Color(0xFF0E9794)
+                            )
+                        }
+
+                        Button(
+                            onClick = {
+                                if (result.value != null) {
+                                    for (uri in result.value!!) {
+                                        val filePart = uriToMultipartBodyPart(context, uri, "file")
+                                        scope.launch {
+                                            vm.addAttachment(taskId, filePart)
+                                            delay(1000)
+                                            val res = vm.postAttachment.value
+                                            withContext(Dispatchers.Main) {
+                                                if (res != null) {
+                                                    if (res.status == "201") {
+                                                        Toast.makeText(context, "Success add new Attachment", Toast.LENGTH_SHORT).show()
+                                                        onDismiss()
+                                                    } else {
+                                                        Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    Toast.makeText(context, "Please pick a file", Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD8FDFF)),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .weight(1f)
+                        ) {
+                            Text(
+                                text = "Submit",
+                                color = Color(0xFF0E9794)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @SuppressLint("Range")
+    private fun getFileName(context: Context, uri: Uri): String? {
+        var fileName: String? = null
+        if (uri.scheme == ContentResolver.SCHEME_CONTENT) {
+            val cursor: Cursor? = context.contentResolver.query(uri, null, null, null, null)
+            cursor?.use {
+                if (it.moveToFirst()) {
+                    fileName = it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                }
+            }
+        } else if (uri.scheme == ContentResolver.SCHEME_FILE) {
+            fileName = uri.path?.let { path ->
+                val cut = path.lastIndexOf('/')
+                if (cut != -1) {
+                    path.substring(cut + 1)
+                } else null
+            }
+        }
+        return fileName
+    }
+
+    fun uriToMultipartBodyPart(context: Context, uri: Uri, name: String): MultipartBody.Part {
+        val file = File(context.cacheDir, getFileName2(context, uri) ?: "Unknown file")
+        val inputStream = context.contentResolver.openInputStream(uri)
+        file.outputStream().use { outputStream ->
+            inputStream?.copyTo(outputStream)
+        }
+        val requestBody = RequestBody.create(context.contentResolver.getType(uri)?.toMediaTypeOrNull(), file)
+        return MultipartBody.Part.createFormData(name, file.name, requestBody)
+    }
+
+    fun getFileName2(context: Context, uri: Uri): String? {
+        var result: String? = null
+        if (uri.scheme == "content") {
+            val cursor = context.contentResolver.query(uri, null, null, null, null)
+            cursor?.use {
+                if (it.moveToFirst()) {
+                    result = it.getString(it.getColumnIndexOrThrow("_display_name"))
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.path
+            val cut = result?.lastIndexOf('/')
+            if (cut != null && cut != -1) {
+                result = result?.substring(cut + 1)
+            }
+        }
+        return result
     }
 
     private fun String.toColor() = Color(parseColor(this))

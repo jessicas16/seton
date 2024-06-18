@@ -336,7 +336,6 @@ class AddTaskActivity : ComponentActivity() {
                         end.linkTo(parent.end)
                     },
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                userScrollEnabled = true,
             ) {
                 items(invitedUserTask) { user ->
                     Row(
