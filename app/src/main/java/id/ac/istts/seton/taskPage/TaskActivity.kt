@@ -80,8 +80,10 @@ import kotlinx.coroutines.launch
 
 class TaskActivity : ComponentActivity() {
     private val vm: TaskViewModel by viewModels<TaskViewModel>()
+    lateinit var userEmail : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        userEmail = intent.getStringExtra("userEmail").toString()
         setContent {
             val items = listOf(
                 MenuItem(
