@@ -218,7 +218,7 @@ class TaskDetailActivity : ComponentActivity() {
                     deadline = "",
                     description = "",
                     priority = -1,
-                    statusTask = -1,
+                    status = -1,
                     pic = Users(
                         email = "",
                         name = "",
@@ -350,7 +350,7 @@ class TaskDetailActivity : ComponentActivity() {
                             )
                         }
                         var status = ""
-                        when (taskDetail.data.statusTask) {
+                        when (taskDetail.data.status) {
                             0 -> status = "Upcoming"
                             1 -> status = "Ongoing"
                             2 -> status = "Submitted"

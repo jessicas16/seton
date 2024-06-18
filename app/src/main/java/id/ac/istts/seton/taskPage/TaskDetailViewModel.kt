@@ -39,7 +39,7 @@ class TaskDetailViewModel: ViewModel() {
             try {
                 val res = repo.getTaskDetail(taskId)
                 Log.i("LALALALLALALLA", res.data.toString())
-                Log.i("LILILILILILI", res.data.statusTask.toString())
+                Log.i("LILILILILILI", res.data.status.toString())
                 _task.value = res
             } catch (e: Exception) {
                 Log.e("ERROR", e.message.toString())
@@ -52,7 +52,7 @@ class TaskDetailViewModel: ViewModel() {
                         deadline = "",
                         description = "",
                         priority = -1,
-                        statusTask = -1,
+                        status = -1,
                         pic = Users(
                             email = "",
                             name = "",

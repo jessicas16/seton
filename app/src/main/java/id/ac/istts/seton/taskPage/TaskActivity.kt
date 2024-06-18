@@ -151,16 +151,28 @@ class TaskActivity : ComponentActivity() {
                             onItemClick = { currentMenuItem ->
                                 when (currentMenuItem.route){
                                     Screens.Logout.route -> {
-                                        startActivity(Intent(this@TaskActivity, LoginActivity::class.java))
+                                        val intent = Intent(this@TaskActivity, LoginActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
+                                        startActivity(intent)
+                                        finish()
                                     }
                                     Screens.Dashboard.route -> {
-                                        startActivity(Intent(this@TaskActivity, DashboardActivity::class.java))
+                                        val intent = Intent(this@TaskActivity, DashboardActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
+                                        startActivity(intent)
+                                        finish()
                                     }
                                     Screens.Tasks.route -> {
-                                        startActivity(Intent(this@TaskActivity, TaskActivity::class.java))
+                                        val intent = Intent(this@TaskActivity, TaskActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
+                                        startActivity(intent)
+                                        finish()
                                     }
                                     Screens.Projects.route -> {
-                                        startActivity(Intent(this@TaskActivity, ListProjectActivity::class.java))
+                                        val intent = Intent(this@TaskActivity, ListProjectActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
+                                        startActivity(intent)
+                                        finish()
                                     }
                                     Screens.Report.route -> {
                                         val intent = Intent(this@TaskActivity, ReportActivity::class.java)
@@ -333,7 +345,7 @@ class TaskActivity : ComponentActivity() {
                                     }
                                 }
                             }
-                            if (it.statusTask == 1) {
+                            if (it.status == 1) {
                                 Box(
                                     Modifier
                                         .fillMaxWidth()

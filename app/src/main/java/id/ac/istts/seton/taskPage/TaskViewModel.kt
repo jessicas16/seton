@@ -22,11 +22,11 @@ class TaskViewModel: ViewModel() {
 
                 Log.i("LALALALLALALLA", res.data.toString())
                 val filteredTasks = listOf(
-                    Pair("Upcoming", res.data.filter { it.statusTask == 0 }),
-                    Pair("Ongoing", res.data.filter { it.statusTask == 1 }),
-                    Pair("Submitted", res.data.filter { it.statusTask == 2 }),
-                    Pair("Revision", res.data.filter { it.statusTask == 3 }),
-                    Pair("Completed", res.data.filter { it.statusTask == 4 })
+                    Pair("Upcoming", res.data.filter { it.status == 0 }),
+                    Pair("Ongoing", res.data.filter { it.status == 1 }),
+                    Pair("Submitted", res.data.filter { it.status == 2 }),
+                    Pair("Revision", res.data.filter { it.status == 3 }),
+                    Pair("Completed", res.data.filter { it.status == 4 })
                 )
                 Log.i("LILILILILILI", filteredTasks.toString())
                 _tasks.value = filteredTasks

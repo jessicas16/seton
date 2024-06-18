@@ -340,7 +340,7 @@ class CalendarActivity : ComponentActivity() {
                                                                 .size(6.dp)
                                                                 .background(
                                                                     Color(
-                                                                        when (cal.tasks[i].statusTask) {
+                                                                        when (cal.tasks[i].status) {
                                                                             0 -> 0xFFFFDD60
                                                                             1 -> 0xFFF4976C
                                                                             2 -> 0xFF87CBCA
@@ -448,7 +448,7 @@ class CalendarActivity : ComponentActivity() {
                                                         .fillMaxWidth()
                                                         .height(8.dp)
                                                         .background(Color(
-                                                            when (task.statusTask) {
+                                                            when (task.status) {
                                                                 0 -> 0xFFFFDD60
                                                                 1 -> 0xFFF4976C
                                                                 2 -> 0xFF87CBCA

@@ -508,7 +508,7 @@ class DefaultRepo(
                         deadline = data.deadline,
                         description = data.description,
                         priority = data.priority,
-                        status = data.statusTask,
+                        status = data.status,
                         pic_email = data.pic.email,
                         project_id = data.project.id
                     )
@@ -579,10 +579,8 @@ class DefaultRepo(
         tasks.addAll(getUserTasksByPICFromLocal)
         tasks.addAll(getUserTasksByTeamFromLocal)
 
-        Log.i("TASKSAAAAAAAAAAAAAAAA", tasks.toString())
-
         val dataTask: MutableList<DataTask> = mutableListOf()
-
+        getUserProjects(true, email)
         try {
             for(task in tasks){
                 val pic = withContext(Dispatchers.IO){ dataSourceLocal.userDao().getByEmail(task.pic_email) }
@@ -599,7 +597,7 @@ class DefaultRepo(
                     deadline = task.deadline,
                     description = task.description,
                     priority = task.priority,
-                    statusTask = task.status,
+                    status = task.status,
                     pic = pic,
                     project = projects!!,
                     teams = teams,
@@ -628,7 +626,10 @@ class DefaultRepo(
         getUserProjects(true, email)
         if(force){
             try {
-                val getUserTaskFromApi = withContext(Dispatchers.IO){dataSourceRemote.getUserTasks(email)}
+                val getUserTaskFromApi = withContext(Dispatchers.IO){
+//                    Log.i("TOP_VALUEX", "---")
+                    dataSourceRemote.getUserTasks(email)
+                }
 
                 for(data in getUserTaskFromApi.data){
                     val task = Tasks(
@@ -637,7 +638,7 @@ class DefaultRepo(
                         deadline = data.deadline,
                         description = data.description,
                         priority = data.priority,
-                        status = data.statusTask,
+                        status = data.status,
                         pic_email = data.pic.email,
                         project_id = data.project.id
                     )
@@ -653,10 +654,14 @@ class DefaultRepo(
                         }catch (e: Exception){}
                     }
 
+                    Log.i("DATA_TASK_REPO", data.teams.toString())
                     for(team in data.teams){
                         try {
                             withContext(Dispatchers.IO){ dataSourceLocal.userDao().insert(team)}
-                        }catch (e: Exception){}
+                            Log.i("TASK SUCCESS", "SUCCESS INSERT TEAM")
+                        }catch (e: Exception){
+                            Log.i("TASK ERROR", e.message.toString())
+                        }
 
                         try {
                             withContext(Dispatchers.IO) {
@@ -670,7 +675,10 @@ class DefaultRepo(
                                     dataSourceLocal.taskTeamDao().insert(taskTeam)
                                 }
                             }
-                        }catch (e: Exception){}
+                            Log.i("TASK2 SUCCESS", "SUCCESS INSERT TEAM")
+                        }catch (e: Exception){
+                            Log.i("TASK2 ERROR", e.message.toString())
+                        }
                     }
 
                     for(comment in data.comments){
@@ -696,9 +704,13 @@ class DefaultRepo(
                             withContext(Dispatchers.IO){dataSourceLocal.labelDao().insert(label)}
                         }catch (e: Exception){}
                     }
+
+                    getUserProjects(true, email)
                 }
                 message = "Success get project by id from API!"
-            }catch (e: Exception){}
+            }catch (e: Exception){
+                Log.i("ERR_REPO", e.message.toString())
+            }
         }
 
         val getUserTasksByPICFromLocal = withContext(Dispatchers.IO){dataSourceLocal.taskDao().getByPIC(email)}
@@ -851,7 +863,7 @@ class DefaultRepo(
                 deadline = data.deadline,
                 description = data.description,
                 priority = data.priority,
-                status = data.statusTask,
+                status = data.status,
                 pic_email = data.pic.email,
                 project_id = data.project.id
             )
@@ -941,7 +953,7 @@ class DefaultRepo(
             deadline = task.deadline,
             description = task.description,
             priority = task.priority,
-            statusTask = task.status,
+            status = task.status,
             pic = pic,
             project = project!!,
             teams = teams,
