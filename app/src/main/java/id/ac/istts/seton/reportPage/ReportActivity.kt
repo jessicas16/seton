@@ -432,8 +432,9 @@ class ReportActivity : ComponentActivity() {
 
                     val upcomingTasks = selectedProject.tasks.count { it.status == 0 }
                     val ongoingTasks = selectedProject.tasks.count { it.status == 1 }
-                    val completedTasks = selectedProject.tasks.count { it.status == 2 }
+                    val submittedTasks = selectedProject.tasks.count { it.status == 2 }
                     val revisionTasks = selectedProject.tasks.count { it.status == 3 }
+                    val completedTasks = selectedProject.tasks.count { it.status == 4 }
 
                     val pieChartData = mutableListOf<PieData>()
 
@@ -443,11 +444,14 @@ class ReportActivity : ComponentActivity() {
                     if (ongoingTasks > 0) {
                         pieChartData.add(PieData(value = ongoingTasks.toFloat(), label = "Ongoing Tasks: $ongoingTasks Tasks", color = Color(0xFFF0E68C), labelColor = Color.Black))
                     }
-                    if (completedTasks > 0) {
-                        pieChartData.add(PieData(value = completedTasks.toFloat(), label = "Completed Tasks: $completedTasks Tasks", color = Color(0xFFADD8E6), labelColor = Color.Black))
+                    if(submittedTasks > 0){
+                        pieChartData.add(PieData(value = submittedTasks.toFloat(), label = "Ongoing Tasks: $submittedTasks Tasks", color = Color(0xFF0E9794), labelColor = Color.Black))
                     }
                     if (revisionTasks > 0) {
                         pieChartData.add(PieData(value = revisionTasks.toFloat(), label = "Revision Tasks: $revisionTasks Tasks", color = Color(0xFF90EE90), labelColor = Color.Black))
+                    }
+                    if (completedTasks > 0) {
+                        pieChartData.add(PieData(value = completedTasks.toFloat(), label = "Completed Tasks: $completedTasks Tasks", color = Color(0xFFADD8E6), labelColor = Color.Black))
                     }
 
                     Card(
@@ -489,16 +493,17 @@ class ReportActivity : ComponentActivity() {
                             Column(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                                 LegendItem(color = Color(0xFFF76A6A), label = "Upcoming Tasks: $upcomingTasks Tasks")
                                 LegendItem(color = Color(0xFFF0E68C), label = "Ongoing Tasks: $ongoingTasks Tasks")
-                                LegendItem(color = Color(0xFFADD8E6), label = "Completed Tasks: $completedTasks Tasks")
+                                LegendItem(color = Color(0xFF0E9794), label = "Submitted Tasks: $submittedTasks Tasks")
                                 LegendItem(color = Color(0xFF90EE90), label = "Revision Tasks: $revisionTasks Tasks")
+                                LegendItem(color = Color(0xFFADD8E6), label = "Completed Tasks: $completedTasks Tasks")
                             }
                         }
 
                     }
 
                     val memberTaskData = selectedProject.tasks.groupBy { it.pic_email }.mapValues { entry ->
-                        val completedTasks = entry.value.count { it.status == 2 }
-                        val remainingTasks = entry.value.count { it.status in 0..1 }
+                        val completedTasks = entry.value.count { it.status == 4 }
+                        val remainingTasks = entry.value.count { it.status != 4 }
                         completedTasks to remainingTasks
                     }
 
