@@ -1,14 +1,11 @@
 package id.ac.istts.seton.reportPage
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,10 +19,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.material.Card
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Dashboard
@@ -39,9 +34,7 @@ import androidx.compose.material.icons.outlined.ListAlt
 import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material.icons.outlined.Task
-import androidx.compose.material.Card
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -50,10 +43,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDrawerState
@@ -68,31 +59,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
-import com.jaikeerthick.composable_graphs.composables.bar.BarGraph
-import com.jaikeerthick.composable_graphs.composables.bar.model.BarData
-import com.jaikeerthick.composable_graphs.composables.line.LineGraph
-import com.jaikeerthick.composable_graphs.composables.line.model.LineData
-import com.jaikeerthick.composable_graphs.composables.line.style.LineGraphColors
-import com.jaikeerthick.composable_graphs.composables.line.style.LineGraphStyle
-import com.jaikeerthick.composable_graphs.composables.line.style.LineGraphVisibility
 import com.jaikeerthick.composable_graphs.composables.pie.PieChart
 import com.jaikeerthick.composable_graphs.composables.pie.model.PieData
 import com.jaikeerthick.composable_graphs.composables.pie.style.PieChartStyle
 import com.jaikeerthick.composable_graphs.composables.pie.style.PieChartVisibility
-import com.jaikeerthick.composable_graphs.style.LabelPosition
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
@@ -103,25 +84,16 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.shader.color
-import com.patrykandpatrick.vico.compose.common.shape.toVicoShape
-import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
-import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
-import com.patrykandpatrick.vico.core.common.shader.DynamicShader
-import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
-import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.DefaultPointConnector
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Dimensions
-import com.patrykandpatrick.vico.core.common.component.TextComponent
+import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import id.ac.istts.seton.AppBar
 import id.ac.istts.seton.DrawerBody
@@ -134,13 +106,11 @@ import id.ac.istts.seton.config.ApiConfiguration
 import id.ac.istts.seton.landingPage.LandingPageActivity
 import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
-import id.ac.istts.seton.projectPage.ListProjectViewModel
 import id.ac.istts.seton.taskPage.TaskActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.Calendar
 import java.util.Locale
 
@@ -266,7 +236,7 @@ class ReportActivity : ComponentActivity() {
                 Scaffold(
                     topBar = {
                         AppBar (
-                            name = "Dashboard",
+                            name = "Report",
                             onNavigationIconClick = {
                                 scope.launch {
                                     drawerState.open()
