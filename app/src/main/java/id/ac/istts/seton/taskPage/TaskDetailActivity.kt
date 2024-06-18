@@ -68,6 +68,7 @@ import androidx.compose.material.icons.outlined.Task
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
@@ -95,12 +96,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import id.ac.istts.seton.AppBar
+import id.ac.istts.seton.AppFont
 import id.ac.istts.seton.DrawerBody
 import id.ac.istts.seton.DrawerHeader
 import id.ac.istts.seton.MenuItem
@@ -478,9 +481,30 @@ class TaskDetailActivity : ComponentActivity() {
                     }
                 }
                 Column {
-                    Text(
-                        text = "asdfasdasdasdasd"
-                    )
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp, end = 8.dp),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            val percentage = allChecklist.filter { it.is_checked == 1 }.size.toFloat() / allChecklist.size.toFloat()
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(50.dp),
+                                progress = { percentage },
+                                color = Color(0xFF0E9794),
+                                strokeWidth = 5.dp,
+                                trackColor = Color(0xFFECFFFF)
+                            )
+                            Text(
+                                text = "${(percentage * 100).toInt()}%",
+                                color = Color.Black,
+                                fontFamily = AppFont.fontBold,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(8.dp)
+                            )
+                        }
+                    }
                 }
             }
 
