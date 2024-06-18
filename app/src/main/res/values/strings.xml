@@ -14,4 +14,5 @@
     <string name="default_web_client_id">77834221419-0e8sklciokdlrqqtb1b135ip0j81gvhg.apps.googleusercontent.com</string>
     <string name="page">Dashboard</string>
     <string name="title_activity_report">ReportActivity</string>
+    <string name="title_activity_task_detail">TaskDetailActivity</string>
 </resources>

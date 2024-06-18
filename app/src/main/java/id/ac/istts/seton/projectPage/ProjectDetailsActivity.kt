@@ -537,6 +537,7 @@ class ProjectDetailsActivity : ComponentActivity() {
 
                 }
             } else {
+                //klo dipilih boards
                 Text(
                     text = "Boards",
                     fontSize = 20.sp,

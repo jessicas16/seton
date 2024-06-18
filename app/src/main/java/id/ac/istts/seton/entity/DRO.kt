@@ -54,3 +54,21 @@ data class ProjectDetailDRO(
     var message: String,
     var data : DetailProject,
 )
+
+data class TaskDRO(
+    var status : String,
+    var message: String,
+    var data : DataTask
+)
+
+data class LabelDRO(
+    var status : String,
+    var message: String,
+    var data : Labels
+)
+
+data class ChecklistDRO(
+    var status : String,
+    var message: String,
+    var data : Checklists
+)

@@ -27,6 +27,9 @@ interface TaskDao {
     @Query("SELECT * FROM tasks WHERE id = :id")
     fun getById(id: Int): Tasks?
 
+    @Query("SELECT * FROM tasks")
+    fun getAll(): List<Tasks>
+
     @Query("SELECT * FROM tasks WHERE pic_email = :email")
     fun getByPIC(email: String): List<Tasks>
 

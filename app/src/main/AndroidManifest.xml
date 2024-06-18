@@ -21,6 +21,11 @@
             android:label="@string/title_activity_report"
             android:theme="@style/Theme.SETON" />
         <activity
+            android:name=".taskPage.TaskDetailActivity"
+            android:exported="false"
+            android:label="@string/title_activity_task_detail"
+            android:theme="@style/Theme.SETON" />
+        <activity
             android:name=".projectPage.ProjectDetailsActivity"
             android:exported="false"
             android:label="@string/title_activity_project_details"

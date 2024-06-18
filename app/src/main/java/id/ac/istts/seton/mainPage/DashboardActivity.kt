@@ -26,10 +26,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Dashboard
@@ -43,13 +43,13 @@ import androidx.compose.material.icons.outlined.ListAlt
 import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material.icons.outlined.Task
-import androidx.compose.material.Button
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -91,6 +91,7 @@ import id.ac.istts.seton.projectPage.ListProjectActivity
 import id.ac.istts.seton.reportPage.ReportActivity
 import id.ac.istts.seton.taskPage.DataTask
 import id.ac.istts.seton.taskPage.TaskActivity
+import id.ac.istts.seton.taskPage.TaskDetailActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.mapNotNull
@@ -258,7 +259,7 @@ class DashboardActivity : ComponentActivity() {
             LazyColumn(
                 Modifier
                     .fillMaxSize()
-                    .padding(16.dp, 60.dp),
+                    .padding(16.dp, 56.dp, 16.dp, 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 item {
@@ -583,7 +584,7 @@ class DashboardActivity : ComponentActivity() {
                                             strokeWidth = 5.dp,
                                             trackColor = Color(0xFFECFFFF)
                                         )
-                                        androidx.compose.material3.Text(
+                                        Text(
                                             text = "${(percentage * 100).toInt()}%",
                                             color = Color.Black,
                                             fontFamily = AppFont.fontBold,
@@ -600,8 +601,11 @@ class DashboardActivity : ComponentActivity() {
                         ) {
                             Row(modifier = Modifier.clickable {
                                 // Go to Task Details
+                                val intent = Intent(this@DashboardActivity, TaskDetailActivity::class.java)
+                                intent.putExtra("taskId", it.id.toString())
+                                startActivity(intent)
                             }, verticalAlignment = Alignment.CenterVertically) {
-                                androidx.compose.material3.Text(
+                                Text(
                                     text = "See Details",
                                     fontSize = 14.sp,
                                     fontFamily = AppFont.fontNormal,
@@ -683,5 +687,10 @@ class DashboardActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        vm.getUserTasksDashboard()
     }
 }

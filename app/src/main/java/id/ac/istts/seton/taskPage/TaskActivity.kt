@@ -64,7 +64,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-
 import id.ac.istts.seton.AppBar
 import id.ac.istts.seton.AppFont
 import id.ac.istts.seton.DrawerBody
@@ -189,7 +188,6 @@ class TaskActivity : ComponentActivity() {
                     TaskPreview()
                 }
             }
-
         }
     }
 
@@ -333,7 +331,7 @@ class TaskActivity : ComponentActivity() {
                                     }
                                 }
                             }
-                            if (it.status == 1) {
+                            if (it.statusTask == 1) {
                                 Box(
                                     Modifier
                                         .fillMaxWidth()
@@ -366,6 +364,9 @@ class TaskActivity : ComponentActivity() {
                         ) {
                             Row(modifier = Modifier.clickable {
                                 // Go to Task Details
+                                val intent = Intent(this@TaskActivity, TaskDetailActivity::class.java)
+                                intent.putExtra("taskId", it.id.toString())
+                                startActivity(intent)
                             }, verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = "See Details",
@@ -449,5 +450,10 @@ class TaskActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        vm.getUserTasks()
     }
 }

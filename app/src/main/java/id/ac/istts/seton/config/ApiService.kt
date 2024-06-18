@@ -1,11 +1,14 @@
 package id.ac.istts.seton.config
 
 import id.ac.istts.seton.entity.BasicDRO
+import id.ac.istts.seton.entity.ChecklistDRO
+import id.ac.istts.seton.entity.LabelDRO
 import id.ac.istts.seton.entity.ListProjectDRO
 import id.ac.istts.seton.entity.ListTaskDRO
 import id.ac.istts.seton.entity.ListUserDRO
 import id.ac.istts.seton.entity.ProjectDRO
 import id.ac.istts.seton.entity.ProjectDetailDRO
+import id.ac.istts.seton.entity.TaskDRO
 import id.ac.istts.seton.entity.UserDRO
 import id.ac.istts.seton.entity.Users
 import id.ac.istts.seton.entity.addProjectDTO
@@ -82,4 +85,25 @@ interface ApiService {
 
     @POST("tasks/")
     suspend fun createTask(@Body taskDTO: addTaskDTO): BasicDRO
+
+    @GET("tasks/{taskId}")
+    suspend fun getTaskById(@Path("taskId") taskId: String): TaskDRO
+
+    @PUT("tasks/{taskId}/{status}")
+    suspend fun updateTaskStatus(
+        @Path("taskId") taskId: String,
+        @Path("status") status: String,
+    ): BasicDRO
+
+    @POST("tasks/label/{taskId}/{title}")
+    suspend fun addLabelToTask(
+        @Path("taskId") taskId: String,
+        @Path("title") title: String,
+    ): LabelDRO
+
+    @POST("tasks/checklist/{taskId}/{title}")
+    suspend fun addChecklist(
+        @Path("taskId") taskId: String,
+        @Path("title") title: String,
+    ): ChecklistDRO
 }
