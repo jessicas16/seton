@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import id.ac.istts.seton.config.local.AppDatabase
 import id.ac.istts.seton.entity.BasicDRO
+import id.ac.istts.seton.entity.ChecklistDRO
+import id.ac.istts.seton.entity.Checklists
 import id.ac.istts.seton.entity.LabelDRO
 import id.ac.istts.seton.entity.Labels
 import id.ac.istts.seton.entity.ListProjectDRO
@@ -510,7 +512,7 @@ class DefaultRepo(
                         pic_email = data.pic.email,
                         project_id = data.project.id
                     )
-
+                    getUserProjects(true, email)
                     withContext(Dispatchers.IO){
                         try {
                             if(dataSourceLocal.taskDao().getById(data.id) == null){
@@ -565,9 +567,6 @@ class DefaultRepo(
                             withContext(Dispatchers.IO){dataSourceLocal.labelDao().insert(label)}
                         }catch (e: Exception){}
                     }
-
-                    getUserProjects(true, email)
-
                 }
                 message = "Success get project by id from API!"
             }catch (e: Exception){}
@@ -626,7 +625,7 @@ class DefaultRepo(
 
     suspend fun getUserTasksDashboard(force:Boolean = true, email: String = "ivan.s21@mhs.istts.ac.id"): ListTaskDashboardDRO {
         var message = "Success get project by id from local!"
-
+        getUserProjects(true, email)
         if(force){
             try {
                 val getUserTaskFromApi = withContext(Dispatchers.IO){dataSourceRemote.getUserTasks(email)}
@@ -697,9 +696,6 @@ class DefaultRepo(
                             withContext(Dispatchers.IO){dataSourceLocal.labelDao().insert(label)}
                         }catch (e: Exception){}
                     }
-
-                    getUserProjects(true, email)
-
                 }
                 message = "Success get project by id from API!"
             }catch (e: Exception){}
@@ -1003,7 +999,7 @@ class DefaultRepo(
             addLabel = dataSourceRemote.addLabelToTask(taskId, label)
 
             if(addLabel.status == "201"){
-                var label = Labels(
+                val labelBaru = Labels(
                     id = addLabel.data.id,
                     title = addLabel.data.title,
                     color = addLabel.data.color,
@@ -1011,12 +1007,36 @@ class DefaultRepo(
                 )
 
                 withContext(Dispatchers.IO){
-                    dataSourceLocal.labelDao().insert(label)
+                    dataSourceLocal.labelDao().insert(labelBaru)
                 }
             }else{
                 addLabel = null
             }
         }catch (e: Exception){}
         return addLabel!!
+    }
+
+    suspend fun addChecklist(taskId: String, title: String): ChecklistDRO {
+        var addCheck: ChecklistDRO? = null
+
+        try {
+            addCheck = dataSourceRemote.addChecklist(taskId, title)
+
+            if(addCheck.status == "201"){
+                val checklist = Checklists(
+                    id = addCheck.data.id,
+                    title = addCheck.data.title,
+                    is_checked = addCheck.data.is_checked,
+                    task_id = addCheck.data.task_id
+                )
+
+                withContext(Dispatchers.IO){
+                    dataSourceLocal.checklistDao().insert(checklist)
+                }
+            }else{
+                addCheck = null
+            }
+        }catch (e: Exception){}
+        return addCheck!!
     }
 }

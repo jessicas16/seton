@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.ac.istts.seton.config.ApiConfiguration
 import id.ac.istts.seton.entity.BasicDRO
+import id.ac.istts.seton.entity.ChecklistDRO
+import id.ac.istts.seton.entity.Checklists
 import id.ac.istts.seton.entity.LabelDRO
 import id.ac.istts.seton.entity.Labels
 import id.ac.istts.seton.entity.Projects
@@ -18,6 +20,7 @@ class TaskDetailViewModel: ViewModel() {
     private val _task = MutableLiveData<TaskDRO>()
     private val _status = MutableLiveData<BasicDRO>()
     private val _label = MutableLiveData<LabelDRO>()
+    private val _checklist = MutableLiveData<ChecklistDRO>()
 
     val task: MutableLiveData<TaskDRO>
         get() = _task
@@ -27,6 +30,9 @@ class TaskDetailViewModel: ViewModel() {
 
     val label: MutableLiveData<LabelDRO>
         get() = _label
+
+    val checklist: MutableLiveData<ChecklistDRO>
+        get() = _checklist
 
     fun getTaskById (taskId: String) {
         viewModelScope.launch {
@@ -113,6 +119,31 @@ class TaskDetailViewModel: ViewModel() {
                         id = -1,
                         title = "",
                         color = "",
+                        task_id = ""
+                    )
+                )
+            }
+        }
+    }
+
+    fun addNewChecklist(
+        taskId: String,
+        title: String,
+    ){
+        viewModelScope.launch {
+            try {
+                val res = repo.addChecklist(taskId, title)
+                _checklist.value = res
+                getTaskById(taskId)
+            } catch (e: Exception) {
+                Log.e("ERROR", e.message.toString())
+                _checklist.value = ChecklistDRO(
+                    status = "500",
+                    message = "Internal Server Error",
+                    data = Checklists(
+                        id = -1,
+                        title = "",
+                        is_checked = -1,
                         task_id = ""
                     )
                 )

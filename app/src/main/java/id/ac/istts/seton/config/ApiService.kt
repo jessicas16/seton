@@ -1,6 +1,7 @@
 package id.ac.istts.seton.config
 
 import id.ac.istts.seton.entity.BasicDRO
+import id.ac.istts.seton.entity.ChecklistDRO
 import id.ac.istts.seton.entity.LabelDRO
 import id.ac.istts.seton.entity.ListProjectDRO
 import id.ac.istts.seton.entity.ListTaskDRO
@@ -94,10 +95,15 @@ interface ApiService {
         @Path("status") status: String,
     ): BasicDRO
 
-    @POST("tasks/label/{taskId}")
+    @POST("tasks/label/{taskId}/{title}")
     suspend fun addLabelToTask(
         @Path("taskId") taskId: String,
-        @Body label: String
+        @Path("title") title: String,
     ): LabelDRO
 
+    @POST("tasks/checklist/{taskId}/{title}")
+    suspend fun addChecklist(
+        @Path("taskId") taskId: String,
+        @Path("title") title: String,
+    ): ChecklistDRO
 }

@@ -67,3 +67,8 @@ data class LabelDRO(
     var data : Labels
 )
 
+data class ChecklistDRO(
+    var status : String,
+    var message: String,
+    var data : Checklists
+)

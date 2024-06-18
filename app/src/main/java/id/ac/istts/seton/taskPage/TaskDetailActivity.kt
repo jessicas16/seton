@@ -142,7 +142,7 @@ class TaskDetailActivity : ComponentActivity() {
             )
 
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-            val scope = rememberCoroutineScope()
+            scope = rememberCoroutineScope()
 //            val navController = rememberNavController()
 //            val navBackStackEntry by navController.currentBackStackEntryAsState()
 //            val currentRoute = navBackStackEntry?.destination?.route
@@ -250,10 +250,18 @@ class TaskDetailActivity : ComponentActivity() {
 
         //DIALOG
         val showLabelDialog = remember { mutableStateOf(false) }
+        val showCheckListDialog = remember { mutableStateOf(false) }
+        val showAttachmentsDialog = remember { mutableStateOf(false) }
         if (showLabelDialog.value) {
             ModalForLabels(
                 taskId = taskId
             ){ showLabelDialog.value = false }
+        }
+
+        if (showCheckListDialog.value) {
+            ModalForChecklists(
+                taskId = taskId
+            ){ showCheckListDialog.value = false }
         }
 
         ConstraintLayout(
@@ -574,20 +582,19 @@ class TaskDetailActivity : ComponentActivity() {
                             text = "Labels",
                             icon = Icons.Filled.Discount
                         ) {
-//                            Toast.makeText(context, "Labels", Toast.LENGTH_SHORT).show()
                             showLabelDialog.value = true
                         }
                         AddItems(
                             text = "Checklist",
                             icon = Icons.Filled.CheckBox
                         ) {
-                            Toast.makeText(context, "Checklist", Toast.LENGTH_SHORT).show()
+                            showCheckListDialog.value = true
                         }
                         AddItems(
                             text = "Attachments",
                             icon = Icons.Filled.Attachment
                         ) {
-                            Toast.makeText(context, "Attachments", Toast.LENGTH_SHORT).show()
+                            showAttachmentsDialog.value = true
                         }
                     }
                 }
@@ -692,7 +699,7 @@ class TaskDetailActivity : ComponentActivity() {
                         modifier = Modifier.padding(8.dp),
                         label = { Text("Title") },
                         keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Email,
+                            keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Done,
                         ),
                     )
@@ -724,6 +731,94 @@ class TaskDetailActivity : ComponentActivity() {
                                             if(res != null){
                                                 if(res.status == "201"){
                                                     Toast.makeText(context, "Success add new Label", Toast.LENGTH_SHORT).show()
+                                                    onDismiss()
+                                                } else {
+                                                    Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()
+                                                }
+                                                title = ""
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD8FDFF)),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .weight(1f)
+                        ) {
+                            Text(
+                                text = "Add",
+                                color = Color(0xFF0E9794)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun ModalForChecklists(
+        taskId : String,
+        onDismiss:() -> Unit
+    ){
+        val context = LocalContext.current
+        var goal by remember { mutableStateOf("")}
+        Dialog(onDismissRequest = { onDismiss() }) {
+            Card(
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier.padding(12.dp),
+            ) {
+                Column(
+                    Modifier
+                        .background(Color.White)
+                        .padding(12.dp)
+                ) {
+                    androidx.compose.material.Text(
+                        text = "Add New Goals",
+                        modifier = Modifier.padding(4.dp),
+                        fontSize = 20.sp
+                    )
+
+                    OutlinedTextField(
+                        value = goal,
+                        onValueChange = { goal = it },
+                        modifier = Modifier.padding(8.dp),
+                        label = { Text("Goals") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Done,
+                        ),
+                    )
+
+                    Row {
+                        OutlinedButton(
+                            onClick = { onDismiss() },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .weight(1f)
+                        ) {
+                            androidx.compose.material.Text(
+                                text = "Cancel",
+                                color = Color(0xFF0E9794)
+                            )
+                        }
+
+                        Button(
+                            onClick = {
+                                if (goal.isEmpty()){
+                                    Toast.makeText(context, "Goal cannot be empty", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    scope.launch {
+                                        vm.addNewChecklist(taskId, goal)
+                                        delay(1000)
+                                        val res = vm.label.value
+                                        runOnUiThread{
+                                            if(res != null){
+                                                if(res.status == "201"){
+                                                    Toast.makeText(context, "Success add new Checklist", Toast.LENGTH_SHORT).show()
                                                     onDismiss()
                                                 } else {
                                                     Toast.makeText(context, res.message, Toast.LENGTH_SHORT).show()
