@@ -512,14 +512,14 @@ class DashboardActivity : ComponentActivity() {
                         Row {
                             Column {
                                 Row {
-                                    androidx.compose.material3.Text(
+                                    Text(
                                         text = it.title,
                                         fontFamily = AppFont.fontBold,
                                         fontSize = 20.sp
                                     )
                                 }
                                 Row(Modifier.padding(vertical = 4.dp)) {
-                                    androidx.compose.material3.Text(
+                                    Text(
                                         text = it.project.name,
                                         fontSize = 16.sp,
                                         fontFamily = AppFont.fontLight
