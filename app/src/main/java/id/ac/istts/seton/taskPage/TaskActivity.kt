@@ -210,7 +210,7 @@ class TaskActivity : ComponentActivity() {
     fun TaskPreview() {
         val userTasks by vm.tasks.observeAsState(emptyList())
         LaunchedEffect(key1 = Unit) {
-            vm.getUserTasks()
+            vm.getUserTasks(email = userEmail)
         }
         ConstraintLayout(modifier = Modifier.fillMaxSize().background(Color.White)) {
             LazyColumn(
@@ -469,6 +469,6 @@ class TaskActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        vm.getUserTasks()
+        vm.getUserTasks(userEmail)
     }
 }

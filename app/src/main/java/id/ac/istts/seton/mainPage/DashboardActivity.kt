@@ -244,7 +244,7 @@ class DashboardActivity : ComponentActivity() {
         val (selectedChart, setSelectedChart) = remember { mutableStateOf("Upcoming") }
 
         LaunchedEffect(key1 = Unit) {
-            vm.getUserTasksDashboard()
+            vm.getUserTasksDashboard(userEmail)
         }
 
         ConstraintLayout(modifier = Modifier
@@ -686,6 +686,6 @@ class DashboardActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        vm.getUserTasksDashboard()
+        vm.getUserTasksDashboard(userEmail)
     }
 }

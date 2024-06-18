@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.ac.istts.seton.config.ApiConfiguration
-import id.ac.istts.seton.taskPage.DataTask
 import kotlinx.coroutines.launch
 
 class DashboardViewModel: ViewModel(){
@@ -16,10 +15,10 @@ class DashboardViewModel: ViewModel(){
     val tasks: LiveData<List<Pair<String, List<DataTaskDashboard>>>>
         get() = _tasks
 
-    fun getUserTasksDashboard() {
+    fun getUserTasksDashboard(email : String) {
         viewModelScope.launch {
             try {
-                val res = repo.getUserTasksDashboard()
+                val res = repo.getUserTasksDashboard(email = email)
                 Log.i("DATA_TASK", res.data.toString())
                 val filteredTasks = listOf(
                     Pair("Upcoming", res.data.filter { it.status == 0 }),

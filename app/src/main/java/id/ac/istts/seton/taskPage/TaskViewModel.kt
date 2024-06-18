@@ -15,10 +15,12 @@ class TaskViewModel: ViewModel() {
     val tasks: LiveData<List<Pair<String, List<DataTask>>>>
         get() = _tasks
 
-    fun getUserTasks() {
+    fun getUserTasks(
+        email : String
+    ) {
         viewModelScope.launch {
             try {
-                val res = repo.getUserTasks()
+                val res = repo.getUserTasks(email = email)
 
                 Log.i("LALALALLALALLA", res.data.toString())
                 val filteredTasks = listOf(
