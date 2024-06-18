@@ -72,3 +72,15 @@ data class ChecklistDRO(
     var message: String,
     var data : Checklists
 )
+
+data class PostAttachmentDRO(
+    var status : String,
+    var message : String,
+    var data : Attachments
+)
+
+data class GetAttachmentDRO(
+    var status : String,
+    var message : String,
+    var data : List<Attachments>
+)
