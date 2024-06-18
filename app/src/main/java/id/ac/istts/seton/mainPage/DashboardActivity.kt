@@ -191,31 +191,26 @@ class DashboardActivity : ComponentActivity() {
 
                                         val intent = Intent(this@DashboardActivity, LoginActivity::class.java)
                                         startActivity(intent)
-                                        finish()
                                     }
                                     Screens.Projects.route -> {
                                         val intent = Intent(this@DashboardActivity, ListProjectActivity::class.java)
                                         intent.putExtra("userEmail", userEmail)
                                         startActivity(intent)
-                                        finish()
                                     }
                                     Screens.Tasks.route -> {
                                         val intent = Intent(this@DashboardActivity, TaskActivity::class.java)
                                         intent.putExtra("userEmail", userEmail)
                                         startActivity(intent)
-                                        finish()
                                     }
                                     Screens.Calendar.route -> {
                                         val intent = Intent(this@DashboardActivity, CalendarActivity::class.java)
                                         intent.putExtra("userEmail", userEmail)
                                         startActivity(intent)
-                                        finish()
                                     }
                                     Screens.Report.route -> {
                                         val intent = Intent(this@DashboardActivity, ReportActivity::class.java)
                                         intent.putExtra("userEmail", userEmail)
                                         startActivity(intent)
-                                        finish()
                                     }
                                 }
                             }
