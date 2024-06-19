@@ -158,4 +158,7 @@ dependencies {
     //COIL for Image Loading
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("io.coil-kt:coil-svg:2.5.0")
+
+    //Download
+    implementation("com.squareup.okhttp3:okhttp:4.9.2")
 }

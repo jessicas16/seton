@@ -8,6 +8,7 @@ import android.database.Cursor
 import android.graphics.Color.parseColor
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.OpenableColumns
 import android.util.Log
 import android.widget.Toast
@@ -133,9 +134,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody
 import java.io.File
 import java.io.FileOutputStream
@@ -155,7 +159,6 @@ class TaskDetailActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         taskId = intent.getStringExtra("taskId").toString()
         userEmail = intent.getStringExtra("userEmail").toString()
-        Toast.makeText(this, taskId, Toast.LENGTH_SHORT).show()
         setContent{
             scope = rememberCoroutineScope()
             mAuth = FirebaseAuth.getInstance()
@@ -802,6 +805,41 @@ class TaskDetailActivity : ComponentActivity() {
                                     IconButton(
                                         onClick = {
                                             //download file
+                                            var isSuccess = false
+                                            runBlocking {
+                                                withContext(Dispatchers.IO){
+                                                    isSuccess = downloadFile(attachment.file_name)
+                                                }
+                                            }
+
+                                            if(isSuccess){
+                                                Toast.makeText(this@TaskDetailActivity, "Download success", Toast.LENGTH_SHORT).show()
+                                            }else{
+                                                Toast.makeText(this@TaskDetailActivity, "Download failed", Toast.LENGTH_SHORT).show()
+                                            }
+//                                            try{
+//
+//                                            }catch(e: Exception){
+//                                                Log.d("Error Download", e.toString())
+//                                            }
+//                                            url.httpDownload().fileDestination{ _, _, _ ->
+//                                                File(folder.path)
+//                                            }.response{ _, _, result ->
+//                                                when(result){
+//                                                    result.Failure -> {
+//                                                        val error = result.getException()
+//                                                        println("Failed to download file: $error")
+//                                                    }
+//                                                    result.Success -> {
+//                                                        println("File downloaded to $outputPath")
+//                                                    }
+//                                                }
+//                                            }
+
+//                                            url.httpDownload().fileDestination { response, request ->
+//                                                File(filePath)
+//                                            }.response()
+
 
                                         },
                                     ){
@@ -1081,6 +1119,38 @@ class TaskDetailActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         vm.getTaskById(taskId)
+    }
+
+    fun downloadFile(file_name: String): Boolean{
+        val folder = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "SETON")
+        if (!folder.exists()) {
+            folder.mkdirs()
+        }
+
+        val filePath = folder.path.toString() + "/" + file_name
+
+        val url = env.prefixStorage + file_name
+
+        val client = OkHttpClient()
+
+        val request = Request.Builder().url(url).build()
+
+        client.newCall(request).execute().use{ response ->
+            if (!response.isSuccessful){
+                return false
+            }else{
+                val inputStream: InputStream? = response.body?.byteStream()
+                val outputFile = File(filePath)
+
+                inputStream?.use { input ->
+                    FileOutputStream(outputFile).use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                return true
+            }
+
+        }
     }
 
     @Composable
