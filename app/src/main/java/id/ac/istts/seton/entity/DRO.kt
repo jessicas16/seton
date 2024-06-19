@@ -111,7 +111,7 @@ data class CommentDRO(
     var data : Comments
 )
 
-data class ChangePasswordDRO(
+data class UpdateProfileDRO(
     var status : String,
     var message : String,
     var data : String

@@ -94,6 +94,7 @@ class SettingActivity : ComponentActivity() {
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mAuth: FirebaseAuth
     val vm: SettingViewModel by viewModels<SettingViewModel>()
+    private lateinit var mainScope: CoroutineScope
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userEmail = intent.getStringExtra("userEmail").toString()
@@ -104,6 +105,7 @@ class SettingActivity : ComponentActivity() {
             .build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         val auth = Firebase.auth
+        mainScope = CoroutineScope(Dispatchers.Main)
         setContent {
             val items = listOf(
                 MenuItem(
@@ -225,6 +227,13 @@ class SettingActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        mainScope.launch {
+            vm.getUser(userEmail)
+        }
+    }
+
     @Preview(showBackground = true)
     @Composable
     fun SettingPreview() {
@@ -302,6 +311,7 @@ class SettingActivity : ComponentActivity() {
                             .clickable {
                                 val intent = Intent(context, EditProfileActivity::class.java)
                                 intent.putExtra("userEmail", userEmail)
+                                intent.putExtra("userName", user?.name.toString())
                                 context.startActivity(intent)
                             }
                     )

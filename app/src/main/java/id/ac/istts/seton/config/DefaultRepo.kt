@@ -8,7 +8,7 @@ import id.ac.istts.seton.entity.AddCommentDTO
 import id.ac.istts.seton.entity.AllChecklistDRO
 import id.ac.istts.seton.entity.AllCommentDRO
 import id.ac.istts.seton.entity.BasicDRO
-import id.ac.istts.seton.entity.ChangePasswordDRO
+import id.ac.istts.seton.entity.UpdateProfileDRO
 import id.ac.istts.seton.entity.ChangePasswordDTO
 import id.ac.istts.seton.entity.ChecklistDRO
 import id.ac.istts.seton.entity.Checklists
@@ -146,8 +146,12 @@ class DefaultRepo(
         }
     }
 
-    suspend fun updatePassword(email: String, oldPassword: String, newPassword: String): ChangePasswordDRO {
+    suspend fun updatePassword(email: String, oldPassword: String, newPassword: String): UpdateProfileDRO {
         return dataSourceRemote.updatePassword(email, ChangePasswordDTO(oldPassword, newPassword))
+    }
+
+    suspend fun updateProfile(email: String, file : MultipartBody.Part?, name: String): UpdateProfileDRO {
+        return dataSourceRemote.updateProfile(email, name, file)
     }
 
     //PROJECTS

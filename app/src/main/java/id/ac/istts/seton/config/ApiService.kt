@@ -4,7 +4,6 @@ import id.ac.istts.seton.entity.AddCommentDTO
 import id.ac.istts.seton.entity.AllChecklistDRO
 import id.ac.istts.seton.entity.AllCommentDRO
 import id.ac.istts.seton.entity.BasicDRO
-import id.ac.istts.seton.entity.ChangePasswordDRO
 import id.ac.istts.seton.entity.ChangePasswordDTO
 import id.ac.istts.seton.entity.ChecklistDRO
 import id.ac.istts.seton.entity.CommentDRO
@@ -17,6 +16,7 @@ import id.ac.istts.seton.entity.PostAttachmentDRO
 import id.ac.istts.seton.entity.ProjectDRO
 import id.ac.istts.seton.entity.ProjectDetailDRO
 import id.ac.istts.seton.entity.TaskDRO
+import id.ac.istts.seton.entity.UpdateProfileDRO
 import id.ac.istts.seton.entity.UserDRO
 import id.ac.istts.seton.entity.Users
 import id.ac.istts.seton.entity.addProjectDTO
@@ -55,16 +55,24 @@ interface ApiService {
     @POST("users/login/")
     suspend fun loginUser(@Body userLoginDRO: userLoginDTO):BasicDRO
 
-    @POST("users/loginWithGoogle")
-    suspend fun loginUserWithGoogle(
-        @Body user : authUser
-    ):BasicDRO
-
     @PUT("users/password/{email}")
     suspend fun updatePassword(
         @Path("email") email: String,
         @Body dataPassword: ChangePasswordDTO
-    ): ChangePasswordDRO
+    ): UpdateProfileDRO
+
+    @Multipart
+    @PUT("users/{email}")
+    suspend fun updateProfile(
+        @Path("email") email: String,
+        @Part("name") name: String,
+        @Part filename: MultipartBody.Part?
+    ): UpdateProfileDRO
+
+    @POST("users/loginWithGoogle")
+    suspend fun loginUserWithGoogle(
+        @Body user : authUser
+    ):BasicDRO
 
     //PROJECTS
     @GET("projects/getTasksProject/{projectId}")
