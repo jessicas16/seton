@@ -155,7 +155,7 @@ class SettingActivity : ComponentActivity() {
                             items = items,
                             onItemClick = { currentMenuItem ->
                                 when (currentMenuItem.route){
-                                    Screens.Projects.route -> {
+                                    Screens.Dashboard.route -> {
                                         val intent = Intent(this@SettingActivity, DashboardActivity::class.java)
                                         intent.putExtra("userEmail", userEmail)
                                         startActivity(intent)
