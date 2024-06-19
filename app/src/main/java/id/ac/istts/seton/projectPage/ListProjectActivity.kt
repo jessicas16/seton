@@ -3,6 +3,7 @@ package id.ac.istts.seton.projectPage
 //import com.example.seton.SetUpNavGraph
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -78,6 +79,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import id.ac.istts.seton.AppBar
 import id.ac.istts.seton.AppFont
 import id.ac.istts.seton.DrawerBody
@@ -85,6 +88,7 @@ import id.ac.istts.seton.DrawerHeader
 import id.ac.istts.seton.MenuItem
 import id.ac.istts.seton.R
 import id.ac.istts.seton.Screens
+import id.ac.istts.seton.SetUpNavGraph
 import id.ac.istts.seton.calendarPage.CalendarActivity
 import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
@@ -141,54 +145,57 @@ class ListProjectActivity : ComponentActivity() {
 
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             val scope = rememberCoroutineScope()
-//            val navController = rememberNavController()
-//            val navBackStackEntry by navController.currentBackStackEntryAsState()
-//            val currentRoute = navBackStackEntry?.destination?.route
-//
-//            val topBarTitle =
-//                if (currentRoute != null){
-//                    items[items.indexOfFirst {
-//                        it.route == currentRoute
-//                    }].title
-//                }
-//                else {
-//                    items[0].title
-//                }
+            val navController = rememberNavController()
+            val context = LocalContext.current
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+
+            val topBarTitle =
+                if (currentRoute != null){
+                    items[items.indexOfFirst {
+                        it.route == currentRoute
+                    }].title
+                }else{
+                    items[0].title
+                }
 
             ModalNavigationDrawer(
-                gesturesEnabled = drawerState.isOpen,
-                drawerContent = {
-                    ModalDrawerSheet {
+                gesturesEnabled = drawerState.isOpen,drawerContent = {
+                    ModalDrawerSheet(
+
+                    ) {
                         DrawerHeader()
                         Spacer(modifier = Modifier.height(8.dp))
-                        DrawerBody(
-                            items = items,
-                            onItemClick = { currentMenuItem ->
-                                when (currentMenuItem.route){
-                                    Screens.Logout.route -> {
-                                        startActivity(Intent(this@ListProjectActivity, LoginActivity::class.java))
+                        DrawerBody(items = items, currentRoute =currentRoute) { currentNavigationItem ->
+                            if(currentNavigationItem.route == "projects"){
+                                Toast.makeText(context,"Share Clicked", Toast.LENGTH_LONG).show()
+                            }else{
+                                navController.navigate(currentNavigationItem.route){
+                                    // Pop up to the start destination of the graph to
+                                    // avoid building up a large stack of destinations
+                                    // on the back stack as users select items
+                                    navController.graph.startDestinationRoute?.let { startDestinationRoute ->
+                                        // Pop up to the start destination, clearing the back stack
+                                        popUpTo(startDestinationRoute) {
+                                            // Save the state of popped destinations
+                                            saveState = true
+                                        }
                                     }
-                                    Screens.Dashboard.route -> {
-                                        startActivity(Intent(this@ListProjectActivity, DashboardActivity::class.java))
-                                    }
-                                    Screens.Tasks.route -> {
-                                        startActivity(Intent(this@ListProjectActivity, TaskActivity::class.java))
-                                    }
-                                    Screens.Calendar.route -> {
-                                        startActivity(Intent(this@ListProjectActivity, CalendarActivity::class.java))
-                                    }
-                                    Screens.Report.route -> {
-                                        val intent = Intent(this@ListProjectActivity, ReportActivity::class.java)
-                                        intent.putExtra("userEmail", userEmail)
-                                        startActivity(intent)
-                                        finish()
-                                    }
+
+                                    // Configure navigation to avoid multiple instances of the same destination
+                                    launchSingleTop = true
+
+                                    // Restore state when re-selecting a previously selected item
+                                    restoreState = true
                                 }
                             }
-                        )
+
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        }
                     }
-                }, drawerState = drawerState
-            ) {
+                }, drawerState = drawerState){
                 Scaffold(
                     topBar = {
                         AppBar (
@@ -200,8 +207,8 @@ class ListProjectActivity : ComponentActivity() {
                             }
                         )
                     }
-                ) {
-                    val hai = it
+                ) {innerPadding->
+                    SetUpNavGraph(navController = navController, innerPadding = innerPadding)
                     ListProjectPreview()
                 }
             }

@@ -1,5 +1,6 @@
 package id.ac.istts.seton.mainPage
 
+import android.icu.util.Calendar
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,15 +8,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.ac.istts.seton.config.ApiConfiguration
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class DashboardViewModel: ViewModel(){
     private var repo = ApiConfiguration.defaultRepo
     private val _tasks = MutableLiveData<List<Pair<String, List<DataTaskDashboard>>>>()
-
     val tasks: LiveData<List<Pair<String, List<DataTaskDashboard>>>>
         get() = _tasks
+    private val _numCount = MutableLiveData<ArrayList<Float>>()
+    val numCount: LiveData<ArrayList<Float>>
+        get() = _numCount
 
-    fun getUserTasksDashboard(email : String) {
+    private var maxData = 0
+
+
+    fun getUserTasksDashboard(email: String) {
         viewModelScope.launch {
             try {
                 val res = repo.getUserTasksDashboard(email = email)
@@ -28,6 +36,37 @@ class DashboardViewModel: ViewModel(){
                     Pair("Completed", res.data.filter { it.status == 4 })
                 )
                 _tasks.value = filteredTasks
+                maxData = 0
+                val numCountList = ArrayList<Float>()
+                for (i in 0..6) {
+                    var dt = Date()
+                    val c: Calendar = Calendar.getInstance()
+                    c.setTime(dt)
+                    c.add(Calendar.DATE, i)
+                    dt = c.getTime()
+                    val sdf2 = SimpleDateFormat("yyyy-mm-dd")
+                    val currentDate2 = sdf2.format(dt)
+                    var temp = 0
+                    for (task in res.data) {
+                        if (task.deadline == currentDate2) {
+                            temp += 1
+                        }
+                    }
+                    numCountList.add(temp.toFloat())
+                    if(maxData < temp){
+                        maxData = temp
+                    }
+                }
+                print("cetak " +numCountList)
+                if(maxData > 0){
+                    for (i in 0..6){
+                        numCountList.set(i, numCountList.get(i) / maxData)
+                    }
+                }
+                numCountList.add(maxData.toFloat())
+
+                _numCount.value = numCountList
+
             } catch (e: Exception) {
                 Log.e("ERROR", e.message.toString())
                 _tasks.value = emptyList()

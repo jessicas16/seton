@@ -102,6 +102,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import id.ac.istts.seton.AppBar
 import id.ac.istts.seton.AppFont
 import id.ac.istts.seton.DrawerBody
@@ -109,6 +111,7 @@ import id.ac.istts.seton.DrawerHeader
 import id.ac.istts.seton.MenuItem
 import id.ac.istts.seton.R
 import id.ac.istts.seton.Screens
+import id.ac.istts.seton.SetUpNavGraph
 import id.ac.istts.seton.entity.AddCommentDTO
 import id.ac.istts.seton.entity.Projects
 import id.ac.istts.seton.entity.TaskDRO
@@ -180,49 +183,58 @@ class TaskDetailActivity : ComponentActivity() {
             )
 
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-            scope = rememberCoroutineScope()
-//            val navController = rememberNavController()
-//            val navBackStackEntry by navController.currentBackStackEntryAsState()
-//            val currentRoute = navBackStackEntry?.destination?.route
-//
-//            val topBarTitle =
-//                if (currentRoute != null){
-//                    items[items.indexOfFirst {
-//                        it.route == currentRoute
-//                    }].title
-//                }
-//                else {
-//                    items[0].title
-//                }
+            val scope = rememberCoroutineScope()
+            val navController = rememberNavController()
+            val context = LocalContext.current
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+
+            val topBarTitle =
+                if (currentRoute != null){
+                    items[items.indexOfFirst {
+                        it.route == currentRoute
+                    }].title
+                }else{
+                    items[0].title
+                }
 
             ModalNavigationDrawer(
-                gesturesEnabled = drawerState.isOpen,
-                drawerContent = {
-                    ModalDrawerSheet {
+                gesturesEnabled = drawerState.isOpen,drawerContent = {
+                    ModalDrawerSheet(
+
+                    ) {
                         DrawerHeader()
                         Spacer(modifier = Modifier.height(8.dp))
-                        DrawerBody(
-                            items = items,
-                            onItemClick = { currentMenuItem ->
-                                when (currentMenuItem.route){
-                                    Screens.Logout.route -> {
-                                        startActivity(Intent(this@TaskDetailActivity, LoginActivity::class.java))
+                        DrawerBody(items = items, currentRoute =currentRoute) { currentNavigationItem ->
+                            if(currentNavigationItem.route == "Tasks Detail"){
+                                Toast.makeText(context,"Share Clicked", Toast.LENGTH_LONG).show()
+                            }else{
+                                navController.navigate(currentNavigationItem.route){
+                                    // Pop up to the start destination of the graph to
+                                    // avoid building up a large stack of destinations
+                                    // on the back stack as users select items
+                                    navController.graph.startDestinationRoute?.let { startDestinationRoute ->
+                                        // Pop up to the start destination, clearing the back stack
+                                        popUpTo(startDestinationRoute) {
+                                            // Save the state of popped destinations
+                                            saveState = true
+                                        }
                                     }
-                                    Screens.Dashboard.route -> {
-                                        startActivity(Intent(this@TaskDetailActivity, DashboardActivity::class.java))
-                                    }
-                                    Screens.Tasks.route -> {
-                                        startActivity(Intent(this@TaskDetailActivity, TaskActivity::class.java))
-                                    }
-                                    Screens.Projects.route -> {
-                                        startActivity(Intent(this@TaskDetailActivity, ListProjectActivity::class.java))
-                                    }
+
+                                    // Configure navigation to avoid multiple instances of the same destination
+                                    launchSingleTop = true
+
+                                    // Restore state when re-selecting a previously selected item
+                                    restoreState = true
                                 }
                             }
-                        )
+
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        }
                     }
-                }, drawerState = drawerState
-            ) {
+                }, drawerState = drawerState){
                 Scaffold(
                     topBar = {
                         AppBar (
@@ -234,8 +246,8 @@ class TaskDetailActivity : ComponentActivity() {
                             }
                         )
                     }
-                ) {
-                    val hai = it
+                ) {innerPadding->
+                    SetUpNavGraph(navController = navController, innerPadding = innerPadding)
                     DetailTask()
                 }
             }

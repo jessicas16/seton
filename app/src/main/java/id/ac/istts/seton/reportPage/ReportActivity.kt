@@ -59,11 +59,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -175,65 +178,57 @@ class ReportActivity : ComponentActivity() {
 
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             val scope = rememberCoroutineScope()
+            val navController = rememberNavController()
+            val context = LocalContext.current
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+
+            val topBarTitle =
+                if (currentRoute != null){
+                    items[items.indexOfFirst {
+                        it.route == currentRoute
+                    }].title
+                }else{
+                    items[0].title
+                }
 
             ModalNavigationDrawer(
-                gesturesEnabled = drawerState.isOpen,
-                drawerContent = {
-                    ModalDrawerSheet {
+                gesturesEnabled = drawerState.isOpen,drawerContent = {
+                    ModalDrawerSheet(
+
+                    ) {
                         DrawerHeader()
                         Spacer(modifier = Modifier.height(8.dp))
-                        DrawerBody(
-                            items = items,
-                            onItemClick = { currentMenuItem ->
-                                when (currentMenuItem.route){
-                                    Screens.Logout.route -> {
-                                        val ioScope = CoroutineScope(Dispatchers.Main)
-                                        ioScope.launch {
-                                            ApiConfiguration.defaultRepo.logoutUser()
+                        DrawerBody(items = items, currentRoute =currentRoute) { currentNavigationItem ->
+                            if(currentNavigationItem.route == "share"){
+                                Toast.makeText(context,"Share Clicked", Toast.LENGTH_LONG).show()
+                            }else{
+                                navController.navigate(currentNavigationItem.route){
+                                    // Pop up to the start destination of the graph to
+                                    // avoid building up a large stack of destinations
+                                    // on the back stack as users select items
+                                    navController.graph.startDestinationRoute?.let { startDestinationRoute ->
+                                        // Pop up to the start destination, clearing the back stack
+                                        popUpTo(startDestinationRoute) {
+                                            // Save the state of popped destinations
+                                            saveState = true
                                         }
+                                    }
 
-                                        if(mAuth.currentUser != null){
-                                            mAuth.signOut()
-                                            mGoogleSignInClient.signOut()
-                                        }
+                                    // Configure navigation to avoid multiple instances of the same destination
+                                    launchSingleTop = true
 
-                                        val intent = Intent(this@ReportActivity, LoginActivity::class.java)
-                                        startActivity(intent)
-                                        finish()
-                                    }
-                                    Screens.Dashboard.route -> {
-                                        val intent = Intent(this@ReportActivity, LandingPageActivity::class.java)
-                                        intent.putExtra("userEmail", userEmail)
-                                        startActivity(intent)
-                                        finish()
-                                    }
-                                    Screens.Projects.route -> {
-                                        val intent = Intent(this@ReportActivity, ListProjectActivity::class.java)
-                                        intent.putExtra("userEmail", userEmail)
-                                        startActivity(intent)
-                                        finish()
-                                    }
-                                    Screens.Tasks.route -> {
-                                        val intent = Intent(this@ReportActivity, TaskActivity::class.java)
-                                        intent.putExtra("userEmail", userEmail)
-                                        startActivity(intent)
-                                        finish()
-                                    }
-                                    Screens.Calendar.route -> {
-                                        val intent = Intent(this@ReportActivity, CalendarActivity::class.java)
-                                        intent.putExtra("userEmail", userEmail)
-                                        startActivity(intent)
-                                        finish()
-                                    }
-                                    Screens.Report.route -> {
-
-                                    }
+                                    // Restore state when re-selecting a previously selected item
+                                    restoreState = true
                                 }
                             }
-                        )
+
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        }
                     }
-                }, drawerState = drawerState
-            ) {
+                }, drawerState = drawerState){
                 Scaffold(
                     topBar = {
                         AppBar (

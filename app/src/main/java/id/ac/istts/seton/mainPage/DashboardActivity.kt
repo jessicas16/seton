@@ -2,7 +2,11 @@ package id.ac.istts.seton.mainPage
 
 //import com.example.seton.SetUpNavGraph
 import android.content.Intent
+import android.icu.util.Calendar
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -63,6 +67,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -95,15 +100,62 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import id.ac.istts.seton.SetUpNavGraph
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.Date
 
 class DashboardActivity : ComponentActivity() {
     lateinit var userEmail : String
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mAuth: FirebaseAuth
     private val vm: DashboardViewModel by viewModels<DashboardViewModel>()
+
+    var mapUpcoming : HashMap<Float, Int> = HashMap<Float, Int>()
+    var nilaiUpcoming = ArrayList<Float>()
+    var nmhari = ArrayList<String>()
+    var namahari = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userEmail = intent.getStringExtra("userEmail").toString()
+
+        mapUpcoming.put(0.2F, 10)
+        mapUpcoming.put(0.3F, 10)
+        mapUpcoming.put(0.4F, 10)
+        mapUpcoming.put(0.5F, 10)
+        mapUpcoming.put(0.7F, 10)
+        mapUpcoming.put(0.9F, 10)
+        mapUpcoming.put(1F, 10)
+
+
+        nilaiUpcoming.add(0.2F)
+        nilaiUpcoming.add(0.3F)
+        nilaiUpcoming.add(0.4F)
+        nilaiUpcoming.add(0.5F)
+        nilaiUpcoming.add(0.7F)
+        nilaiUpcoming.add(0.8F)
+        nilaiUpcoming.add(1F)
+
+        nmhari.clear()
+        for (i in 0..6) {
+            var dt = Date()
+            val c: Calendar = Calendar.getInstance()
+            c.setTime(dt)
+            c.add(Calendar.DATE, i)
+            dt = c.getTime()
+            val sdf2 = SimpleDateFormat("dd MMM")
+            val currentDate2 = sdf2.format(dt)
+            nmhari.add(currentDate2)
+        }
+        // proses pembentukan nama hari
+//        nmhari.add("17 jun"); nmhari.add("18 jun"); nmhari.add("17 jun"); nmhari.add("17 jun");
+//        nmhari.add("17 jun"); nmhari.add("20 jun"); nmhari.add("17 jun");
+
         setContent {
             mAuth = FirebaseAuth.getInstance()
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -154,70 +206,57 @@ class DashboardActivity : ComponentActivity() {
 
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             val scope = rememberCoroutineScope()
-//            val navController = rememberNavController()
-//            val navBackStackEntry by navController.currentBackStackEntryAsState()
-//            val currentRoute = navBackStackEntry?.destination?.route
+            val navController = rememberNavController()
+            val context = LocalContext.current
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
 
-//            val topBarTitle =
-//                if (currentRoute != null){
-//                    items[items.indexOfFirst {
-//                        it.route == currentRoute
-//                    }].title
-//                }
-//                else {
-//                    items[0].title
-//                }
+            val topBarTitle =
+                if (currentRoute != null){
+                    items[items.indexOfFirst {
+                        it.route == currentRoute
+                    }].title
+                }else{
+                    items[0].title
+                }
 
             ModalNavigationDrawer(
-                gesturesEnabled = drawerState.isOpen,
-                drawerContent = {
-                    ModalDrawerSheet {
+                gesturesEnabled = drawerState.isOpen,drawerContent = {
+                    ModalDrawerSheet(
+
+                    ) {
                         DrawerHeader()
                         Spacer(modifier = Modifier.height(8.dp))
-                        DrawerBody(
-                            items = items,
-                            onItemClick = { currentMenuItem ->
-                                when (currentMenuItem.route){
-                                    Screens.Logout.route -> {
-                                        val ioScope = CoroutineScope(Dispatchers.Main)
-                                        ioScope.launch {
-                                            ApiConfiguration.defaultRepo.logoutUser()
+                        DrawerBody(items = items, currentRoute =currentRoute) { currentNavigationItem ->
+                            if(currentNavigationItem.route == "dashboard"){
+                                Toast.makeText(context,"Dashboard Clicked", Toast.LENGTH_LONG).show()
+                            }else{
+                                navController.navigate(currentNavigationItem.route){
+                                    // Pop up to the start destination of the graph to
+                                    // avoid building up a large stack of destinations
+                                    // on the back stack as users select items
+                                    navController.graph.startDestinationRoute?.let { startDestinationRoute ->
+                                        // Pop up to the start destination, clearing the back stack
+                                        popUpTo(startDestinationRoute) {
+                                            // Save the state of popped destinations
+                                            saveState = true
                                         }
+                                    }
 
-                                        if(mAuth.currentUser != null){
-                                            mAuth.signOut()
-                                            mGoogleSignInClient.signOut()
-                                        }
+                                    // Configure navigation to avoid multiple instances of the same destination
+                                    launchSingleTop = true
 
-                                        val intent = Intent(this@DashboardActivity, LoginActivity::class.java)
-                                        startActivity(intent)
-                                    }
-                                    Screens.Projects.route -> {
-                                        val intent = Intent(this@DashboardActivity, ListProjectActivity::class.java)
-                                        intent.putExtra("userEmail", userEmail)
-                                        startActivity(intent)
-                                    }
-                                    Screens.Tasks.route -> {
-                                        val intent = Intent(this@DashboardActivity, TaskActivity::class.java)
-                                        intent.putExtra("userEmail", userEmail)
-                                        startActivity(intent)
-                                    }
-                                    Screens.Calendar.route -> {
-                                        val intent = Intent(this@DashboardActivity, CalendarActivity::class.java)
-                                        intent.putExtra("userEmail", userEmail)
-                                        startActivity(intent)
-                                    }
-                                    Screens.Report.route -> {
-                                        val intent = Intent(this@DashboardActivity, ReportActivity::class.java)
-                                        intent.putExtra("userEmail", userEmail)
-                                        startActivity(intent)
-                                    }
+                                    // Restore state when re-selecting a previously selected item
+                                    restoreState = true
                                 }
                             }
-                        )
+
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        }
                     }
-                }, drawerState = drawerState
-            ) {
+                }, drawerState = drawerState) {
                 Scaffold(
                     topBar = {
                         AppBar (
@@ -229,8 +268,8 @@ class DashboardActivity : ComponentActivity() {
                             }
                         )
                     }
-                ) {
-                    val hai = it
+                ) {innerPadding->
+                    SetUpNavGraph(navController = navController, innerPadding = innerPadding)
                     chartPreview()
                 }
             }
@@ -242,6 +281,12 @@ class DashboardActivity : ComponentActivity() {
     fun chartPreview() {
         val userTasks by vm.tasks.observeAsState(emptyList())
         val (selectedChart, setSelectedChart) = remember { mutableStateOf("Upcoming") }
+        val valueUpcoming by vm.numCount.observeAsState()
+        Log.d("cetak", "cetak: $valueUpcoming")
+        var emptyArray = ArrayList<Float>()
+        for(i in 0..7) {
+            emptyArray.add(0.0F)
+        }
 
         LaunchedEffect(key1 = Unit) {
             vm.getUserTasksDashboard(userEmail)
@@ -253,12 +298,15 @@ class DashboardActivity : ComponentActivity() {
             LazyColumn(
                 Modifier
                     .fillMaxSize()
-                    .padding(16.dp, 56.dp, 16.dp, 16.dp),
+                    .padding(16.dp, 60.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 item {
                     chartItem(
                         selectedChart = selectedChart,
+                        dataUpComing = mapUpcoming,
+                        nilaiUpComing = if(valueUpcoming.isNullOrEmpty()) emptyArray else valueUpcoming!!,
+                        maxUpcoming = if(valueUpcoming.isNullOrEmpty()) 0 else valueUpcoming!![7].toInt(),
                         upcomingCount = userTasks.firstOrNull { it.first == "Upcoming" }?.second?.size ?: 0,
                         ongoingCount = userTasks.firstOrNull { it.first == "Ongoing" }?.second?.size ?: 0,
                         completedCount = userTasks.firstOrNull { it.first == "Completed" }?.second?.size ?: 0,
@@ -274,9 +322,22 @@ class DashboardActivity : ComponentActivity() {
         }
     }
 
+    fun getData(): ArrayList<Pair<Float, Int>> {
+        var dt = ArrayList<Pair<Float, Int>>()
+        dt.add(Pair(0.2F, 10))
+        dt.add(Pair(0.2F, 10))
+        dt.add(Pair(0.2F, 10))
+        dt.add(Pair(0.2F, 10))
+        dt.add(Pair(0.2F, 10))
+        return dt
+    }
+
     @Composable
     fun chartItem(
         selectedChart: String,
+        dataUpComing: HashMap<Float, Int>,
+        nilaiUpComing: ArrayList<Float>,
+        maxUpcoming: Int,
         upcomingCount: Int,
         ongoingCount: Int,
         completedCount: Int,
@@ -298,13 +359,17 @@ class DashboardActivity : ComponentActivity() {
                         .padding(top = 16.dp)
                 ) {
                     val data = when (selectedChart) {
-                        "Upcoming" -> {
+                        "Upcoming" ->
+                        {
+//                                dataUpComing
                             mapOf(
-                                Pair(upcomingCount.toFloat(), 10),
-                                Pair(0.6f, 12),
-                                Pair(0.2f, 13),
-                                Pair(0.7f, 15),
-                                Pair(0.8f, 16)
+                                Pair(nilaiUpComing[0], maxUpcoming),
+                                Pair(nilaiUpComing[1], maxUpcoming),
+                                Pair(nilaiUpComing[2], maxUpcoming),
+                                Pair(nilaiUpComing[3], maxUpcoming),
+                                Pair(nilaiUpComing[4], maxUpcoming),
+                                Pair(nilaiUpComing[5], maxUpcoming),
+                                Pair(nilaiUpComing[6], maxUpcoming),
                             )
                         }
                         "Completed" -> {
@@ -317,10 +382,10 @@ class DashboardActivity : ComponentActivity() {
                         }
                         "Ongoing" -> {
                             mapOf(
-                                Pair(ongoingCount.toFloat(), 10),
+                                Pair(ongoingCount.toFloat(), 0),
                                 Pair(0.5f, 10),
-                                Pair(0.6f, 10),
-                                Pair(0.8f, 10)
+                                Pair(0.6f, 13),
+                                Pair(0.8f, 16)
                             )
                         }
                         else -> mapOf()
@@ -328,7 +393,7 @@ class DashboardActivity : ComponentActivity() {
                     Chart(
                         data = data,
                         max_value = data.values.maxOrNull() ?: 0,
-                        days = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+                        days = nmhari
                     )
                 }
                 Row(
@@ -505,14 +570,14 @@ class DashboardActivity : ComponentActivity() {
                         Row {
                             Column {
                                 Row {
-                                    Text(
+                                    androidx.compose.material3.Text(
                                         text = it.title,
                                         fontFamily = AppFont.fontBold,
                                         fontSize = 20.sp
                                     )
                                 }
                                 Row(Modifier.padding(vertical = 4.dp)) {
-                                    Text(
+                                    androidx.compose.material3.Text(
                                         text = it.project.name,
                                         fontSize = 16.sp,
                                         fontFamily = AppFont.fontLight
@@ -576,7 +641,7 @@ class DashboardActivity : ComponentActivity() {
                                             strokeWidth = 5.dp,
                                             trackColor = Color(0xFFECFFFF)
                                         )
-                                        Text(
+                                        androidx.compose.material3.Text(
                                             text = "${(percentage * 100).toInt()}%",
                                             color = Color.Black,
                                             fontFamily = AppFont.fontBold,
@@ -593,12 +658,8 @@ class DashboardActivity : ComponentActivity() {
                         ) {
                             Row(modifier = Modifier.clickable {
                                 // Go to Task Details
-                                val intent = Intent(this@DashboardActivity, TaskDetailActivity::class.java)
-                                intent.putExtra("userEmail", userEmail)
-                                intent.putExtra("taskId", it.id.toString())
-                                startActivity(intent)
                             }, verticalAlignment = Alignment.CenterVertically) {
-                                Text(
+                                androidx.compose.material3.Text(
                                     text = "See Details",
                                     fontSize = 14.sp,
                                     fontFamily = AppFont.fontNormal,
@@ -681,7 +742,6 @@ class DashboardActivity : ComponentActivity() {
             }
         }
     }
-
     override fun onResume() {
         super.onResume()
         vm.getUserTasksDashboard(userEmail)

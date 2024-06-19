@@ -35,6 +35,7 @@ fun DrawerHeader() {
 @Composable
 fun DrawerBody(
     items: List<MenuItem>,
+    currentRoute: String?,
     onItemClick: (MenuItem) -> Unit,
 ) {
     items.forEachIndexed { index, menuItem ->
@@ -42,13 +43,15 @@ fun DrawerBody(
             label = {
                     Text(text = menuItem.title)
             },
-            selected = false,
-            onClick = {
+            selected = currentRoute == menuItem.route, onClick = {
                 onItemClick(menuItem)
             },
+//            onClick = {
+//                onItemClick(menuItem)
+//            },
             icon = {
                 Icon(
-                    imageVector = if(false){
+                    imageVector = if(currentRoute == menuItem.route){
                         menuItem.selectedIcon
                     }
                     else {
