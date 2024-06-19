@@ -126,7 +126,6 @@ import id.ac.istts.seton.entity.Projects
 import id.ac.istts.seton.entity.TaskDRO
 import id.ac.istts.seton.entity.Users
 import id.ac.istts.seton.env
-import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
 import id.ac.istts.seton.reportPage.ReportActivity
@@ -772,7 +771,7 @@ class TaskDetailActivity : ComponentActivity() {
                             Row(
                                 modifier = Modifier
                                     .padding(horizontal = 8.dp)
-                                    .height(25.dp)
+                                    .height(35.dp)
                                     .fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
