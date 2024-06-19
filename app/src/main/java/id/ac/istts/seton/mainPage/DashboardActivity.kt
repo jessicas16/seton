@@ -3,10 +3,8 @@ package id.ac.istts.seton.mainPage
 //import com.example.seton.SetUpNavGraph
 import android.content.Intent
 import android.icu.util.Calendar
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -38,14 +36,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.ListAlt
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Task
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.ListAlt
-import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Task
@@ -69,7 +65,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -91,24 +86,14 @@ import id.ac.istts.seton.MenuItem
 import id.ac.istts.seton.R
 import id.ac.istts.seton.Screens
 import id.ac.istts.seton.calendarPage.CalendarActivity
-import id.ac.istts.seton.config.ApiConfiguration
 import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.projectPage.AddProjectActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
 import id.ac.istts.seton.reportPage.ReportActivity
 import id.ac.istts.seton.taskPage.TaskActivity
-import id.ac.istts.seton.taskPage.TaskDetailActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import id.ac.istts.seton.SetUpNavGraph
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.LocalDateTime
 import java.util.Date
 
 class DashboardActivity : ComponentActivity() {
@@ -529,13 +514,13 @@ class DashboardActivity : ComponentActivity() {
         Row {
             Column {
                 Row(Modifier.padding(top = 16.dp)) {
-                    androidx.compose.material3.Text(
+                    Text(
                         modifier = Modifier.padding(end = 16.dp, bottom = 16.dp),
                         text = title,
                         fontFamily = AppFont.fontSemiBold,
                         fontSize = 24.sp
                     )
-                    androidx.compose.material3.Text(
+                    Text(
                         modifier = Modifier
                             .weight(6f),
                         text = data.size.toString(),
@@ -551,7 +536,7 @@ class DashboardActivity : ComponentActivity() {
                             .height(100.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        androidx.compose.material3.Text(
+                        Text(
                             modifier = Modifier
                                 .weight(6f),
                             text = "You have no $title Task",
@@ -590,14 +575,14 @@ class DashboardActivity : ComponentActivity() {
                         Row {
                             Column {
                                 Row {
-                                    androidx.compose.material3.Text(
+                                    Text(
                                         text = it.title,
                                         fontFamily = AppFont.fontBold,
                                         fontSize = 20.sp
                                     )
                                 }
                                 Row(Modifier.padding(vertical = 4.dp)) {
-                                    androidx.compose.material3.Text(
+                                    Text(
                                         text = it.project.name,
                                         fontSize = 16.sp,
                                         fontFamily = AppFont.fontLight
@@ -637,7 +622,7 @@ class DashboardActivity : ComponentActivity() {
                                             .padding(horizontal = 8.dp, vertical = 4.dp)
                                     ) {
                                         val priority = listOf("Low", "Medium", "High")
-                                        androidx.compose.material3.Text(
+                                        Text(
                                             text = priority[it.priority],
                                             fontSize = 12.sp,
                                             fontFamily = AppFont.fontNormal
@@ -661,7 +646,7 @@ class DashboardActivity : ComponentActivity() {
                                             strokeWidth = 5.dp,
                                             trackColor = Color(0xFFECFFFF)
                                         )
-                                        androidx.compose.material3.Text(
+                                        Text(
                                             text = "${(percentage * 100).toInt()}%",
                                             color = Color.Black,
                                             fontFamily = AppFont.fontBold,
@@ -678,8 +663,12 @@ class DashboardActivity : ComponentActivity() {
                         ) {
                             Row(modifier = Modifier.clickable {
                                 // Go to Task Details
+                                val intent = Intent(this@DashboardActivity, TaskActivity::class.java)
+                                intent.putExtra("taskId", it.id)
+                                intent.putExtra("userEmail", userEmail)
+                                startActivity(intent)
                             }, verticalAlignment = Alignment.CenterVertically) {
-                                androidx.compose.material3.Text(
+                                Text(
                                     text = "See Details",
                                     fontSize = 14.sp,
                                     fontFamily = AppFont.fontNormal,
@@ -710,7 +699,7 @@ class DashboardActivity : ComponentActivity() {
                                             ),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        androidx.compose.material3.Text(
+                                        Text(
                                             text = if (i < 2) alias else "+2",
                                             fontSize = 16.sp,
                                             fontFamily = AppFont.fontBold,
