@@ -44,26 +44,32 @@ class DashboardViewModel: ViewModel(){
                     c.setTime(dt)
                     c.add(Calendar.DATE, i)
                     dt = c.getTime()
-                    val sdf2 = SimpleDateFormat("yyyy-mm-dd")
+                    val sdf2 = SimpleDateFormat("yyyy-MM-dd")
                     val currentDate2 = sdf2.format(dt)
                     var temp = 0
                     for (task in res.data) {
-                        if (task.deadline == currentDate2) {
+                        println("cetak task deadline = " + task.deadline.substring(0, 10) + " --- " + currentDate2)
+                        if (task.deadline.substring(0, 10) == currentDate2) {
                             temp += 1
                         }
                     }
                     numCountList.add(temp.toFloat())
-                    if(maxData < temp){
+                    if(maxData < temp.toFloat()){
                         maxData = temp
                     }
+//                    numCountList.add(temp.toFloat() * i)
+//                    if(maxData < temp.toFloat() * i){
+//                        maxData = temp * i
+//                    }
                 }
-                print("cetak " +numCountList)
+                println("cetak " +numCountList)
                 if(maxData > 0){
                     for (i in 0..6){
                         numCountList.set(i, numCountList.get(i) / maxData)
                     }
                 }
-                numCountList.add(maxData.toFloat())
+                numCountList.add((maxData.toFloat() * 2).toFloat())
+                println("cetak akhir " +numCountList)
 
                 _numCount.value = numCountList
 

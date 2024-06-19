@@ -35,27 +35,24 @@ fun DrawerHeader() {
 @Composable
 fun DrawerBody(
     items: List<MenuItem>,
-    currentRoute: String?,
     onItemClick: (MenuItem) -> Unit,
 ) {
     items.forEachIndexed { index, menuItem ->
         NavigationDrawerItem(
             label = {
-                    Text(text = menuItem.title)
+                Text(text = menuItem.title)
             },
-            selected = currentRoute == menuItem.route, onClick = {
+            selected = false,
+            onClick = {
                 onItemClick(menuItem)
             },
-//            onClick = {
-//                onItemClick(menuItem)
-//            },
             icon = {
                 Icon(
-                    imageVector = if(currentRoute == menuItem.route){
+                    imageVector = if(false){
                         menuItem.selectedIcon
                     }
                     else {
-                         menuItem.unSelectedIcon
+                        menuItem.unSelectedIcon
                     },
                     contentDescription = menuItem.title
                 )
