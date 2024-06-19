@@ -3,7 +3,6 @@ package id.ac.istts.seton.projectPage
 //import com.example.seton.SetUpNavGraph
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -34,14 +33,12 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.ListAlt
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Task
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.ListAlt
-import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Task
@@ -81,8 +78,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -96,16 +91,11 @@ import id.ac.istts.seton.DrawerHeader
 import id.ac.istts.seton.MenuItem
 import id.ac.istts.seton.R
 import id.ac.istts.seton.Screens
-import id.ac.istts.seton.SetUpNavGraph
 import id.ac.istts.seton.calendarPage.CalendarActivity
-import id.ac.istts.seton.config.ApiConfiguration
-import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
 import id.ac.istts.seton.reportPage.ReportActivity
 import id.ac.istts.seton.settingPage.SettingActivity
 import id.ac.istts.seton.taskPage.TaskActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ListProjectActivity : ComponentActivity() {
@@ -499,6 +489,7 @@ class ListProjectActivity : ComponentActivity() {
                             Row(modifier = Modifier.clickable(onClick = {
                                 val intent = Intent(context, ProjectDetailsActivity::class.java)
                                 intent.putExtra("projectId", id.toString())
+                                intent.putExtra("userEmail", userEmail)
                                 context.startActivity(intent)
                             }), verticalAlignment = Alignment.CenterVertically) {
                                 Text(
