@@ -11,7 +11,6 @@ import id.ac.istts.seton.entity.BasicDRO
 import id.ac.istts.seton.entity.ChecklistDRO
 import id.ac.istts.seton.entity.Checklists
 import id.ac.istts.seton.entity.CommentDRO
-import id.ac.istts.seton.entity.FileUploadRequest
 import id.ac.istts.seton.entity.GetAttachmentDRO
 import id.ac.istts.seton.entity.LabelDRO
 import id.ac.istts.seton.entity.Labels
@@ -41,6 +40,7 @@ import id.ac.istts.seton.projectPage.DetailProject
 import id.ac.istts.seton.taskPage.DataTask
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MultipartBody
 import java.time.LocalDate
 
 class DefaultRepo(
@@ -1061,8 +1061,8 @@ class DefaultRepo(
         return addCheck!!
     }
 
-    suspend fun postAttachment(fileUploadRequest: FileUploadRequest): PostAttachmentDRO {
-        return dataSourceRemote.uploadFile(fileUploadRequest)
+    suspend fun postAttachment(taskId: String, file : MultipartBody.Part): PostAttachmentDRO {
+        return dataSourceRemote.uploadFile(taskId, file)
     }
 
     suspend fun getAttachment(taskId: String): GetAttachmentDRO {

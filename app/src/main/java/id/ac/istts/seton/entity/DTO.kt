@@ -1,7 +1,6 @@
 package id.ac.istts.seton.entity
 
 import com.squareup.moshi.JsonClass
-import okhttp3.MultipartBody
 
 @JsonClass(generateAdapter = true)
 data class userDTO (
@@ -32,11 +31,6 @@ data class addTaskDTO(
     val priority : String,
     val pic_email: String,
     val project_id : String
-)
-
-data class FileUploadRequest(
-    val taskId: String,
-    val file: MultipartBody.Part
 )
 
 data class AddCommentDTO(

@@ -128,6 +128,8 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -757,11 +759,12 @@ class TaskDetailActivity : ComponentActivity() {
                                     IconButton(
                                         onClick = {
                                             //download file
+
                                         },
                                     ){
                                         Icon(
                                             imageVector = Icons.Default.FileDownload,
-                                            contentDescription = "Remove",
+                                            contentDescription = "Download",
                                             modifier = Modifier
                                                 .size(20.dp),
                                         )
@@ -982,7 +985,6 @@ class TaskDetailActivity : ComponentActivity() {
                         )
                         IconButton(
                             onClick = {
-                                //add comment
                                 val dto = AddCommentDTO(
                                     task_id = taskId,
                                     email = userEmail,
@@ -1386,34 +1388,16 @@ class TaskDetailActivity : ComponentActivity() {
         return fileName
     }
 
-    fun uriToMultipartBodyPart(context: Context, uri: Uri, name: String): MultipartBody.Part {
-        val file = File(context.cacheDir, getFileName2(context, uri) ?: "Unknown file")
-        val inputStream = context.contentResolver.openInputStream(uri)
-        file.outputStream().use { outputStream ->
-            inputStream?.copyTo(outputStream)
-        }
-        val requestBody = RequestBody.create(context.contentResolver.getType(uri)?.toMediaTypeOrNull(), file)
-        return MultipartBody.Part.createFormData(name, file.name, requestBody)
-    }
-
-    fun getFileName2(context: Context, uri: Uri): String? {
-        var result: String? = null
-        if (uri.scheme == "content") {
-            val cursor = context.contentResolver.query(uri, null, null, null, null)
-            cursor?.use {
-                if (it.moveToFirst()) {
-                    result = it.getString(it.getColumnIndexOrThrow("_display_name"))
-                }
-            }
-        }
-        if (result == null) {
-            result = uri.path
-            val cut = result?.lastIndexOf('/')
-            if (cut != null && cut != -1) {
-                result = result?.substring(cut + 1)
-            }
-        }
-        return result
+    fun uriToMultipartBodyPart(context: Context, uri: Uri, partName: String): MultipartBody.Part {
+        val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+        val file = File(context.cacheDir, getFileName(context, uri) ?: "tempFile")
+        val outputStream = FileOutputStream(file)
+        inputStream?.copyTo(outputStream)
+        val requestBody = RequestBody.create(
+            context.contentResolver.getType(uri)?.toMediaTypeOrNull(),
+            file
+        )
+        return MultipartBody.Part.createFormData(partName, file.name, requestBody)
     }
 
     private fun String.toColor() = Color(parseColor(this))

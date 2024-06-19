@@ -13,7 +13,6 @@ import id.ac.istts.seton.entity.Checklists
 import id.ac.istts.seton.entity.CommentDRO
 import id.ac.istts.seton.entity.Comments
 import id.ac.istts.seton.entity.DataComment
-import id.ac.istts.seton.entity.FileUploadRequest
 import id.ac.istts.seton.entity.LabelDRO
 import id.ac.istts.seton.entity.Labels
 import id.ac.istts.seton.entity.PostAttachmentDRO
@@ -185,11 +184,12 @@ class TaskDetailViewModel: ViewModel() {
     ){
         viewModelScope.launch {
             try {
-                val files = FileUploadRequest(taskId, file)
-                val res = repo.postAttachment(files)
+                Log.i("IH MASOOKK", taskId)
+                val res = repo.postAttachment(taskId, file)
                 Log.i("Attachment response", res.toString())
                 _postAttachment.value = res
                 getTaskById(taskId)
+                getAttachments(taskId)
             } catch (e: Exception) {
                 Log.e("ERROR", e.message.toString())
             }

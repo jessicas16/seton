@@ -6,7 +6,6 @@ import id.ac.istts.seton.entity.AllCommentDRO
 import id.ac.istts.seton.entity.BasicDRO
 import id.ac.istts.seton.entity.ChecklistDRO
 import id.ac.istts.seton.entity.CommentDRO
-import id.ac.istts.seton.entity.FileUploadRequest
 import id.ac.istts.seton.entity.GetAttachmentDRO
 import id.ac.istts.seton.entity.LabelDRO
 import id.ac.istts.seton.entity.ListProjectDRO
@@ -23,6 +22,7 @@ import id.ac.istts.seton.entity.addTaskDTO
 import id.ac.istts.seton.entity.userDTO
 import id.ac.istts.seton.entity.userLoginDTO
 import id.ac.istts.seton.loginRegister.authUser
+import okhttp3.MultipartBody
 import retrofit2.http.*
 
 interface ApiService {
@@ -114,9 +114,11 @@ interface ApiService {
         @Path("title") title: String,
     ): ChecklistDRO
 
-    @POST("tasks/attachments")
+    @Multipart
+    @POST("tasks/attachment/{taskId}")
     suspend fun uploadFile(
-        @Body fileUploadRequest: FileUploadRequest
+        @Path("taskId") taskId: String,
+        @Part filename: MultipartBody.Part
     ): PostAttachmentDRO
 
     @GET("tasks/attachment/{taskId}")
