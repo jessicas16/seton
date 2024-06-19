@@ -27,12 +27,14 @@ import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.ListAlt
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Report
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Task
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.ListAlt
 import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Report
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Task
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenuItem
@@ -109,6 +111,7 @@ import id.ac.istts.seton.calendarPage.CalendarActivity
 import id.ac.istts.seton.config.ApiConfiguration
 import id.ac.istts.seton.landingPage.LandingPageActivity
 import id.ac.istts.seton.loginRegister.LoginActivity
+import id.ac.istts.seton.mainPage.DashboardActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
 import id.ac.istts.seton.taskPage.TaskActivity
 import kotlinx.coroutines.CoroutineScope
@@ -169,10 +172,10 @@ class ReportActivity : ComponentActivity() {
                     unSelectedIcon = Icons.Outlined.Report
                 ),
                 MenuItem(
-                    title = "Logout",
-                    route = Screens.Logout.route,
-                    selectedIcon = Icons.Filled.Logout,
-                    unSelectedIcon = Icons.Outlined.Logout
+                    title = "Settings",
+                    route = Screens.Settings.route,
+                    selectedIcon = Icons.Filled.Settings,
+                    unSelectedIcon = Icons.Outlined.Settings
                 ),
             )
 
@@ -202,18 +205,24 @@ class ReportActivity : ComponentActivity() {
                             items = items,
                             onItemClick = { currentMenuItem ->
                                 when (currentMenuItem.route){
-                                    Screens.Logout.route -> {
-                                        val ioScope = CoroutineScope(Dispatchers.Main)
-                                        ioScope.launch {
-                                            ApiConfiguration.defaultRepo.logoutUser()
-                                        }
-
-                                        if(mAuth.currentUser != null){
-                                            mAuth.signOut()
-                                            mGoogleSignInClient.signOut()
-                                        }
+                                    Screens.Settings.route -> {
+//                                        val ioScope = CoroutineScope(Dispatchers.Main)
+//                                        ioScope.launch {
+//                                            ApiConfiguration.defaultRepo.logoutUser()
+//                                        }
+//
+//                                        if(mAuth.currentUser != null){
+//                                            mAuth.signOut()
+//                                            mGoogleSignInClient.signOut()
+//                                        }
 
                                         val intent = Intent(this@ReportActivity, LoginActivity::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                    }
+                                    Screens.Dashboard.route -> {
+                                        val intent = Intent(this@ReportActivity, DashboardActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
                                         startActivity(intent)
                                         finish()
                                     }
