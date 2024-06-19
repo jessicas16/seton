@@ -290,6 +290,9 @@ class DashboardActivity : ComponentActivity() {
         val userTasks by vm.tasks.observeAsState(emptyList())
         val (selectedChart, setSelectedChart) = remember { mutableStateOf("Upcoming") }
         val valueUpcoming by vm.numCount.observeAsState()
+        val valueOngoing by vm.numCountOngoing.observeAsState()
+        val valueCompleted by vm.numCountCompleted.observeAsState()
+
         Log.d("cetak", "cetak: $valueUpcoming")
         var emptyArray = ArrayList<Float>()
         for(i in 0..7) {
@@ -315,8 +318,10 @@ class DashboardActivity : ComponentActivity() {
                         dataUpComing = mapUpcoming,
                         nilaiUpComing = if(valueUpcoming.isNullOrEmpty()) emptyArray else valueUpcoming!!,
                         maxUpcoming = if(valueUpcoming.isNullOrEmpty()) 0 else valueUpcoming!![7].toInt(),
-                        nilaiOngoing = if(valueUpcoming.isNullOrEmpty()) emptyArray else valueUpcoming!!,
-                        maxOngoing = if(valueUpcoming.isNullOrEmpty()) 0 else valueUpcoming!![7].toInt(),
+                        nilaiOngoing = if(valueOngoing.isNullOrEmpty()) emptyArray else valueOngoing!!,
+                        maxOngoing = if(valueOngoing.isNullOrEmpty()) 0 else valueOngoing!![7].toInt(),
+                        nilaiCompleted = if(valueCompleted.isNullOrEmpty()) emptyArray else valueCompleted!!,
+                        maxCompleted = if(valueCompleted.isNullOrEmpty()) 0 else valueCompleted!![7].toInt(),
                         upcomingCount = userTasks.firstOrNull { it.first == "Upcoming" }?.second?.size ?: 0,
                         ongoingCount = userTasks.firstOrNull { it.first == "Ongoing" }?.second?.size ?: 0,
                         completedCount = userTasks.firstOrNull { it.first == "Completed" }?.second?.size ?: 0,
@@ -348,6 +353,8 @@ class DashboardActivity : ComponentActivity() {
         dataUpComing: HashMap<Float, Int>,
         nilaiUpComing: ArrayList<Float>,
         nilaiOngoing: ArrayList<Float>,
+        nilaiCompleted: ArrayList<Float>,
+        maxCompleted: Int,
         maxOngoing: Int,
         maxUpcoming: Int,
         upcomingCount: Int,
@@ -386,10 +393,13 @@ class DashboardActivity : ComponentActivity() {
                         }
                         "Completed" -> {
                             mapOf(
-                                Pair(0.3f, 5),
-                                Pair(0.6f, 8),
-                                Pair(0.9f, 20),
-                                Pair(1.0f, 25)
+                                Pair(nilaiCompleted[0], maxCompleted),
+                                Pair(nilaiCompleted[1], maxCompleted),
+                                Pair(nilaiCompleted[2], maxCompleted),
+                                Pair(nilaiCompleted[3], maxCompleted),
+                                Pair(nilaiCompleted[4], maxCompleted),
+                                Pair(nilaiCompleted[5], maxCompleted),
+                                Pair(nilaiCompleted[6], maxCompleted),
                             )
                         }
                         "Ongoing" -> {

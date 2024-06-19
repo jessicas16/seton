@@ -69,7 +69,7 @@ fun Chart(
                         .padding(start = 20.dp)
                         .width(20.dp)
                         .fillMaxHeight(heightFactor)
-                        .background(Color.Blue)
+                        .background(Color(0xFF0E9794))
                         .clickable {
                             Toast.makeText(context, value.toString(), Toast.LENGTH_SHORT).show()
                         }

@@ -20,7 +20,17 @@ class DashboardViewModel: ViewModel(){
     val numCount: LiveData<ArrayList<Float>>
         get() = _numCount
 
+    private val _numCountOngoing = MutableLiveData<ArrayList<Float>>()
+    val numCountOngoing: LiveData<ArrayList<Float>>
+        get() = _numCountOngoing
+
+    private val _numCountCompleted = MutableLiveData<ArrayList<Float>>()
+    val numCountCompleted: LiveData<ArrayList<Float>>
+        get() = _numCountCompleted
+
     private var maxData = 0
+    private var maxDataOngoing = 0
+    private var maxDataCompleted = 0
 
 
     fun getUserTasksDashboard(email: String) {
@@ -37,7 +47,11 @@ class DashboardViewModel: ViewModel(){
                 )
                 _tasks.value = filteredTasks
                 maxData = 0
+                maxDataOngoing = 0
+                maxDataCompleted = 0
                 val numCountList = ArrayList<Float>()
+                val numCountOngoingList = ArrayList<Float>()
+                val numCountCompletedList = ArrayList<Float>()
                 for (i in 0..6) {
                     var dt = Date()
                     val c: Calendar = Calendar.getInstance()
@@ -47,26 +61,33 @@ class DashboardViewModel: ViewModel(){
                     val sdf2 = SimpleDateFormat("yyyy-MM-dd")
                     val currentDate2 = sdf2.format(dt)
                     var temp = 0
+                    var tempOngoing = 0
+                    var tempCompleted = 0
                     for (task in res.data) {
                         println("cetak task deadline = " + task.deadline.substring(0, 10) + " --- " + currentDate2)
                         if (task.deadline.substring(0, 10) == currentDate2 && task.status == 0) {
                             temp += 1
                         }
-                        else if (task.deadline.substring(0, 10) == currentDate2 && task.status == 1){
-                            temp += 1
+                        if (task.deadline.substring(0, 10) == currentDate2 && task.status == 1){
+                            tempOngoing += 1
                         }
-                        else if (task.deadline.substring(0,10) == currentDate2 && task.status == 2){
-                            temp += 1
+                        if (task.deadline.substring(0,10) == currentDate2 && task.status == 4){
+                            tempCompleted += 1
                         }
                     }
                     numCountList.add(temp.toFloat())
+                    numCountOngoingList.add(tempOngoing.toFloat())
+                    numCountCompletedList.add(tempCompleted.toFloat())
+
                     if(maxData < temp.toFloat()){
                         maxData = temp
                     }
-//                    numCountList.add(temp.toFloat() * i)
-//                    if(maxData < temp.toFloat() * i){
-//                        maxData = temp * i
-//                    }
+                    if (maxDataOngoing < tempOngoing.toFloat()){
+                        maxDataOngoing = tempOngoing
+                    }
+                    if (maxDataCompleted < tempCompleted.toFloat()){
+                        maxDataCompleted = tempCompleted
+                    }
                 }
                 println("cetak " +numCountList)
                 if(maxData > 0){
@@ -74,10 +95,25 @@ class DashboardViewModel: ViewModel(){
                         numCountList.set(i, numCountList.get(i) / maxData)
                     }
                 }
+                if (maxDataOngoing > 0){
+                    for (i in 0..6){
+                        numCountOngoingList.set(i, numCountOngoingList.get(i) / maxDataOngoing)
+                    }
+                }
+                if (maxDataCompleted > 0){
+                    for (i in 0..6){
+                        numCountCompletedList.set(i, numCountCompletedList.get(i) / maxDataCompleted)
+                    }
+                }
                 numCountList.add((maxData.toFloat() * 2).toFloat())
+                numCountOngoingList.add((maxDataOngoing.toFloat() * 2).toFloat())
+                numCountCompletedList.add((maxDataCompleted.toFloat() * 2).toFloat())
+
                 println("cetak akhir " +numCountList)
 
                 _numCount.value = numCountList
+                _numCountOngoing.value = numCountOngoingList
+                _numCountCompleted.value = numCountCompletedList
 
             } catch (e: Exception) {
                 Log.e("ERROR", e.message.toString())
