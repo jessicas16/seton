@@ -218,6 +218,7 @@ class ReportActivity : ComponentActivity() {
 //                                        }
 
                                         val intent = Intent(this@ReportActivity, SettingActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
                                         startActivity(intent)
                                         finish()
                                     }

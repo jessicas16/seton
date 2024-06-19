@@ -185,6 +185,7 @@ class AddProjectActivity : ComponentActivity() {
 //                                        }
 
                                         val intent = Intent(this@AddProjectActivity, SettingActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
                                         startActivity(intent)
                                         finish()
                                     }

@@ -188,6 +188,7 @@ class TaskActivity : ComponentActivity() {
 //                                        }
 
                                         val intent = Intent(this@TaskActivity, SettingActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
                                         startActivity(intent)
                                         finish()
                                     }

@@ -165,6 +165,7 @@ class CalendarActivity : ComponentActivity() {
 //                                        }
 
                                         val intent = Intent(this@CalendarActivity, SettingActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
                                         startActivity(intent)
                                         finish()
                                     }
