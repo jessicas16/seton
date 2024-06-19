@@ -1073,12 +1073,64 @@ class DefaultRepo(
         return dataSourceRemote.getChecklist(taskId)
     }
 
-    suspend fun updateChecklistStatus(checklistId: String): BasicDRO {
-        return dataSourceRemote.updateChecklistStatus(checklistId)
+    suspend fun updateChecklistStatus(taskId:String, checklistId: String): BasicDRO {
+        //update in db
+        val x = withContext(Dispatchers.IO){
+            dataSourceRemote.updateChecklistStatus(checklistId)
+        }
+        if(x.status != "200"){
+            return x
+        } else {
+            //update in local
+            try {
+                val getChecklistFormApi = dataSourceRemote.getChecklist(taskId = taskId)
+                val data = getChecklistFormApi.data
+                for (checklist in data){
+                    withContext(Dispatchers.IO){
+                        try {
+                            dataSourceLocal.checklistDao().update(checklist)
+                        }catch (e: Exception){}
+                    }
+                }
+            } catch (e: Exception) {
+                Log.i("ERRORMESSAGE", e.message.toString())
+            }
+
+            var dro = BasicDRO(
+                status = "200",
+                message = "Success update checklist status!",
+                data = ""
+            )
+            return dro
+        }
     }
 
-    suspend fun deleteChecklist(checklistId: String): BasicDRO {
-        return dataSourceRemote.deleteChecklist(checklistId)
+    suspend fun deleteChecklist(taskId:String, checklistId: String): BasicDRO {
+        //delete in db
+        val x = withContext(Dispatchers.IO){
+            dataSourceRemote.deleteChecklist(checklistId)
+        }
+        if(x.status != "200"){
+            return x
+        } else {
+            //delete in local
+            try {
+                withContext(Dispatchers.IO){
+                    try {
+                        dataSourceLocal.checklistDao().deleteById(checklistId.toInt())
+                    }catch (e: Exception){}
+                }
+            } catch (e: Exception) {
+                Log.i("ERRORMESSAGE", e.message.toString())
+            }
+
+            var dro = BasicDRO(
+                status = "200",
+                message = "Success delete checklist!",
+                data = ""
+            )
+            return dro
+        }
     }
 
     suspend fun addCommentTask(comment: AddCommentDTO): CommentDRO {

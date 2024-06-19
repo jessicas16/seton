@@ -20,4 +20,10 @@ interface ChecklistDao {
 
     @Query("SELECT * FROM checklists WHERE task_id = :id")
     fun getByTaskId(id: Int): List<Checklists>
+
+    @Query("DELETE FROM checklists")
+    fun cleardb()
+
+    @Query("DELETE FROM checklists WHERE id = :id")
+    fun deleteById(id: Int)
 }

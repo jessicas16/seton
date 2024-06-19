@@ -301,19 +301,28 @@ class TaskDetailActivity : ComponentActivity() {
         if (showLabelDialog.value) {
             ModalForLabels(
                 taskId = taskId
-            ){ showLabelDialog.value = false }
+            ){
+                showLabelDialog.value = false
+                vm.getTaskById(taskId)
+            }
         }
 
         if (showAttachmentsDialog.value) {
             ModalforAttachments(
                 taskId = taskId
-            ){ showAttachmentsDialog.value = false }
+            ){
+                showAttachmentsDialog.value = false
+                vm.getTaskById(taskId)
+            }
         }
 
         if (showCheckListDialog.value) {
             ModalForChecklists(
                 taskId = taskId
-            ){ showCheckListDialog.value = false }
+            ){
+                showCheckListDialog.value = false
+                vm.getTaskById(taskId)
+            }
         }
 
         ConstraintLayout(

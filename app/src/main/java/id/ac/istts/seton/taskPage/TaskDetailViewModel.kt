@@ -160,9 +160,9 @@ class TaskDetailViewModel: ViewModel() {
         viewModelScope.launch {
             try {
                 val res = repo.addChecklist(taskId, title)
-                Log.i("Checklist response", res.toString())
                 _checklist.value = res
                 getTaskById(taskId)
+                getChecklist(taskId)
             } catch (e: Exception) {
                 Log.e("ERROR", e.message.toString())
                 _checklist.value = ChecklistDRO(
@@ -233,7 +233,7 @@ class TaskDetailViewModel: ViewModel() {
     ){
         viewModelScope.launch {
             try {
-                val res = repo.updateChecklistStatus(checklistId)
+                val res = repo.updateChecklistStatus(taskId, checklistId)
                 Log.i("Checklist response", res.toString())
                 getChecklist(taskId)
             } catch (e: Exception) {
@@ -248,7 +248,7 @@ class TaskDetailViewModel: ViewModel() {
     ){
         viewModelScope.launch {
             try {
-                val res = repo.deleteChecklist(checklistId)
+                val res = repo.deleteChecklist(taskId, checklistId)
                 Log.i("Checklist response", res.toString())
                 getChecklist(taskId)
             } catch (e: Exception) {
