@@ -157,6 +157,7 @@ class TaskDetailActivity : ComponentActivity() {
         userEmail = intent.getStringExtra("userEmail").toString()
         Toast.makeText(this, taskId, Toast.LENGTH_SHORT).show()
         setContent{
+            scope = rememberCoroutineScope()
             mAuth = FirebaseAuth.getInstance()
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -204,7 +205,6 @@ class TaskDetailActivity : ComponentActivity() {
             )
 
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-            val scope = rememberCoroutineScope()
 //            val navController = rememberNavController()
 //            val navBackStackEntry by navController.currentBackStackEntryAsState()
 //            val currentRoute = navBackStackEntry?.destination?.route
