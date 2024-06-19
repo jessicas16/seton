@@ -90,6 +90,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.binayshaw7777.kotstep.ui.vertical.VerticalIconStepper
 import id.ac.istts.seton.AppBar
@@ -312,6 +313,7 @@ class ProjectDetailsActivity : ComponentActivity() {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .zIndex(2f)
                     .shadow(10.dp, MaterialTheme.shapes.medium)
                     .clip(shape = RoundedCornerShape(10.dp))
                     .constrainAs(detailsOrBoard) {
@@ -708,6 +710,7 @@ class ProjectDetailsActivity : ComponentActivity() {
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
                         .fillMaxSize()
+                        .padding(top = 24.dp)
                         .heightIn(0.dp, 700.dp)
                         .constrainAs(projectOverview) {
                             top.linkTo(detailsOrBoard.bottom, margin = 24.dp)
@@ -964,9 +967,9 @@ class ProjectDetailsActivity : ComponentActivity() {
     fun TaskPreview(
         userEmail: String
     ) {
-        val userTasks by vm.tasks.observeAsState(emptyList())
+        val userTasks by vm.tasksProject.observeAsState(emptyList())
         LaunchedEffect(key1 = Unit) {
-            vm.getUserTasks(email = userEmail)
+            vm.getUserTasks(projectId)
         }
         LazyColumn(
             Modifier

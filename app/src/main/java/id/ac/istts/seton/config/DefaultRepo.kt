@@ -145,6 +145,10 @@ class DefaultRepo(
     }
 
     //PROJECTS
+    suspend fun getTaskProject(projectId: String):ListTaskDRO{
+        return dataSourceRemote.getTasksProject(projectId)
+    }
+
     suspend fun getUserProjects(force:Boolean = true, email: String ): ListProjectDRO {
         var status = "200"
         var message = "Success get user projects from local!"

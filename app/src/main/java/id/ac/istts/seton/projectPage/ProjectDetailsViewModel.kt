@@ -19,7 +19,7 @@ class ProjectDetailsViewModel: ViewModel() {
     private val _invitedUsers = MutableLiveData<List<Users>>()
     private val _checkEmail = MutableLiveData<UserDRO>()
     private val _response = MutableLiveData<BasicDRO>()
-    private val _tasks = MutableLiveData<List<Pair<String, List<DataTask>>>>()
+    private val _tasksProject = MutableLiveData<List<Pair<String, List<DataTask>>>>()
 
     val invitedUsers: MutableLiveData<List<Users>>
         get() = _invitedUsers
@@ -32,15 +32,15 @@ class ProjectDetailsViewModel: ViewModel() {
     val response: LiveData<BasicDRO>
         get() = _response
 
-    val tasks: LiveData<List<Pair<String, List<DataTask>>>>
-        get() = _tasks
+    val tasksProject: LiveData<List<Pair<String, List<DataTask>>>>
+        get() = _tasksProject
 
     fun getUserTasks(
-        email : String
+        projectId : String
     ) {
         viewModelScope.launch {
             try {
-                val res = repo.getUserTasks(email = email)
+                val res = repo.getTaskProject(projectId = projectId)
 
                 Log.i("LALALALLALALLA", res.data.toString())
                 val filteredTasks = listOf(
@@ -51,10 +51,10 @@ class ProjectDetailsViewModel: ViewModel() {
                     Pair("Completed", res.data.filter { it.status == 4 })
                 )
                 Log.i("LILILILILILI", filteredTasks.toString())
-                _tasks.value = filteredTasks
+                _tasksProject.value = filteredTasks
             } catch (e: Exception) {
                 Log.e("ERROR", e.message.toString())
-                _tasks.value = emptyList()
+                _tasksProject.value = emptyList()
             }
         }
     }

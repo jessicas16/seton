@@ -59,6 +59,9 @@ interface ApiService {
     ):BasicDRO
 
     //PROJECTS
+    @GET("projects/getTasksProject/{projectId}")
+    suspend fun getTasksProject(@Path("projectId") projectId: String): ListTaskDRO
+
     @GET("projects/{email}")
     suspend fun getUserProjects(@Path("email") email: String): ListProjectDRO
 
