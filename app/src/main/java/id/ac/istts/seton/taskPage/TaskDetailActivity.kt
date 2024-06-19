@@ -125,6 +125,9 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class TaskDetailActivity : ComponentActivity() {
     private val vm: TaskDetailViewModel by viewModels<TaskDetailViewModel>()
@@ -908,13 +911,28 @@ class TaskDetailActivity : ComponentActivity() {
                                         )
                                         Spacer(modifier = Modifier.width(16.dp))
                                         var waktu = ""
+                                        var tgl = ""
+                                        val monthMap = listOf(
+                                            "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+                                        )
                                         if (comment.time != "") {
+                                            tgl = comment.time.substring(0, 10)
+                                            val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
+                                                Date()
+                                            )
+
+                                            if(tgl != currentDate){
+                                                tgl = "${comment.time.substring( 8, 10)} ${ monthMap[comment.time.substring(5, 7).toInt() - 1]} ${comment.time.substring(0, 4)}"
+                                            } else {
+                                                tgl = ""
+                                            }
+
                                             val jam = comment.time.substring(11, 13).toInt()
                                             val menit = comment.time.substring(14, 16)
                                             waktu = if (jam > 12) "${jam - 12}:$menit PM" else "$jam:$menit AM"
                                         }
                                         Text(
-                                            text = waktu,
+                                            text = "$tgl $waktu",
                                             fontSize = 12.sp,
                                             fontFamily = FontFamily(
                                                 Font(R.font.open_sans_regular, FontWeight.Normal)
