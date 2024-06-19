@@ -187,27 +187,27 @@ class LoginActivity : ComponentActivity() {
                             }
                     )
 
-                    Row(
-                        modifier = Modifier
-                            .constrainAs(forgotPass) {
-                                top.linkTo(etPassword.bottom)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                            }
-                            .width(282.dp),
-                        horizontalArrangement = Arrangement.End
-                    ){
-                        Row(
-                            modifier = Modifier.padding(start = 30.dp)
-                        ) {
-                            Text(
-                                text = "Forgot Password?",
-                                modifier = Modifier.padding(top = 4.dp),
-                                color = Color(0xFF0E9794),
-                                fontSize = 12.sp
-                            )
-                        }
-                    }
+//                    Row(
+//                        modifier = Modifier
+//                            .constrainAs(forgotPass) {
+//                                top.linkTo(etPassword.bottom)
+//                                start.linkTo(parent.start)
+//                                end.linkTo(parent.end)
+//                            }
+//                            .width(282.dp),
+//                        horizontalArrangement = Arrangement.End
+//                    ){
+//                        Row(
+//                            modifier = Modifier.padding(start = 30.dp)
+//                        ) {
+//                            Text(
+//                                text = "Forgot Password?",
+//                                modifier = Modifier.padding(top = 4.dp),
+//                                color = Color(0xFF0E9794),
+//                                fontSize = 12.sp
+//                            )
+//                        }
+//                    }
 
                     Button(
                         onClick = {
@@ -238,7 +238,7 @@ class LoginActivity : ComponentActivity() {
                         },
                         modifier = Modifier
                             .constrainAs(btnLogin) {
-                                top.linkTo(forgotPass.bottom, margin = 16.dp)
+                                top.linkTo(etPassword.bottom, margin = 16.dp)
                                 start.linkTo(parent.start)
                                 end.linkTo(parent.end)
                             }
