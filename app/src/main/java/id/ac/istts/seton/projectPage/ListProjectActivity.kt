@@ -102,6 +102,7 @@ import id.ac.istts.seton.config.ApiConfiguration
 import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
 import id.ac.istts.seton.reportPage.ReportActivity
+import id.ac.istts.seton.settingPage.SettingActivity
 import id.ac.istts.seton.taskPage.TaskActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -200,7 +201,7 @@ class ListProjectActivity : ComponentActivity() {
 //                                            mGoogleSignInClient.signOut()
 //                                        }
 
-                                        val intent = Intent(this@ListProjectActivity, LoginActivity::class.java)
+                                        val intent = Intent(this@ListProjectActivity, SettingActivity::class.java)
                                         startActivity(intent)
                                         finish()
                                     }

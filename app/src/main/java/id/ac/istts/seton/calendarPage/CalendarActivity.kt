@@ -74,6 +74,7 @@ import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
 import id.ac.istts.seton.reportPage.ReportActivity
+import id.ac.istts.seton.settingPage.SettingActivity
 import id.ac.istts.seton.taskPage.TaskActivity
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -163,7 +164,7 @@ class CalendarActivity : ComponentActivity() {
 //                                            mGoogleSignInClient.signOut()
 //                                        }
 
-                                        val intent = Intent(this@CalendarActivity, LoginActivity::class.java)
+                                        val intent = Intent(this@CalendarActivity, SettingActivity::class.java)
                                         startActivity(intent)
                                         finish()
                                     }

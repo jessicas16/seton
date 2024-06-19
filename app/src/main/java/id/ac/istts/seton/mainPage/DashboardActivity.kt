@@ -90,6 +90,7 @@ import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.projectPage.AddProjectActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
 import id.ac.istts.seton.reportPage.ReportActivity
+import id.ac.istts.seton.settingPage.SettingActivity
 import id.ac.istts.seton.taskPage.TaskActivity
 import id.ac.istts.seton.taskPage.TaskDetailActivity
 import kotlinx.coroutines.flow.mapNotNull
@@ -229,7 +230,7 @@ class DashboardActivity : ComponentActivity() {
 //                                            mGoogleSignInClient.signOut()
 //                                        }
 
-                                        val intent = Intent(this@DashboardActivity, LoginActivity::class.java)
+                                        val intent = Intent(this@DashboardActivity, SettingActivity::class.java)
                                         startActivity(intent)
                                         finish()
                                     }

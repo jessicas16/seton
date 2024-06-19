@@ -130,6 +130,7 @@ import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
 import id.ac.istts.seton.reportPage.ReportActivity
+import id.ac.istts.seton.settingPage.SettingActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -243,7 +244,7 @@ class TaskDetailActivity : ComponentActivity() {
 //                                            mGoogleSignInClient.signOut()
 //                                        }
 
-                                        val intent = Intent(this@TaskDetailActivity, LoginActivity::class.java)
+                                        val intent = Intent(this@TaskDetailActivity, SettingActivity::class.java)
                                         startActivity(intent)
                                         finish()
                                     }

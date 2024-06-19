@@ -113,6 +113,7 @@ import id.ac.istts.seton.landingPage.LandingPageActivity
 import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
+import id.ac.istts.seton.settingPage.SettingActivity
 import id.ac.istts.seton.taskPage.TaskActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -216,7 +217,7 @@ class ReportActivity : ComponentActivity() {
 //                                            mGoogleSignInClient.signOut()
 //                                        }
 
-                                        val intent = Intent(this@ReportActivity, LoginActivity::class.java)
+                                        val intent = Intent(this@ReportActivity, SettingActivity::class.java)
                                         startActivity(intent)
                                         finish()
                                     }
