@@ -237,7 +237,7 @@ class ProjectDetailsActivity : ComponentActivity() {
                 Scaffold(
                     topBar = {
                         AppBar (
-                            name = "Dashboard",
+                            name = "Project Details",
                             onNavigationIconClick = {
                                 scope.launch {
                                     drawerState.open()

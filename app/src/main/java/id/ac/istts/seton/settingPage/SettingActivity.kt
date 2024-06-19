@@ -69,10 +69,14 @@ import id.ac.istts.seton.MenuItem
 import id.ac.istts.seton.R
 import id.ac.istts.seton.Screens
 import id.ac.istts.seton.calendarPage.CalendarActivity
+import id.ac.istts.seton.config.ApiConfiguration
+import id.ac.istts.seton.landingPage.LandingPageActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
 import id.ac.istts.seton.reportPage.ReportActivity
 import id.ac.istts.seton.taskPage.TaskActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SettingActivity : ComponentActivity() {
@@ -343,6 +347,19 @@ class SettingActivity : ComponentActivity() {
                 Row(
                     Modifier.padding(horizontal = 8.dp, vertical = 8.dp).clickable {
                         // Logout Code
+                        val ioScope = CoroutineScope(Dispatchers.Main)
+                        ioScope.launch {
+                            ApiConfiguration.defaultRepo.logoutUser()
+                        }
+
+                        if(mAuth.currentUser != null){
+                            mAuth.signOut()
+                            mGoogleSignInClient.signOut()
+                        }
+
+                        val intent = Intent(this@SettingActivity, LandingPageActivity::class.java)
+                        startActivity(intent)
+                        finish()
                     },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
