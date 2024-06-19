@@ -16,6 +16,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -54,7 +55,6 @@ import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Discount
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.ListAlt
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.filled.Send
@@ -63,7 +63,6 @@ import androidx.compose.material.icons.filled.Task
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.ListAlt
-import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Task
@@ -91,6 +90,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -104,8 +104,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -119,13 +119,12 @@ import id.ac.istts.seton.DrawerHeader
 import id.ac.istts.seton.MenuItem
 import id.ac.istts.seton.R
 import id.ac.istts.seton.Screens
-import id.ac.istts.seton.SetUpNavGraph
 import id.ac.istts.seton.calendarPage.CalendarActivity
-import id.ac.istts.seton.config.ApiConfiguration
 import id.ac.istts.seton.entity.AddCommentDTO
 import id.ac.istts.seton.entity.Projects
 import id.ac.istts.seton.entity.TaskDRO
 import id.ac.istts.seton.entity.Users
+import id.ac.istts.seton.env
 import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
@@ -954,6 +953,21 @@ class TaskDetailActivity : ComponentActivity() {
                                         )
                                     } else {
                                         //tampilkan profile..
+                                        val pp = comment.user_email.profile_picture
+                                        val url = env.prefixStorage + pp
+                                        Image(
+                                            painter = rememberImagePainter(
+                                                data = url,
+                                                builder = {
+                                                    crossfade(true)
+                                                    transformations(CircleCropTransformation())
+                                                }
+                                            ),
+                                            contentDescription = "profile picture",
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                        )
                                     }
                                 }
                                 Spacer(modifier = Modifier.width(8.dp))

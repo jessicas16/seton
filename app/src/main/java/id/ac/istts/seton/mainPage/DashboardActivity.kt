@@ -91,6 +91,7 @@ import id.ac.istts.seton.projectPage.AddProjectActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
 import id.ac.istts.seton.reportPage.ReportActivity
 import id.ac.istts.seton.taskPage.TaskActivity
+import id.ac.istts.seton.taskPage.TaskDetailActivity
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -303,7 +304,7 @@ class DashboardActivity : ComponentActivity() {
             LazyColumn(
                 Modifier
                     .fillMaxSize()
-                    .padding(16.dp, 60.dp),
+                    .padding(16.dp, 24.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 item {
@@ -670,8 +671,8 @@ class DashboardActivity : ComponentActivity() {
                         ) {
                             Row(modifier = Modifier.clickable {
                                 // Go to Task Details
-                                val intent = Intent(this@DashboardActivity, TaskActivity::class.java)
-                                intent.putExtra("taskId", it.id)
+                                val intent = Intent(this@DashboardActivity, TaskDetailActivity::class.java)
+                                intent.putExtra("taskId", it.id.toString())
                                 intent.putExtra("userEmail", userEmail)
                                 startActivity(intent)
                             }, verticalAlignment = Alignment.CenterVertically) {

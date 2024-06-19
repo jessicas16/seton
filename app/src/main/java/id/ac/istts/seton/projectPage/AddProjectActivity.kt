@@ -12,6 +12,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,7 +33,6 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.HorizontalRule
 import androidx.compose.material.icons.filled.ListAlt
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.icons.filled.Settings
@@ -40,7 +40,6 @@ import androidx.compose.material.icons.filled.Task
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.ListAlt
-import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Report
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Task
@@ -63,6 +62,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -73,8 +73,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 import id.ac.istts.seton.AppBar
@@ -85,14 +85,13 @@ import id.ac.istts.seton.R
 import id.ac.istts.seton.Screens
 import id.ac.istts.seton.calendarPage.CalendarActivity
 import id.ac.istts.seton.component.CustomDateTimePicker
-import id.ac.istts.seton.config.ApiConfiguration
 import id.ac.istts.seton.entity.addProjectDTO
+import id.ac.istts.seton.env
 import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
 import id.ac.istts.seton.reportPage.ReportActivity
 import id.ac.istts.seton.taskPage.TaskActivity
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -464,6 +463,21 @@ class AddProjectActivity : ComponentActivity() {
                                 )
                             } else {
                                 //tampilkan profile..
+                                val pp = user.profile_picture
+                                val url = env.prefixStorage + pp
+                                Image(
+                                    painter = rememberImagePainter(
+                                        data = url,
+                                        builder = {
+                                            crossfade(true)
+                                            transformations(CircleCropTransformation())
+                                        }
+                                    ),
+                                    contentDescription = "profile picture",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                )
                             }
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(text = user.name)

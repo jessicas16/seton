@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -46,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -56,12 +58,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
 import id.ac.istts.seton.R
 import id.ac.istts.seton.component.CustomDateTimePicker
 import id.ac.istts.seton.entity.ProjectDRO
 import id.ac.istts.seton.entity.Projects
 import id.ac.istts.seton.entity.Users
 import id.ac.istts.seton.entity.addTaskDTO
+import id.ac.istts.seton.env
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -355,6 +360,21 @@ class AddTaskActivity : ComponentActivity() {
                                 )
                             } else {
                                 //tampilkan profile..
+                                val pp = user.profile_picture
+                                val url = env.prefixStorage + pp
+                                Image(
+                                    painter = rememberImagePainter(
+                                        data = url,
+                                        builder = {
+                                            crossfade(true)
+                                            transformations(CircleCropTransformation())
+                                        }
+                                    ),
+                                    contentDescription = "profile picture",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                )
                             }
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(text = user.name)
