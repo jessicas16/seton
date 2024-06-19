@@ -75,6 +75,7 @@ import com.jaikeerthick.composable_graphs.composables.pie.model.PieData
 import com.jaikeerthick.composable_graphs.composables.pie.style.PieChartStyle
 import com.jaikeerthick.composable_graphs.composables.pie.style.PieChartVisibility
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
@@ -403,16 +404,19 @@ class ReportActivity : ComponentActivity() {
                                                 shader = DynamicShader.color(Color(0xFF0E9794)),
                                                 backgroundShader = DynamicShader.color(Color.Transparent),
                                                 pointConnector = DefaultPointConnector(0f),
+
                                             )
                                         )
                                     ),
                                     startAxis = rememberStartAxis(
+                                        label = rememberAxisLabelComponent(color = Color.Black),
                                         itemPlacer = if (maxTask <= 7)
                                             AxisItemPlacer.Vertical.count(count = { maxTask + 1 }, true)
                                         else
                                             AxisItemPlacer.Vertical.step(step = { 1f }, true)
                                     ),
                                     bottomAxis = rememberBottomAxis(
+                                        label = rememberAxisLabelComponent(color = Color.Black),
                                         valueFormatter = { value, _, _ -> taskData[value.toInt()] }
                                     ),
 
@@ -563,12 +567,14 @@ class ReportActivity : ComponentActivity() {
                                             dataLabel = rememberTextComponent(textSize = 14.sp)
                                         ),
                                         startAxis = rememberStartAxis(
+                                            label = rememberAxisLabelComponent(color = Color.Black),
                                             itemPlacer = if (maxProgress < 10)
                                                 AxisItemPlacer.Vertical.count(count = { maxProgress + 1 }, true)
                                             else
                                                 AxisItemPlacer.Vertical.step(step = { 1f }, true)
                                         ),
                                         bottomAxis = rememberBottomAxis(
+                                            label = rememberAxisLabelComponent(color = Color.Black),
                                             valueFormatter = { value, _, _ -> memberProjects[value.toInt()].name }
                                         ),
                                     ),
