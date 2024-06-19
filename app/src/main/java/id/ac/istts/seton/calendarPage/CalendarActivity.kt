@@ -30,12 +30,14 @@ import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.ListAlt
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Report
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Task
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.ListAlt
 import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Report
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Task
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalDrawerSheet
@@ -70,6 +72,7 @@ import id.ac.istts.seton.R
 import id.ac.istts.seton.Screens
 import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
+import id.ac.istts.seton.projectPage.ListProjectActivity
 import id.ac.istts.seton.reportPage.ReportActivity
 import id.ac.istts.seton.taskPage.TaskActivity
 import kotlinx.coroutines.launch
@@ -116,66 +119,91 @@ class CalendarActivity : ComponentActivity() {
                     unSelectedIcon = Icons.Outlined.Report
                 ),
                 MenuItem(
-                    title = "Logout",
-                    route = Screens.Logout.route,
-                    selectedIcon = Icons.Filled.Logout,
-                    unSelectedIcon = Icons.Outlined.Logout
+                    title = "Settings",
+                    route = Screens.Settings.route,
+                    selectedIcon = Icons.Filled.Settings,
+                    unSelectedIcon = Icons.Outlined.Settings
                 ),
             )
 
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             val scope = rememberCoroutineScope()
-            val navController = rememberNavController()
-            val context = LocalContext.current
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route
+//            val navController = rememberNavController()
+//            val navBackStackEntry by navController.currentBackStackEntryAsState()
+//            val currentRoute = navBackStackEntry?.destination?.route
 
-            val topBarTitle =
-                if (currentRoute != null){
-                    items[items.indexOfFirst {
-                        it.route == currentRoute
-                    }].title
-                }else{
-                    items[0].title
-                }
+//            val topBarTitle =
+//                if (currentRoute != null){
+//                    items[items.indexOfFirst {
+//                        it.route == currentRoute
+//                    }].title
+//                }
+//                else {
+//                    items[0].title
+//                }
 
             ModalNavigationDrawer(
-                gesturesEnabled = drawerState.isOpen,drawerContent = {
-                    ModalDrawerSheet(
-
-                    ) {
+                gesturesEnabled = drawerState.isOpen,
+                drawerContent = {
+                    ModalDrawerSheet {
                         DrawerHeader()
                         Spacer(modifier = Modifier.height(8.dp))
-                        DrawerBody(items = items) { currentNavigationItem ->
-                            if(currentNavigationItem.route == "share"){
-                                Toast.makeText(context,"Share Clicked", Toast.LENGTH_LONG).show()
-                            }else{
-                                navController.navigate(currentNavigationItem.route){
-                                    // Pop up to the start destination of the graph to
-                                    // avoid building up a large stack of destinations
-                                    // on the back stack as users select items
-                                    navController.graph.startDestinationRoute?.let { startDestinationRoute ->
-                                        // Pop up to the start destination, clearing the back stack
-                                        popUpTo(startDestinationRoute) {
-                                            // Save the state of popped destinations
-                                            saveState = true
-                                        }
+                        DrawerBody(
+                            items = items,
+                            onItemClick = { currentMenuItem ->
+                                when (currentMenuItem.route){
+                                    Screens.Settings.route -> {
+//                                        val ioScope = CoroutineScope(Dispatchers.Main)
+//                                        ioScope.launch {
+//                                            ApiConfiguration.defaultRepo.logoutUser()
+//                                        }
+//
+//                                        if(mAuth.currentUser != null){
+//                                            mAuth.signOut()
+//                                            mGoogleSignInClient.signOut()
+//                                        }
+
+                                        val intent = Intent(this@CalendarActivity, LoginActivity::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                    }
+                                    Screens.Dashboard.route -> {
+                                        val intent = Intent(this@CalendarActivity, DashboardActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
+                                        startActivity(intent)
+                                        finish()
+                                    }
+                                    Screens.Projects.route -> {
+                                        val intent = Intent(this@CalendarActivity, ListProjectActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
+                                        startActivity(intent)
+                                        finish()
+                                    }
+                                    Screens.Tasks.route -> {
+                                        val intent = Intent(this@CalendarActivity, TaskActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
+                                        startActivity(intent)
+                                        finish()
+                                    }
+                                    Screens.Calendar.route -> {
+                                        val intent = Intent(this@CalendarActivity, CalendarActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
+                                        startActivity(intent)
+                                        finish()
+                                    }
+                                    Screens.Report.route -> {
+                                        val intent = Intent(this@CalendarActivity, ReportActivity::class.java)
+                                        intent.putExtra("userEmail", userEmail)
+                                        startActivity(intent)
+                                        finish()
                                     }
 
-                                    // Configure navigation to avoid multiple instances of the same destination
-                                    launchSingleTop = true
-
-                                    // Restore state when re-selecting a previously selected item
-                                    restoreState = true
                                 }
                             }
-
-                            scope.launch {
-                                drawerState.close()
-                            }
-                        }
+                        )
                     }
-                }, drawerState = drawerState) {
+                }, drawerState = drawerState
+            ){
                 Scaffold(
                     topBar = {
                         AppBar (
