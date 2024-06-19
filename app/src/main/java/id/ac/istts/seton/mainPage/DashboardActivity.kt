@@ -312,6 +312,8 @@ class DashboardActivity : ComponentActivity() {
                         dataUpComing = mapUpcoming,
                         nilaiUpComing = if(valueUpcoming.isNullOrEmpty()) emptyArray else valueUpcoming!!,
                         maxUpcoming = if(valueUpcoming.isNullOrEmpty()) 0 else valueUpcoming!![7].toInt(),
+                        nilaiOngoing = if(valueUpcoming.isNullOrEmpty()) emptyArray else valueUpcoming!!,
+                        maxOngoing = if(valueUpcoming.isNullOrEmpty()) 0 else valueUpcoming!![7].toInt(),
                         upcomingCount = userTasks.firstOrNull { it.first == "Upcoming" }?.second?.size ?: 0,
                         ongoingCount = userTasks.firstOrNull { it.first == "Ongoing" }?.second?.size ?: 0,
                         completedCount = userTasks.firstOrNull { it.first == "Completed" }?.second?.size ?: 0,
@@ -342,6 +344,8 @@ class DashboardActivity : ComponentActivity() {
         selectedChart: String,
         dataUpComing: HashMap<Float, Int>,
         nilaiUpComing: ArrayList<Float>,
+        nilaiOngoing: ArrayList<Float>,
+        maxOngoing: Int,
         maxUpcoming: Int,
         upcomingCount: Int,
         ongoingCount: Int,
@@ -387,10 +391,13 @@ class DashboardActivity : ComponentActivity() {
                         }
                         "Ongoing" -> {
                             mapOf(
-                                Pair(ongoingCount.toFloat(), 0),
-                                Pair(0.5f, 10),
-                                Pair(0.6f, 13),
-                                Pair(0.8f, 16)
+                                Pair(nilaiOngoing[0], maxOngoing),
+                                Pair(nilaiOngoing[1], maxOngoing),
+                                Pair(nilaiOngoing[2], maxOngoing),
+                                Pair(nilaiOngoing[3], maxOngoing),
+                                Pair(nilaiOngoing[4], maxOngoing),
+                                Pair(nilaiOngoing[5], maxOngoing),
+                                Pair(nilaiOngoing[6], maxOngoing),
                             )
                         }
                         else -> mapOf()

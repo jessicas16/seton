@@ -30,7 +30,7 @@ fun SetUpNavGraph(
         composable(Screens.Tasks.route){
 
         }
-        composable(Screens.Logout.route){
+        composable(Screens.Settings.route){
             LoginActivity()
         }
     }

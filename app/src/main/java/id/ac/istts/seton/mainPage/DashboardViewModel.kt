@@ -49,7 +49,13 @@ class DashboardViewModel: ViewModel(){
                     var temp = 0
                     for (task in res.data) {
                         println("cetak task deadline = " + task.deadline.substring(0, 10) + " --- " + currentDate2)
-                        if (task.deadline.substring(0, 10) == currentDate2) {
+                        if (task.deadline.substring(0, 10) == currentDate2 && task.status == 0) {
+                            temp += 1
+                        }
+                        else if (task.deadline.substring(0, 10) == currentDate2 && task.status == 1){
+                            temp += 1
+                        }
+                        else if (task.deadline.substring(0,10) == currentDate2 && task.status == 2){
                             temp += 1
                         }
                     }
