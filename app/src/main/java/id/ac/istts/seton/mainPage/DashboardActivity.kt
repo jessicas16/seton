@@ -300,7 +300,7 @@ class DashboardActivity : ComponentActivity() {
                     val data = when (selectedChart) {
                         "Upcoming" -> {
                             mapOf(
-                                Pair(0.5f, 10),
+                                Pair(upcomingCount.toFloat(), 10),
                                 Pair(0.6f, 12),
                                 Pair(0.2f, 13),
                                 Pair(0.7f, 15),
@@ -308,7 +308,6 @@ class DashboardActivity : ComponentActivity() {
                             )
                         }
                         "Completed" -> {
-                            // Ganti ini dengan data sebenarnya dari Completed
                             mapOf(
                                 Pair(0.3f, 5),
                                 Pair(0.6f, 8),
@@ -317,12 +316,11 @@ class DashboardActivity : ComponentActivity() {
                             )
                         }
                         "Ongoing" -> {
-                            // Ganti ini dengan data sebenarnya dari Ongoing
                             mapOf(
-                                Pair(0.4f, 7),
+                                Pair(ongoingCount.toFloat(), 10),
                                 Pair(0.5f, 10),
-                                Pair(0.6f, 13),
-                                Pair(0.8f, 16)
+                                Pair(0.6f, 10),
+                                Pair(0.8f, 10)
                             )
                         }
                         else -> mapOf()
