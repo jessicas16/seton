@@ -38,3 +38,8 @@ data class AddCommentDTO(
     val email : String,
     val value: String
 )
+
+data class ChangePasswordDTO(
+    val oldPassword: String,
+    val newPassword : String
+)

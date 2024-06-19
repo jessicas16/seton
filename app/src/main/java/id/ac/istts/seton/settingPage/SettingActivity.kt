@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -44,17 +46,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -70,6 +78,8 @@ import id.ac.istts.seton.R
 import id.ac.istts.seton.Screens
 import id.ac.istts.seton.calendarPage.CalendarActivity
 import id.ac.istts.seton.config.ApiConfiguration
+import id.ac.istts.seton.entity.Users
+import id.ac.istts.seton.env
 import id.ac.istts.seton.landingPage.LandingPageActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
@@ -83,6 +93,7 @@ class SettingActivity : ComponentActivity() {
     lateinit var userEmail : String
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mAuth: FirebaseAuth
+    val vm: SettingViewModel by viewModels<SettingViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userEmail = intent.getStringExtra("userEmail").toString()
@@ -217,7 +228,11 @@ class SettingActivity : ComponentActivity() {
     @Preview(showBackground = true)
     @Composable
     fun SettingPreview() {
+        val user by vm.user.observeAsState(null)
         val context = LocalContext.current
+        LaunchedEffect(key1 = Unit) {
+            vm.getUser(userEmail)
+        }
         ConstraintLayout(modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
@@ -233,7 +248,7 @@ class SettingActivity : ComponentActivity() {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (true){
+                    if (user?.profile_picture.toString() == "null"){
                         Icon(
                             imageVector = Icons.Rounded.Person,
                             contentDescription = "Profile Picture",
@@ -242,22 +257,21 @@ class SettingActivity : ComponentActivity() {
                                 .weight(1f)
                         )
                     } else {
-                        //tampilkan profile..
-//                        val pp = user.profile_picture
-//                        val url = env.prefixStorage + pp
-//                        Image(
-//                            painter = rememberImagePainter(
-//                                data = url,
-//                                builder = {
-//                                    crossfade(true)
-//                                    transformations(CircleCropTransformation())
-//                                }
-//                            ),
-//                            contentDescription = "profile picture",
-//                            contentScale = ContentScale.Crop,
-//                            modifier = Modifier
-//                                .size(40.dp)
-//                        )
+                        val url = env.prefixStorage + user?.profile_picture
+                        Image(
+                            painter = rememberImagePainter(
+                                data = url,
+                                builder = {
+                                    crossfade(true)
+                                    transformations(CircleCropTransformation())
+                                }
+                            ),
+                            contentDescription = "profile picture",
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .size(36.dp)
+                                .weight(1f)
+                        )
                     }
                     Column (
                         Modifier
@@ -265,14 +279,14 @@ class SettingActivity : ComponentActivity() {
                             .padding(horizontal = 8.dp)
                     ) {
                         Text(
-                            text = "Ivan Susanto",
+                            text = user?.name ?: "",
                             fontFamily = AppFont.fontBold,
                             fontSize = 20.sp,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = "ivan.s21@mhs.istts.ac.id",
+                            text = user?.email ?: "",
                             fontFamily = AppFont.fontNormal,
                             fontSize = 14.sp,
                             maxLines = 1,
@@ -287,6 +301,7 @@ class SettingActivity : ComponentActivity() {
                             .weight(1f)
                             .clickable {
                                 val intent = Intent(context, EditProfileActivity::class.java)
+                                intent.putExtra("userEmail", userEmail)
                                 context.startActivity(intent)
                             }
                     )
@@ -308,6 +323,7 @@ class SettingActivity : ComponentActivity() {
                 Row(
                     Modifier.padding(horizontal = 8.dp, vertical = 8.dp).clickable {
                         val intent = Intent(context, ChangePasswordActivity::class.java)
+                        intent.putExtra("userEmail", userEmail)
                         context.startActivity(intent)
                     },
                     verticalAlignment = Alignment.CenterVertically

@@ -4,6 +4,8 @@ import id.ac.istts.seton.entity.AddCommentDTO
 import id.ac.istts.seton.entity.AllChecklistDRO
 import id.ac.istts.seton.entity.AllCommentDRO
 import id.ac.istts.seton.entity.BasicDRO
+import id.ac.istts.seton.entity.ChangePasswordDRO
+import id.ac.istts.seton.entity.ChangePasswordDTO
 import id.ac.istts.seton.entity.ChecklistDRO
 import id.ac.istts.seton.entity.CommentDRO
 import id.ac.istts.seton.entity.GetAttachmentDRO
@@ -57,6 +59,12 @@ interface ApiService {
     suspend fun loginUserWithGoogle(
         @Body user : authUser
     ):BasicDRO
+
+    @PUT("users/password/{email}")
+    suspend fun updatePassword(
+        @Path("email") email: String,
+        @Body dataPassword: ChangePasswordDTO
+    ): ChangePasswordDRO
 
     //PROJECTS
     @GET("projects/getTasksProject/{projectId}")

@@ -8,6 +8,8 @@ import id.ac.istts.seton.entity.AddCommentDTO
 import id.ac.istts.seton.entity.AllChecklistDRO
 import id.ac.istts.seton.entity.AllCommentDRO
 import id.ac.istts.seton.entity.BasicDRO
+import id.ac.istts.seton.entity.ChangePasswordDRO
+import id.ac.istts.seton.entity.ChangePasswordDTO
 import id.ac.istts.seton.entity.ChecklistDRO
 import id.ac.istts.seton.entity.Checklists
 import id.ac.istts.seton.entity.CommentDRO
@@ -142,6 +144,10 @@ class DefaultRepo(
         withContext(Dispatchers.IO){
             dataSourceLocal.rememberDao().clearDb()
         }
+    }
+
+    suspend fun updatePassword(email: String, oldPassword: String, newPassword: String): ChangePasswordDRO {
+        return dataSourceRemote.updatePassword(email, ChangePasswordDTO(oldPassword, newPassword))
     }
 
     //PROJECTS

@@ -110,3 +110,9 @@ data class CommentDRO(
     var message : String,
     var data : Comments
 )
+
+data class ChangePasswordDRO(
+    var status : String,
+    var message : String,
+    var data : String
+)
