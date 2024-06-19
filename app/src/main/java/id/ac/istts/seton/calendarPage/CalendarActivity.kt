@@ -187,12 +187,6 @@ class CalendarActivity : ComponentActivity() {
                                         startActivity(intent)
                                         finish()
                                     }
-                                    Screens.Calendar.route -> {
-                                        val intent = Intent(this@CalendarActivity, CalendarActivity::class.java)
-                                        intent.putExtra("userEmail", userEmail)
-                                        startActivity(intent)
-                                        finish()
-                                    }
                                     Screens.Report.route -> {
                                         val intent = Intent(this@CalendarActivity, ReportActivity::class.java)
                                         intent.putExtra("userEmail", userEmail)

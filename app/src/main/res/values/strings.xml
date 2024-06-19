@@ -17,4 +17,6 @@
     <string name="title_activity_task_detail">TaskDetailActivity</string>
     <string name="title_activity_setting">SettingActivity</string>
     <string name="title_activity_about">AboutActivity</string>
+    <string name="title_activity_change_password">ChangePasswordActivity</string>
+    <string name="title_activity_edit_profile">EditProfileActivity</string>
 </resources>
