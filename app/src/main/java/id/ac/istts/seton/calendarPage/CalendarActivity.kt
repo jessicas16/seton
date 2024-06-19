@@ -146,7 +146,7 @@ class CalendarActivity : ComponentActivity() {
                     ) {
                         DrawerHeader()
                         Spacer(modifier = Modifier.height(8.dp))
-                        DrawerBody(items = items, currentRoute =currentRoute) { currentNavigationItem ->
+                        DrawerBody(items = items) { currentNavigationItem ->
                             if(currentNavigationItem.route == "share"){
                                 Toast.makeText(context,"Share Clicked", Toast.LENGTH_LONG).show()
                             }else{

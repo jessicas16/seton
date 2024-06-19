@@ -6,6 +6,6 @@ sealed class Screens(val route: String) {
     object Tasks : Screens("tasks")
     object Calendar : Screens("calendar")
     object Report : Screens("report")
-    object Logout : Screens("logout")
+    object Settings : Screens("settings")
 
 }
