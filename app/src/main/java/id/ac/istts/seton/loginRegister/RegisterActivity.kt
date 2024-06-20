@@ -82,10 +82,10 @@ class RegisterActivity : ComponentActivity() {
     @Preview(showBackground = true)
     @Composable
     fun RegisterPage(){
-        val name = remember { mutableStateOf("aa") }
-        val email = remember { mutableStateOf("aa") }
-        val confirm_password = remember { mutableStateOf("aa") }
-        val password = remember { mutableStateOf("aa") }
+        val name = remember { mutableStateOf("") }
+        val email = remember { mutableStateOf("") }
+        val confirm_password = remember { mutableStateOf("") }
+        val password = remember { mutableStateOf("") }
         Surface {
             Register(
                 name = name,

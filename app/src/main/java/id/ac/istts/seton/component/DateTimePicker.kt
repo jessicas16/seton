@@ -225,7 +225,7 @@ fun CustomDateTimePicker(
                 state = dateState,
                 onDatePicked = updateState,
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(2f)
             )
             Spacer(modifier = Modifier.width(8.dp))
 
@@ -233,7 +233,7 @@ fun CustomDateTimePicker(
                 state = timePickerState,
                 onTimePicked = updateState,
                 modifier = Modifier
-                    .weight(.5f)
+                    .weight(1.5f)
             )
         }
     }

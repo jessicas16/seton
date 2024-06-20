@@ -91,6 +91,7 @@ class AddProjectViewModel: ViewModel() {
         viewModelScope.launch {
             try {
                 val res = repo.createProject(project)
+                Log.d("RESadsdasdasdasd", res.toString())
                 _response.postValue(res)
             } catch (e: Exception) {
                 Log.e("ERROR", e.message.toString())

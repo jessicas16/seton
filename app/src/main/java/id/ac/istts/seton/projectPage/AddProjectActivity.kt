@@ -87,7 +87,6 @@ import id.ac.istts.seton.calendarPage.CalendarActivity
 import id.ac.istts.seton.component.CustomDateTimePicker
 import id.ac.istts.seton.entity.addProjectDTO
 import id.ac.istts.seton.env
-import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.mainPage.DashboardActivity
 import id.ac.istts.seton.reportPage.ReportActivity
 import id.ac.istts.seton.settingPage.SettingActivity
@@ -377,7 +376,7 @@ class AddProjectActivity : ComponentActivity() {
                         email.value = it
                     },
                     placeholder = {
-                        Text(text = "Invite")
+                        Text(text = "Email User")
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
@@ -509,6 +508,17 @@ class AddProjectActivity : ComponentActivity() {
                         Toast.makeText(this@AddProjectActivity, "Project Name and Description cannot be empty", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
+
+                    if(startDateTimeState.value.isAfter(deadlineState.value)){
+                        Toast.makeText(this@AddProjectActivity, "Start Time cannot be after Deadline", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
+
+                    if(startDateTimeState.value == deadlineState.value){
+                        Toast.makeText(this@AddProjectActivity, "Start Time cannot be same as Deadline", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
+
 
                     val dto = addProjectDTO(
                         name = projectName.value,

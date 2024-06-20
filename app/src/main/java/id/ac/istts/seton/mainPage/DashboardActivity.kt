@@ -86,7 +86,6 @@ import id.ac.istts.seton.MenuItem
 import id.ac.istts.seton.R
 import id.ac.istts.seton.Screens
 import id.ac.istts.seton.calendarPage.CalendarActivity
-import id.ac.istts.seton.loginRegister.LoginActivity
 import id.ac.istts.seton.projectPage.AddProjectActivity
 import id.ac.istts.seton.projectPage.ListProjectActivity
 import id.ac.istts.seton.reportPage.ReportActivity
@@ -365,7 +364,7 @@ class DashboardActivity : ComponentActivity() {
         Text(
             text = "Weekly Stats",
             style = MaterialTheme.typography.h6,
-            modifier = Modifier.padding(2.dp, 10.dp)
+            modifier = Modifier.padding(2.dp, 30.dp)
         )
         Card(
             elevation = 20.dp,
@@ -506,8 +505,9 @@ class DashboardActivity : ComponentActivity() {
             Button(
                 onClick = {
                     val intent = Intent(this@DashboardActivity, AddProjectActivity::class.java)
+                    intent.putExtra("userEmail", userEmail)
                     startActivity(intent)
-                    finish()
+//                    finish()
                 },
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color(0xff109494),
